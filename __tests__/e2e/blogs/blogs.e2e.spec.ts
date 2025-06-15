@@ -1,8 +1,8 @@
 import request from 'supertest';
-import { setupApp } from "../../src/setup-app";
+import { setupApp } from "../../../src/setup-app";
 import express from 'express';
-import {BlogInputDto} from "../../src/blogs/dto/blog.input-dto";
-import {HttpStatus} from "../../src/core/types/http-statuses";
+import {BlogInputDto} from "../../../src/blogs/dto/blog.input-dto";
+import {HttpStatus} from "../../../src/core/types/http-statuses";
 
 describe ('Blog Api body validation check', () => {
     const app = express();

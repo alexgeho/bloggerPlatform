@@ -4,7 +4,7 @@ import {HttpStatus} from "./core/types/http-statuses";
 import {blog} from './blogs/types/blog';
 import { BlogViewModel } from './blogs/types/blog';
 import { Request, Response } from 'express';
-import { validateBlogInputDto } from './blogs/dto/blog.input-dto';
+import { validateBlogInputDto } from './blogs/validation/blogInputDtoValidation';
 
 
 import {createErrorMessages} from './core/utils/error.utils';
@@ -29,6 +29,11 @@ export const setupApp = (app: Express) => {
     });
 
     app.post("/blogs", (req, res) => {
+
+        // Validation
+
+        const errors = validateBlogInputDto(req.body);
+
         //1) проверяем приходящие данные на валидность
         //2) создаем newBlog
         const newBlog: blog = {
