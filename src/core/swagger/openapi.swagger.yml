@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  title: Blogger Platform
+  version: 1.0.0
+  description: Blogger Platform API documentation
+
+tags:
+  - name: Blogs
+    description: API bitau
+  - name: Testing
+    description: API for clearing the database

@@ -10,6 +10,7 @@ import {blogInputDtoValidation} from './blogs/validation/blogInputDtoValidation'
 import {createErrorMessages} from './core/utils/error.utils';
 import {blogsRouter} from "./routers/blogs.router";
 import {testingRouter} from "./routers/testing.router";
+import { setupSwagger } from "./core/swagger/setup-swagger"
 
 
 export const setupApp = (app: Express) => {
@@ -21,10 +22,10 @@ export const setupApp = (app: Express) => {
     });
 
 
-    app.use('/blogs', blogsRouter);
+    app.use('/api/blogs', blogsRouter);
 
-    app.delete('/testing/all-data', testingRouter);
+    app.delete('/api/testing/all-data', testingRouter);
 
-
+    setupSwagger(app);
     return app;
 };
