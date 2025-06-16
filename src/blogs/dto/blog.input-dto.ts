@@ -7,6 +7,3 @@ export type BlogInputDto = {
 };
 
 
-
-    return errors;
-}
