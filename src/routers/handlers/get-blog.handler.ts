@@ -1,8 +1,6 @@
 import {Request, Response} from 'express';
-import {db} from '../../db/in-memory.db';
 import {HttpStatus} from '../../core/types/http-statuses';
 import {createErrorMessages} from '../../core/utils/error.utils';
-import {BlogViewModel} from "../../blogs/types/blog";
 import {blogsRepository} from "../../blogs/repositories/blogs.repository";
 
 export function getBlogHandler(req: Request, res: Response) {

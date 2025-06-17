@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { db } from '../../db/in-memory.db';
 import { HttpStatus } from '../../core/types/http-statuses';
 import { createErrorMessages } from '../../core/utils/error.utils';
 import {blogInputDtoValidation} from "../../blogs/validation/blogInputDtoValidation";
