@@ -5,87 +5,20 @@ import {blog, BlogViewModel} from "../blogs/types/blog";
 import {HttpStatus} from "../core/types/http-statuses";
 import {createErrorMessages} from "../core/utils/error.utils";
 import {db} from "../db/in-memory.db"
+import {getBlogListHandler} from "./handlers/get-blog-list.handler";
+import {createBlogHandler} from "./handlers/post-blog.handler";
+import {getBlogHandler} from "./handlers/get-blog.handler";
+import {updateBlogHandler} from "./handlers/update-driver.handler";
 
 
 export const blogsRouter = Router({});
 
 blogsRouter
 
-    .get("/", (req, res) => {
-        // возвращаем все блоги
-        res.status(200).send(
-            db.blogs.map(blog => ({
-                ...blog,
-                id: String(blog.id)
-            })));
-    })
+    .get("/", getBlogListHandler)
 
-    .post("/", (req, res) => {
-        const errors = blogInputDtoValidation(req.body);
-        if (errors.length > 0) {
-            res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
-        }
-        //1) проверяем приходящие данные на валидность
-        //2) создаем newBlog
-        const newBlog: blog = {
-            id: db.blogs.length ? db.blogs[db.blogs.length - 1].id + 1 : 1,
-            name: req.body.name,
-            description: req.body.description,
-            websiteUrl: req.body.websiteUrl
-        };
+    .post("/", createBlogHandler)
 
-        //3) добавляем newBlog в БД
-        db.blogs.push(newBlog);
+    .get("/:id", getBlogHandler)
 
-        // Возвращаем копию newBlog, но id как строка
-        res.status(HttpStatus.Created).send({
-            ...newBlog,
-            id: String(newBlog.id)
-        });
-    })
-
-    .get("/:id", (req: Request<{ id: string }>, res: Response<BlogViewModel | null>) => {
-        const blog = db.blogs.find(b => b.id === +req.params.id);
-
-        if (!blog) {
-            res.sendStatus(404);
-            return;
-        }
-
-        res.status(200).send({
-            ...blog,
-            id: String(blog.id),
-        });
-    })
-
-    .put('/:id', (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const index = db.blogs.findIndex((v) => v.id === id);
-
-        if (index === -1) {
-            res
-                .status(HttpStatus.NotFound)
-                .send(
-                    createErrorMessages([{field: 'id', message: 'Blog not found'}]),
-                );
-
-
-            return;
-        }
-
-// Оценить!
-        const errors = blogInputDtoValidation(req.body);
-        if (errors.length > 0) {
-            res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
-            return;
-        }
-
-        const blog = db.blogs[index];
-
-        blog.name = req.body.name;
-        blog.description = req.body.description;
-        blog.websiteUrl = req.body.websiteUrl;
-
-        res.status(200).send({message: "Blog was updated successfully"});
-    })
-
+    .put('/:id', updateBlogHandler)

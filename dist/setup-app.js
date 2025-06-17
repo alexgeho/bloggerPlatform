@@ -8,14 +8,15 @@ const express_1 = __importDefault(require("express"));
 const blogs_router_1 = require("./routers/blogs.router");
 const testing_router_1 = require("./routers/testing.router");
 const setup_swagger_1 = require("./core/swagger/setup-swagger");
+const paths_1 = require("./core/paths/paths");
 const setupApp = (app) => {
     app.use(express_1.default.json()); // middleware для парсинга JSON в теле запроса
     // основной роут
     app.get("/", (req, res) => {
         res.status(200).send("Hello world Bitau!");
     });
-    app.use('/api/blogs', blogs_router_1.blogsRouter);
-    app.delete('/api/testing/all-data', testing_router_1.testingRouter);
+    app.use(paths_1.DRIVERS_PATH, blogs_router_1.blogsRouter);
+    app.delete(paths_1.TESTING_PATH, testing_router_1.testingRouter);
     (0, setup_swagger_1.setupSwagger)(app);
     return app;
 };

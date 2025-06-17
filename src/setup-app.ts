@@ -5,12 +5,11 @@ import {blog} from './blogs/types/blog';
 import {BlogViewModel} from './blogs/types/blog';
 import {Request, Response} from 'express';
 import {blogInputDtoValidation} from './blogs/validation/blogInputDtoValidation';
-
-
 import {createErrorMessages} from './core/utils/error.utils';
 import {blogsRouter} from "./routers/blogs.router";
 import {testingRouter} from "./routers/testing.router";
 import { setupSwagger } from "./core/swagger/setup-swagger"
+import {DRIVERS_PATH, TESTING_PATH} from "./core/paths/paths";
 
 
 export const setupApp = (app: Express) => {
@@ -21,10 +20,9 @@ export const setupApp = (app: Express) => {
         res.status(200).send("Hello world Bitau!");
     });
 
+    app.use(DRIVERS_PATH, blogsRouter);
 
-    app.use('/api/blogs', blogsRouter);
-
-    app.delete('/api/testing/all-data', testingRouter);
+    app.delete(TESTING_PATH, testingRouter);
 
     setupSwagger(app);
     return app;
