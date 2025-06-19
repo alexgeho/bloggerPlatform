@@ -27,6 +27,17 @@ export const blogsRepository = {
         blog.websiteUrl = dto.websiteUrl;
 
         return;
+    },
+
+    delete(id: number): void {
+        const index = db.blogs.findIndex((v) => v.id === id);
+
+        if (index === -1) {
+            throw new Error('Driver not exist');
+        }
+
+        db.blogs.splice(index, 1);
+        return;
     }
 
 

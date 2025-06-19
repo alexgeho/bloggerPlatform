@@ -1,2 +1,2 @@
 export const TESTING_PATH = '/api/testing/all-data';
-export const DRIVERS_PATH = '/api/blogs';
+export const BLOGS_PATH = '/api/blogs';

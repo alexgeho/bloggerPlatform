@@ -1,14 +1,13 @@
-import {Request, Response, Router} from "express";
-import {BlogInputDto} from "../blogs/dto/blog.input-dto";
-import {blogInputDtoValidation} from "../blogs/validation/blogInputDtoValidation";
-import {blog, BlogViewModel} from "../blogs/types/blog";
-import {HttpStatus} from "../core/types/http-statuses";
-import {createErrorMessages} from "../core/utils/error.utils";
-import {db} from "../db/in-memory.db"
+import { Router} from "express";
 import {getBlogListHandler} from "./handlers/get-blog-list.handler";
 import {createBlogHandler} from "./handlers/post-blog.handler";
 import {getBlogHandler} from "./handlers/get-blog.handler";
 import {updateBlogHandler} from "./handlers/update-driver.handler";
+import {idValidation} from "../core/middlewares/validation/params-id.validation-middleware";
+import {inputValidationResultMiddleware} from "../core/middlewares/validation/input-validtion-result.middleware";
+import {blogInputDtoValidation} from "../blogs/validation/blog.input-dto.validation-middlewares";
+import {deleteBlogHandler} from "./handlers/delete-blog.handler";
+
 
 
 export const blogsRouter = Router({});
@@ -17,8 +16,25 @@ blogsRouter
 
     .get("/", getBlogListHandler)
 
-    .post("/", createBlogHandler)
+    .post("/",
+        blogInputDtoValidation,
+        inputValidationResultMiddleware,
+        createBlogHandler)
 
-    .get("/:id", getBlogHandler)
+    .get("/:id",
+        idValidation,
+        inputValidationResultMiddleware,
+        getBlogHandler)
 
-    .put('/:id', updateBlogHandler)
+    .put('/:id',
+        idValidation,
+        blogInputDtoValidation,
+        inputValidationResultMiddleware,
+        updateBlogHandler)
+
+.delete('/testing/all-data',
+    idValidation,
+    blogInputDtoValidation,
+    inputValidationResultMiddleware,
+    deleteBlogHandler
+    )

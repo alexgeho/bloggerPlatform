@@ -2,7 +2,7 @@ import express, {Express} from "express";
 import {blogsRouter} from "./routers/blogs.router";
 import {testingRouter} from "./routers/testing.router";
 import { setupSwagger } from "./core/swagger/setup-swagger"
-import {DRIVERS_PATH, TESTING_PATH} from "./core/paths/paths";
+import {BLOGS_PATH, TESTING_PATH} from "./core/paths/paths";
 
 
 export const setupApp = (app: Express) => {
@@ -13,7 +13,7 @@ export const setupApp = (app: Express) => {
         res.status(200).send("Hello world Bitau!");
     });
 
-    app.use(DRIVERS_PATH, blogsRouter);
+    app.use(BLOGS_PATH, blogsRouter);
 
     app.delete(TESTING_PATH, testingRouter);
 

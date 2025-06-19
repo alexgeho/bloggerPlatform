@@ -15,7 +15,7 @@ const setupApp = (app) => {
     app.get("/", (req, res) => {
         res.status(200).send("Hello world Bitau!");
     });
-    app.use(paths_1.DRIVERS_PATH, blogs_router_1.blogsRouter);
+    app.use(paths_1.BLOGS_PATH, blogs_router_1.blogsRouter);
     app.delete(paths_1.TESTING_PATH, testing_router_1.testingRouter);
     (0, setup_swagger_1.setupSwagger)(app);
     return app;

@@ -21,5 +21,13 @@ exports.blogsRepository = {
         blog.description = dto.description;
         blog.websiteUrl = dto.websiteUrl;
         return;
+    },
+    delete(id) {
+        const index = in_memory_db_1.db.blogs.findIndex((v) => v.id === id);
+        if (index === -1) {
+            throw new Error('Driver not exist');
+        }
+        in_memory_db_1.db.blogs.splice(index, 1);
+        return;
     }
 };

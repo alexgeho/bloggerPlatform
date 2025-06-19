@@ -11,7 +11,7 @@ function getBlogHandler(req, res) {
     if (!blog) {
         res
             .status(http_statuses_1.HttpStatus.NotFound)
-            .send((0, error_utils_1.createErrorMessages)([{ field: 'id', message: 'Blog not found bitau' }]));
+            .send((0, error_utils_1.createErrorMessages)([{ field: 'id', message: 'Blog not found' }]));
         return;
     }
     res.status(200).send(Object.assign(Object.assign({}, blog), { id: String(blog.id) }));
