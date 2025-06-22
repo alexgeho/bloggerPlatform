@@ -33,12 +33,14 @@ export const blogsRepository = {
         const index = db.blogs.findIndex((v) => v.id === id);
 
         if (index === -1) {
-            throw new Error('Driver not exist');
+            throw new Error('Driver not exist Bitau');
         }
 
         db.blogs.splice(index, 1);
         return;
+    },
+
+    deleteAll(): void {
+        db.blogs = [];
     }
-
-
 }

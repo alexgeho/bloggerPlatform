@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setupApp = void 0;
 const express_1 = __importDefault(require("express"));
 const blogs_router_1 = require("./routers/blogs.router");
-const testing_router_1 = require("./routers/testing.router");
 const setup_swagger_1 = require("./core/swagger/setup-swagger");
 const paths_1 = require("./core/paths/paths");
 const setupApp = (app) => {
@@ -16,7 +15,6 @@ const setupApp = (app) => {
         res.status(200).send("Hello world Bitau!");
     });
     app.use(paths_1.BLOGS_PATH, blogs_router_1.blogsRouter);
-    app.delete(paths_1.TESTING_PATH, testing_router_1.testingRouter);
     (0, setup_swagger_1.setupSwagger)(app);
     return app;
 };

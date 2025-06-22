@@ -25,9 +25,12 @@ exports.blogsRepository = {
     delete(id) {
         const index = in_memory_db_1.db.blogs.findIndex((v) => v.id === id);
         if (index === -1) {
-            throw new Error('Driver not exist');
+            throw new Error('Driver not exist Bitau');
         }
         in_memory_db_1.db.blogs.splice(index, 1);
         return;
+    },
+    deleteAll() {
+        in_memory_db_1.db.blogs = [];
     }
 };

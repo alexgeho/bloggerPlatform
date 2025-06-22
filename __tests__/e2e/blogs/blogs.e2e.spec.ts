@@ -3,6 +3,7 @@ import { setupApp } from "../../../src/setup-app";
 import express from 'express';
 import {BlogInputDto} from "../../../src/blogs/dto/blog.input-dto";
 import {HttpStatus} from "../../../src/core/types/http-statuses";
+import {clearDb} from "../../utils/clear-db";
 
 describe ('Blog Api body validation check', () => {
     const app = express();
@@ -15,7 +16,7 @@ describe ('Blog Api body validation check', () => {
     };
 
     beforeAll(async () => {
-            await request(app).delete('/testing/all-data').expect(HttpStatus.NoContent);
+        await clearDb(app);
     });
 
 
@@ -27,7 +28,8 @@ describe ('Blog Api body validation check', () => {
         };
 
         await request(app)
-            .post('/blogs')
+            .post('/BLOGS_PATH')
+            .set('Authorization', 'adminToken')
             .send(newBlog)
             .expect(HttpStatus.Created);
     });
@@ -36,17 +38,19 @@ describe ('Blog Api body validation check', () => {
     
     it('should return blogs list; GET /blogs', async () => {
         await request(app)
-            .post('/blogs')
+            .post('/BLOGS_PATH')
+            .set('Authorization', 'adminToken')
             .send({ ...testBlogData, name: 'Another blog' })
             .expect(HttpStatus.Created);
 
         await request(app)
-            .post('/blogs')
+            .post('/BLOGS_PATH')
+            .set('Authorization', 'adminToken')
             .send({ ...testBlogData, name: 'Another blog2' })
             .expect(HttpStatus.Created);
 
         const blogListResponse = await request(app)
-            .get('/blogs')
+            .get('/BLOGS_PATH')
             .expect(HttpStatus.Ok);
 
         expect(blogListResponse.body).toBeInstanceOf(Array);
@@ -55,12 +59,13 @@ describe ('Blog Api body validation check', () => {
 
     it('should return blog by id; GET /blogs/:id', async () => {
         const createResponse = await request(app)
-            .post('/blogs')
+            .post('/BLOGS_PATH')
+            .set('Authorization', 'adminToken')
             .send({ ...testBlogData, name: 'Another test' })
             .expect(HttpStatus.Created);
 
         const getResponse = await request(app)
-            .get(`/blogs/${createResponse.body.id}`)
+            .get(`/BLOGS_PATH/${createResponse.body.id}`)
             .expect(HttpStatus.Ok);
 
         expect(getResponse.body).toEqual({
@@ -74,7 +79,8 @@ describe ('Blog Api body validation check', () => {
     
     it('should update blog; PUT /blogs/:id', async () => {
         const createResponse = await request(app)
-            .post('/blogs')
+            .post('/BLOGS_PATH')
+            .set('Authorization', 'adminToken')
             .send({ ...testBlogData, name: 'Another Test' })
             .expect(HttpStatus.Created);
 
@@ -86,12 +92,13 @@ describe ('Blog Api body validation check', () => {
         };
 
         await request(app)
-            .put(`/blogs/${createResponse.body.id}`)
+            .put(`/BLOGS_PATH/${createResponse.body.id}`)
+            .set('Authorization', 'adminToken')
             .send(blogUpdateData)
             .expect(HttpStatus.NoContent);
 
         const blogResponse = await request(app).get(
-            `/blogs/${createResponse.body.id}`,
+            `/BLOGS_PATH/${createResponse.body.id}`,
         );
 
         expect(blogResponse.body).toEqual({
@@ -105,16 +112,17 @@ describe ('Blog Api body validation check', () => {
         const {
             body: { id: createdBlogId },
         } = await request(app)
-            .post('/blogs')
+            .post('/BLOGS_PATH')
+            .set('Authorization', 'adminToken')
             .send({ ...testBlogData, name: 'Another Test Bitau' })
             .expect(HttpStatus.Created);
 
         await request(app)
-            .delete(`/blogs/${createdBlogId}`)
+            .delete(`/BLOGS_PATH/${createdBlogId}`)
             .expect(HttpStatus.NoContent);
 
         const blogResponse = await request(app).get(
-            `/blogs/${createdBlogId}`,
+            `/BLOGS_PATH/${createdBlogId}`,
         );
         expect(blogResponse.status).toBe(HttpStatus.NotFound);
     });

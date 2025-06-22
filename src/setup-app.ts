@@ -1,8 +1,7 @@
 import express, {Express} from "express";
 import {blogsRouter} from "./routers/blogs.router";
-import {testingRouter} from "./routers/testing.router";
 import { setupSwagger } from "./core/swagger/setup-swagger"
-import {BLOGS_PATH, TESTING_PATH} from "./core/paths/paths";
+import {BLOGS_PATH} from "./core/paths/paths";
 
 
 export const setupApp = (app: Express) => {
@@ -14,8 +13,6 @@ export const setupApp = (app: Express) => {
     });
 
     app.use(BLOGS_PATH, blogsRouter);
-
-    app.delete(TESTING_PATH, testingRouter);
 
     setupSwagger(app);
     return app;
