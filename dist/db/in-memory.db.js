@@ -22,4 +22,10 @@ exports.db = {
             websiteUrl: 'TestText3.com',
         },
     ],
+    // posts: <posts[]>[
+    //     {
+    //
+    //     }
+    //
+    // ]
 };

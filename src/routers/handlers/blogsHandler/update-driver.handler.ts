@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { HttpStatus } from '../../core/types/http-statuses';
-import { createErrorMessages } from '../../core/utils/error.utils';
-import {blogInputDtoValidation} from "../../blogs/validation/blogInputDtoValidation";
-import {BlogInputDto} from "../../blogs/dto/blog.input-dto";
-import {blogsRepository} from "../../blogs/repositories/blogs.repository";
+import { HttpStatus } from '../../../core/types/http-statuses';
+import { createErrorMessages } from '../../../core/utils/error.utils';
+import {blogInputDtoValidation} from "../../../blogs/validation/blogInputDtoValidation";
+import {BlogInputDto} from "../../../blogs/dto/blog.input-dto";
+import {blogsRepository} from "../../../blogs/repositories/blogs.repository";
 
 export function updateBlogHandler(
     req: Request <{ id: string }, {}, BlogInputDto>,

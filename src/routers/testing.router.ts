@@ -1,14 +1,13 @@
-// import {Router} from "express";
-// import {HttpStatus} from "../core/types/http-statuses";
-// import {db} from "../db/in-memory.db"
-//
-//
-// export const testingRouter = Router({});
-//
-// testingRouter
-//
-// .delete('/testing/all-data', (req, res) => {
-//     console.log('DELETE /testing/all-data called');
-//     db.blogs.length = 0; // очищаем все блоги
-//     res.sendStatus(HttpStatus.NoContent); // 204
-// });
+import {Router} from "express";
+import {superAdminGuardMiddleware} from "../auth/middlewares/super-admin.guard-middleware";
+import {deleteAllBlogHandler} from "./handlers/testingHandler/delete-all-blogs.handler";
+
+
+export const testingRouter = Router({});
+
+testingRouter
+
+    .delete('/all-data',
+        superAdminGuardMiddleware,
+        deleteAllBlogHandler
+    )

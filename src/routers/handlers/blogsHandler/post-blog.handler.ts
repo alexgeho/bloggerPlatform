@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { BlogInputDto } from '../../blogs/dto/blog.input-dto';
-import { HttpStatus } from '../../core/types/http-statuses';
-import { createErrorMessages } from '../../core/utils/error.utils';
-import { db } from '../../db/in-memory.db';
-import { blog } from '../../blogs/types/blog';
-import {blogInputDtoValidation} from "../../blogs/validation/blogInputDtoValidation";
-import {blogsRepository} from "../../blogs/repositories/blogs.repository";
+import { BlogInputDto } from '../../../blogs/dto/blog.input-dto';
+import { HttpStatus } from '../../../core/types/http-statuses';
+import { createErrorMessages } from '../../../core/utils/error.utils';
+import { db } from '../../../db/in-memory.db';
+import { blog } from '../../../blogs/types/blog';
+import {blogInputDtoValidation} from "../../../blogs/validation/blogInputDtoValidation";
+import {blogsRepository} from "../../../blogs/repositories/blogs.repository";
 
 export function createBlogHandler(
     req: Request<{}, {}, BlogInputDto>,

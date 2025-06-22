@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
-import {HttpStatus} from '../../core/types/http-statuses';
-import {createErrorMessages} from '../../core/utils/error.utils';
-import {blogsRepository} from "../../blogs/repositories/blogs.repository";
+import {HttpStatus} from '../../../core/types/http-statuses';
+import {createErrorMessages} from '../../../core/utils/error.utils';
+import {blogsRepository} from "../../../blogs/repositories/blogs.repository";
 
 export function getBlogHandler(req: Request, res: Response) {
 
