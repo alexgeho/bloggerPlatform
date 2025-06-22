@@ -3,6 +3,7 @@ import {blogsRouter} from "./routers/blogs.router";
 import { setupSwagger } from "./core/swagger/setup-swagger"
 import {BLOGS_PATH, POSTS_PATH, TESTING_PATH} from "./core/paths/paths";
 import {testingRouter} from "./routers/testing.router";
+import {postsRouter} from "./routers/posts.router";
 
 
 export const setupApp = (app: Express) => {
@@ -15,7 +16,7 @@ export const setupApp = (app: Express) => {
 
     app.use(BLOGS_PATH, blogsRouter);
     app.use(TESTING_PATH, testingRouter);
-    app.use(POSTS_PATH, testingRouter);
+    app.use(POSTS_PATH, postsRouter);
 
     setupSwagger(app);
     return app;

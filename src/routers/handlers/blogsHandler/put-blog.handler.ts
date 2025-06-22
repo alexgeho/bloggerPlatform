@@ -26,7 +26,7 @@ export function updateBlogHandler(
     }
 
     blogsRepository.update(id, req.body);
-    res.sendStatus(HttpStatus.NoContent);
+    res.sendStatus(HttpStatus.Created);
 
 
 }

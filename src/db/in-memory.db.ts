@@ -1,4 +1,5 @@
 import { blog } from '../blogs/types/blog';
+import { post } from '../posts/types/post';
 
 
 export const db = {
@@ -24,12 +25,35 @@ export const db = {
         },
     ],
 
-    // posts: <posts[]>[
-    //     {
-    //
-    //     }
-    //
-    // ]
 
 
+    posts: <post[]>[
+        {
+            id: 1,
+            title: 'titleLine',
+            shortDescription: 'descriptionLine',
+            content: 'contentLine',
+            blogId: 'blogIdLine',
+            blogName: 'blogNameLine'
+        },
+
+        {
+            id: 2,
+            title: 'titleLine',
+            shortDescription: 'descriptionLine',
+            content: 'contentLine',
+            blogId: 'blogIdLine',
+            blogName: 'blogNameLine'
+        },
+
+        {
+            id: 3,
+            title: 'titleLine',
+            shortDescription: 'descriptionLine',
+            content: 'contentLine',
+            blogId: 'blogIdLine',
+            blogName: 'blogNameLine'
+        }
+
+        ]
 };

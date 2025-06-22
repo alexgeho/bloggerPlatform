@@ -22,10 +22,30 @@ exports.db = {
             websiteUrl: 'TestText3.com',
         },
     ],
-    // posts: <posts[]>[
-    //     {
-    //
-    //     }
-    //
-    // ]
+    posts: [
+        {
+            id: 1,
+            title: 'titleLine',
+            shortDescription: 'descriptionLine',
+            content: 'contentLine',
+            blogId: 'blogIdLine',
+            blogName: 'blogNameLine'
+        },
+        {
+            id: 2,
+            title: 'titleLine',
+            shortDescription: 'descriptionLine',
+            content: 'contentLine',
+            blogId: 'blogIdLine',
+            blogName: 'blogNameLine'
+        },
+        {
+            id: 3,
+            title: 'titleLine',
+            shortDescription: 'descriptionLine',
+            content: 'contentLine',
+            blogId: 'blogIdLine',
+            blogName: 'blogNameLine'
+        }
+    ]
 };
