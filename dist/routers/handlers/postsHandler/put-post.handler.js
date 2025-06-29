@@ -13,11 +13,20 @@ exports.putPostHandler = putPostHandler;
 const http_statuses_1 = require("../../../core/types/http-statuses");
 const posts_repository_1 = require("../../../posts/repositories/posts.repository");
 const input_validtion_result_middleware_1 = require("../../../core/middlewares/validation/input-validtion-result.middleware");
+const blogs_repository_1 = require("../../../blogs/repositories/blogs.repository");
 function putPostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const { blogId } = req.body;
+            const blog = yield blogs_repository_1.blogsRepository.findById(blogId);
+            if (!blog) {
+                res
+                    .status(http_statuses_1.HttpStatus.NotFound)
+                    .send((0, input_validtion_result_middleware_1.createErrorMessages)([{ field: 'blogId', message: 'Blog not found' }]));
+                return;
+            }
             const id = req.params.id;
-            const post = posts_repository_1.postsRepository.findById(id);
+            const post = yield posts_repository_1.postsRepository.findById(id); // ✅ await добавлен
             if (!post) {
                 res
                     .status(http_statuses_1.HttpStatus.NotFound)
