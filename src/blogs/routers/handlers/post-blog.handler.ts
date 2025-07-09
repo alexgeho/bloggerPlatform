@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { BlogInputDto } from '../../../blogs/dto/blog.input-dto';
+import { BlogInputDto } from '../../dto/blog.input-dto';
 import { HttpStatus } from '../../../core/types/http-statuses';
-import {blogsRepository} from "../../../blogs/repositories/blogs.repository";
-import {mapToBlogViewModel} from "../../../blogs/mappers/map-to-blog-view-model.util";
+import {blogsRepository} from "../../repositories/blogs.repository";
+import {mapToBlogViewModel} from "../mappers/map-to-blog-output.util";
 
 export async function createBlogHandler(
     req: Request<{}, {}, BlogInputDto>,

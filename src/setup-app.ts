@@ -1,5 +1,5 @@
 import express, {Express} from "express";
-import {blogsRouter} from "./routers/blogs.router";
+import {blogsRouter} from "./blogs/routers/blogs.router";
 import { setupSwagger } from "./core/swagger/setup-swagger"
 import {BLOGS_PATH, POSTS_PATH, TESTING_PATH} from "./core/paths/paths";
 import {testingRouter} from "./routers/testing.router";

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/types/http-statuses';
 import { createErrorMessages } from '../../../core/utils/error.utils';
-import {BlogInputDto} from "../../../blogs/dto/blog.input-dto";
-import {blogsRepository} from "../../../blogs/repositories/blogs.repository";
+import {BlogInputDto} from "../../dto/blog.input-dto";
+import {blogsRepository} from "../../repositories/blogs.repository";
 
 export async function putBlogHandler(
     req: Request <{ id: string }, {}, BlogInputDto>,

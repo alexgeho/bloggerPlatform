@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setupApp = void 0;
 const express_1 = __importDefault(require("express"));
-const blogs_router_1 = require("./routers/blogs.router");
+const blogs_router_1 = require("./blogs/routers/blogs.router");
 const setup_swagger_1 = require("./core/swagger/setup-swagger");
 const paths_1 = require("./core/paths/paths");
 const testing_router_1 = require("./routers/testing.router");
