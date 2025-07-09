@@ -12,15 +12,69 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsRepository = void 0;
 const mongo_db_1 = require("../../db/mongo.db");
 const mongodb_1 = require("mongodb");
+const repository_not_found_error_1 = require("../../core/errors/repository-not-found.error");
 exports.blogsRepository = {
-    findAll() {
+    findMany(queryDto) {
         return __awaiter(this, void 0, void 0, function* () {
-            return mongo_db_1.blogCollection.find().toArray();
+            const { pageNumber, pageSize, sortBy, sortDirection, searchBlogNameTerm } = queryDto;
+            const skip = (pageNumber - 1) * pageSize;
+            const filter = {};
+            if (searchBlogNameTerm) {
+                filter.name = { $regex: searchBlogNameTerm, $options: 'i' };
+            }
+            const items = yield mongo_db_1.blogCollection
+                .find(filter)
+                .sort({ [sortBy]: sortDirection })
+                .skip(skip)
+                .limit(pageSize)
+                .toArray();
+            const totalCount = yield mongo_db_1.blogCollection.countDocuments(filter);
+            return { items, totalCount };
         });
     },
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return mongo_db_1.blogCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+        });
+    },
+    findByIdOrFail(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield mongo_db_1.blogCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+            if (!res) {
+                throw new repository_not_found_error_1.RepositoryNotFoundError('Driver not exist');
+            }
+            return res;
+        });
+    },
+    create(newDriver) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const insertResult = yield mongo_db_1.blogCollection.insertOne(newDriver);
+            return insertResult.insertedId.toString();
+        });
+    },
+    update(id, dto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updateResult = yield mongo_db_1.blogCollection.updateOne({
+                _id: new mongodb_1.ObjectId(id),
+            }, {
+                $set: {
+                    name: dto.name,
+                    phoneNumber: dto.phoneNumber,
+                    email: dto.email,
+                    vehicle: {
+                        make: dto.vehicleMake,
+                        model: dto.vehicleModel,
+                        year: dto.vehicleYear,
+                        licensePlate: dto.vehicleLicensePlate,
+                        description: dto.vehicleDescription,
+                        features: dto.vehicleFeatures,
+                    },
+                },
+            });
+            if (updateResult.matchedCount < 1) {
+                throw new repository_not_found_error_1.RepositoryNotFoundError('Driver not exist');
+            }
+            return;
         });
     },
     delete(id) {
@@ -29,30 +83,9 @@ exports.blogsRepository = {
                 _id: new mongodb_1.ObjectId(id),
             });
             if (deleteResult.deletedCount < 1) {
-                throw new Error('Blog not found');
+                throw new repository_not_found_error_1.RepositoryNotFoundError('Driver not exist');
             }
             return;
-        });
-    },
-    update(id, dto) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const updateResult = yield mongo_db_1.blogCollection.updateOne({ _id: new mongodb_1.ObjectId(id) }, {
-                $set: {
-                    name: dto.name,
-                    description: dto.description,
-                    websiteUrl: dto.websiteUrl,
-                },
-            });
-            if (updateResult.matchedCount < 1) {
-                throw new Error('Blog not exist bitau');
-            }
-            return;
-        });
-    },
-    create(newBlog) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const insertResult = yield mongo_db_1.blogCollection.insertOne(newBlog);
-            return Object.assign(Object.assign({}, newBlog), { _id: insertResult.insertedId });
         });
     },
 };

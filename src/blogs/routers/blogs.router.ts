@@ -7,7 +7,7 @@ import {inputValidationResultMiddleware} from "../../core/middlewares/validation
 import {blogInputDtoValidation} from "../validation/blog.input-dto.validation-middlewares";
 import {deleteBlogHandler} from "./handlers/delete-blog.handler";
 import {superAdminGuardMiddleware} from "../../auth/middlewares/super-admin.guard-middleware";
-import {getBlogHandler} from "../../blogs/routers/handlers/get-blog.handler";
+import {getBlogHandler} from "./handlers/get-blog.handler";
 import {
     paginationAndSortingValidation
 } from "../../core/middlewares/validation/query-pagination-sorting.validation-middleware";

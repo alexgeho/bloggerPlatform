@@ -5,6 +5,7 @@ import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.
 import { BlogQueryInput } from '../routers/input/blog-query.input';
 
 export const blogsRepository = {
+
     async findMany(
         queryDto: BlogQueryInput,
     ): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
@@ -13,25 +14,17 @@ export const blogsRepository = {
             pageSize,
             sortBy,
             sortDirection,
-            searchDriverNameTerm,
-            searchDriverEmailTerm,
-            searchVehicleMakeTerm,
+            searchBlogNameTerm
+
         } = queryDto;
 
         const skip = (pageNumber - 1) * pageSize;
         const filter: any = {};
 
-        if (searchDriverNameTerm) {
-            filter.name = { $regex: searchDriverNameTerm, $options: 'i' };
+        if (searchBlogNameTerm) {
+            filter.name = { $regex: searchBlogNameTerm, $options: 'i' };
         }
 
-        if (searchDriverEmailTerm) {
-            filter.email = { $regex: searchDriverEmailTerm, $options: 'i' };
-        }
-
-        if (searchVehicleMakeTerm) {
-            filter['vehicle.make'] = { $regex: searchVehicleMakeTerm, $options: 'i' };
-        }
 
         const items = await blogCollection
             .find(filter)
