@@ -8,7 +8,7 @@ const express_1 = __importDefault(require("express"));
 const blogs_router_1 = require("./blogs/routers/blogs.router");
 const setup_swagger_1 = require("./core/swagger/setup-swagger");
 const paths_1 = require("./core/paths/paths");
-const testing_router_1 = require("./routers/testing.router");
+const testing_router_1 = require("./testing/routers/testing.router");
 const posts_router_1 = require("./routers/posts.router");
 const setupApp = (app) => {
     app.use(express_1.default.json()); // middleware для парсинга JSON в теле запроса

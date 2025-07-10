@@ -2,7 +2,7 @@ import express, {Express} from "express";
 import {blogsRouter} from "./blogs/routers/blogs.router";
 import { setupSwagger } from "./core/swagger/setup-swagger"
 import {BLOGS_PATH, POSTS_PATH, TESTING_PATH} from "./core/paths/paths";
-import {testingRouter} from "./routers/testing.router";
+import {testingRouter} from "./testing/routers/testing.router";
 import {postsRouter} from "./routers/posts.router";
 
 

@@ -1,4 +1,4 @@
-import { BlogInputDto } from '../dto/blog.input-dto';
+import { BlogInputDto } from '../application/dtos/blog.input-dto';
 import { validationError } from '../types/validationerror';
 
 export const blogInputDtoValidation = (

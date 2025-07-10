@@ -27,19 +27,12 @@ exports.blogsService = {
         return __awaiter(this, void 0, void 0, function* () {
             const newBlog = {
                 name: dto.name,
-                phoneNumber: dto.phoneNumber,
-                email: dto.email,
-                vehicle: {
-                    make: dto.vehicleMake,
-                    model: dto.vehicleModel,
-                    year: dto.vehicleYear,
-                    licensePlate: dto.vehicleLicensePlate,
-                    description: dto.vehicleDescription,
-                    features: dto.vehicleFeatures,
-                },
-                createdAt: new Date(),
+                description: dto.description,
+                websiteUrl: dto.websiteUrl,
+                createdAt: new Date().toISOString(), // Всегда новая дата, как строка
+                isMembership: false
             };
-            return blogs_repository_1.blogsRepository.create(newDriver);
+            return blogs_repository_1.blogsRepository.create(newBlog);
         });
     },
     update(id, dto) {

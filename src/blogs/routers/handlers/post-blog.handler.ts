@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { BlogInputDto } from '../../dto/blog.input-dto';
+import { BlogInputDto } from '../../application/dtos/blog.input-dto';
 import { HttpStatus } from '../../../core/types/http-statuses';
 import {blogsRepository} from "../../repositories/blogs.repository";
 import {mapToBlogViewModel} from "../mappers/map-to-blog-output.util";

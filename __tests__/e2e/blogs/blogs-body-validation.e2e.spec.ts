@@ -2,7 +2,7 @@ import request from 'supertest';
 import express from "express";
 import {setupApp} from "../../../src/setup-app";
 import {describe} from "node:test";
-import {BlogInputDto} from "../../../src/blogs/dto/blog.input-dto";
+import {BlogInputDto} from "../../../src/blogs/application/dtos/blog.input-dto";
 
 
 

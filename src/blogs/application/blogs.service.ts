@@ -3,6 +3,7 @@ import { WithId } from 'mongodb';
 import { Blog } from '../domain/blog';
 import { DomainError } from '../../core/errors/domain.error';
 import { BlogQueryInput } from '../routers/input/blog-query.input';
+import {BlogInputDto} from "./dtos/blog.input-dto";
 
 
 export const blogsService = {
@@ -17,26 +18,23 @@ export const blogsService = {
         return blogsRepository.findByIdOrFail(id);
     },
 
-    async create(dto: DriverAttributes): Promise<string> {
+    async create(dto: BlogInputDto): Promise<string> {
         const newBlog: Blog = {
+
+
             name: dto.name,
-            phoneNumber: dto.phoneNumber,
-            email: dto.email,
-            vehicle: {
-                make: dto.vehicleMake,
-                model: dto.vehicleModel,
-                year: dto.vehicleYear,
-                licensePlate: dto.vehicleLicensePlate,
-                description: dto.vehicleDescription,
-                features: dto.vehicleFeatures,
-            },
-            createdAt: new Date(),
+            description: dto.description,
+            websiteUrl: dto.websiteUrl,
+            createdAt: new Date().toISOString(), // Всегда новая дата, как строка
+            isMembership: false
+
+
         };
 
-        return blogsRepository.create(newDriver);
+        return blogsRepository.create(newBlog);
     },
 
-    async update(id: string, dto: DriverAttributes): Promise<void> {
+    async update(id: string, dto: BlogInputDto): Promise<void> {
         await blogsRepository.update(id, dto);
         return;
     },
