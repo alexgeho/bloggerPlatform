@@ -4,14 +4,14 @@ import { errorsHandler } from '../../../core/errors/errors.handler';
 import { mapToBlogListPaginatedOutput } from '../mappers/map-to-driver-list-paginated-output.util';
 import { BlogQueryInput } from '../input/blog-query.input';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set-default-sort-and-pagination';
+import {PaginationAndSorting} from "../../../core/types/pagination-and-sorting";
+import {BlogSortField} from "../input/blog-sort-field";
 
-export async function getBlogListHandler(
-    req: Request<{}, {}, {}, BlogQueryInput>,
-    res: Response,
-) {
+export async function getBlogListHandler(req: Request, res: Response) {
     try {
-        const queryInput = setDefaultSortAndPaginationIfNotExist(req.query);
-
+        const queryInput = setDefaultSortAndPaginationIfNotExist(
+            req.query as Partial<PaginationAndSorting<BlogSortField>>
+        );
         const { items, totalCount } = await blogsService.findMany(queryInput);
 
         const blogsListOutput = mapToBlogListPaginatedOutput(items, {

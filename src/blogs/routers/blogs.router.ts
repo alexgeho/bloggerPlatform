@@ -11,6 +11,7 @@ import {getBlogHandler} from "./handlers/get-blog.handler";
 import {
     paginationAndSortingValidation
 } from "../../core/middlewares/validation/query-pagination-sorting.validation-middleware";
+import {BlogSortField} from "./input/blog-sort-field";
 
 
 export const blogsRouter = Router({});
@@ -18,7 +19,7 @@ export const blogsRouter = Router({});
 blogsRouter
 
     .get("/",
-        paginationAndSortingValidation,
+        paginationAndSortingValidation(BlogSortField),
         inputValidationResultMiddleware,
         getBlogListHandler)
 
