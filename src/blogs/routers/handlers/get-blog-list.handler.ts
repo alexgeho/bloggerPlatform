@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { blogsService } from '../../application/blogs.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
-import { mapToBlogListPaginatedOutput } from '../mappers/map-to-driver-list-paginated-output.util';
+import { mapToBlogListPaginatedOutput } from '../mappers/map-to-blog-list-paginated-output.util';
 import { BlogQueryInput } from '../input/blog-query.input';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set-default-sort-and-pagination';
 import {PaginationAndSorting} from "../../../core/types/pagination-and-sorting";

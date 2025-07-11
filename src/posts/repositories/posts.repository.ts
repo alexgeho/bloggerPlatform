@@ -1,43 +1,91 @@
-import { Post } from '../types/post';
-import { PostInputDto } from '../dto/post.input-dto';
+import { Post } from '../domain/post';
 import { postCollection } from '../../db/mongo.db';
-import { ObjectId, WithId } from 'mongodb';
+import { WithId } from 'mongodb';
+// import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
+// import {BlogInputDto} from "../application/dtos/blog.input-dto";
+import {PostQueryInput} from "../routers/input/post-query.input";
 
 export const postsRepository = {
-    async findAll(): Promise<WithId<Post>[]> {
-        return postCollection.find().toArray();},
 
-    async findById(id: string): Promise<WithId<Post> | null> {
-        return postCollection.findOne({ _id: new ObjectId(id) });},
+    async findMany(queryDto: PostQueryInput): Promise<{ items: WithId<Post>[]; totalCount: number }> {
+        const {
+            pageNumber,
+            pageSize,
+            sortBy,
+            sortDirection,
+            searchPostNameTerm
 
-    async create(newPost: Post): Promise<WithId<Post>> {
-        const insertResult = await postCollection.insertOne(newPost);
-        return { ...newPost, _id: insertResult.insertedId };},
+        } = queryDto;
 
-    async update(id: string, dto: PostInputDto): Promise<void> {
-        const updateResult = await postCollection.updateOne(
-            {
-                _id: new ObjectId(id),}, {
-                $set: {
-                    title: dto.title,
-                    shortDescription: dto.shortDescription,
-                    content: dto.content,
-                    blogId: dto.blogId,
-                },},);
+        const skip = (pageNumber - 1) * pageSize;
+        const filter: any = {};
 
-        if (updateResult.matchedCount < 1) {
-            throw new Error('Post not exist');
+        if (searchPostNameTerm) {
+            filter.name = {$regex: searchPostNameTerm, $options: 'i'};
         }
-        return;},
 
-    async delete(id: string): Promise<void> {
-        const deleteResult = await postCollection.deleteOne({
-            _id: new ObjectId(id),
-        });
+        const items = await postCollection
+            .find(filter)
+            .sort({[sortBy]: sortDirection})
+            .skip(skip)
+            .limit(pageSize)
+            .toArray();
 
-        if (deleteResult.deletedCount < 1) {
-            throw new Error('Blog not exist');
-        }
-        return;
+        const totalCount = await postCollection.countDocuments(filter);
+
+        return {items, totalCount};
     },
-};
+
+}
+//
+//     async findById(id: string): Promise<WithId<Blog> | null> {
+//         return blogCollection.findOne({ _id: new ObjectId(id) });
+//     },
+//
+//     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
+//         const res = await blogCollection.findOne({ _id: new ObjectId(id) });
+//
+//         if (!res) {
+//             throw new RepositoryNotFoundError('Driver not exist');
+//         }
+//         return res;
+//     },
+//
+//     async create(newBlog: Blog): Promise<string> {
+//         const insertResult = await blogCollection.insertOne(newBlog);
+//         return insertResult.insertedId.toString();
+//     },
+//
+//     async update(id: string, dto: BlogInputDto): Promise<void> {
+//         const updateResult = await blogCollection.updateOne(
+//             {
+//                 _id: new ObjectId(id),
+//             },
+//             {
+//                 $set: {
+//                     name: dto.name,
+//                     description: dto.description,
+//                     websiteUrl: dto.websiteUrl
+//                 },
+//             },
+//         );
+//
+//         if (updateResult.matchedCount < 1) {
+//             throw new RepositoryNotFoundError('Blog not exist');
+//         }
+//
+//         return;
+//     },
+//
+//     async delete(id: string): Promise<void> {
+//         const deleteResult = await blogCollection.deleteOne({
+//             _id: new ObjectId(id),
+//         });
+//
+//         if (deleteResult.deletedCount < 1) {
+//             throw new RepositoryNotFoundError('Blog not exist');
+//         }
+//
+//         return;
+//     },
+// };

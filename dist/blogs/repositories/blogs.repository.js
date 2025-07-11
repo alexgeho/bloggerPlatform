@@ -46,6 +46,12 @@ exports.blogsRepository = {
             return res;
         });
     },
+    findByIds(ids) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const objectIds = ids.map(id => new mongodb_1.ObjectId(id));
+            return mongo_db_1.blogCollection.find({ _id: { $in: objectIds } }).toArray();
+        });
+    },
     create(newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
             const insertResult = yield mongo_db_1.blogCollection.insertOne(newBlog);

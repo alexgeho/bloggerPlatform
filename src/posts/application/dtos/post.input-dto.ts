@@ -1,5 +1,3 @@
-// src/blogs/dto/blog.input-dto.ts
-
 export type PostInputDto = {
     id: number,
     title: string,

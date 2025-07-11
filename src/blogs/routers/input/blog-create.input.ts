@@ -1,8 +1,7 @@
 import { ResourceType } from '../../../core/types/resource-type';
 
-export type BlogUpdateInput = {
+export type BlogCreateInput = {
     data: {
         type: ResourceType.Blogs;
-        id: string;
     };
 };

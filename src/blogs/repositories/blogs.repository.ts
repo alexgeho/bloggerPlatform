@@ -49,10 +49,14 @@ export const blogsRepository = {
         return res;
     },
 
+    async findByIds(ids: string[]): Promise<WithId<Blog>[]> {
+        const objectIds = ids.map(id => new ObjectId(id));
+        return blogCollection.find({ _id: { $in: objectIds } }).toArray();
+    },
+
     async create(newBlog: Blog): Promise<string> {
         const insertResult = await blogCollection.insertOne(newBlog);
-        return insertResult.insertedId.toString();
-    },
+        return insertResult.insertedId.toString();},
 
     async update(id: string, dto: BlogInputDto): Promise<void> {
         const updateResult = await blogCollection.updateOne(
@@ -64,16 +68,11 @@ export const blogsRepository = {
                     name: dto.name,
                     description: dto.description,
                     websiteUrl: dto.websiteUrl
-                    },
-            },
-        );
+                    },},);
 
         if (updateResult.matchedCount < 1) {
-            throw new RepositoryNotFoundError('Blog not exist');
-        }
-
-        return;
-    },
+            throw new RepositoryNotFoundError('Blog not exist');}
+        return;},
 
     async delete(id: string): Promise<void> {
         const deleteResult = await blogCollection.deleteOne({
@@ -83,7 +82,6 @@ export const blogsRepository = {
         if (deleteResult.deletedCount < 1) {
             throw new RepositoryNotFoundError('Blog not exist');
         }
-
         return;
     },
 };

@@ -1,4 +1,3 @@
-
 export type Post = {
     title: string,
     shortDescription: string,
