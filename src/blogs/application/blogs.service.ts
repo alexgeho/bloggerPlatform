@@ -4,6 +4,7 @@ import { Blog } from '../domain/blog';
 import { DomainError } from '../../core/errors/domain.error';
 import { BlogQueryInput } from '../routers/input/blog-query.input';
 import {BlogInputDto} from "./dtos/blog.input-dto";
+import {BlogDataOutput} from "../routers/output/blog-data.output";
 
 
 export const blogsService = {
@@ -18,21 +19,18 @@ export const blogsService = {
         return blogsRepository.findByIdOrFail(id);
     },
 
-    async create(dto: BlogInputDto): Promise<string> {
+    async create(dto: BlogInputDto): Promise<BlogDataOutput> {
         const newBlog: Blog = {
-
-
             name: dto.name,
             description: dto.description,
             websiteUrl: dto.websiteUrl,
-            createdAt: new Date().toISOString(), // Всегда новая дата, как строка
-            isMembership: false
-
-
+            createdAt: new Date().toISOString(),
+            isMembership: true,
         };
-
-        return blogsRepository.create(newBlog);
+        const id = await blogsRepository.create(newBlog);
+        return { id, ...newBlog };
     },
+
 
     async update(id: string, dto: BlogInputDto): Promise<void> {
         await blogsRepository.update(id, dto);
@@ -40,14 +38,6 @@ export const blogsService = {
     },
 
     async delete(id: string): Promise<void> {
-        const activeRide = await blogsRepository.findActiveRideByDriverId(id);
-
-        if (activeRide) {
-            throw new DomainError(
-                `Driver has an active ride. Complete or cancel the ride first`,
-                DriverErrorCode.HasActiveRide,
-            );
-        }
 
         await blogsRepository.delete(id);
         return;

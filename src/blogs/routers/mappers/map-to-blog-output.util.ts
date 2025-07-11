@@ -11,7 +11,7 @@ export function mapToBlogOutput(blog: WithId<Blog>): BlogOutput {
         description: blog.description,
         websiteUrl: blog.websiteUrl,
         createdAt: blog.createdAt,
-        isMembership: false
+        isMembership: true
     };
 }
 

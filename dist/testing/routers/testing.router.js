@@ -9,19 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postBlogHandler = postBlogHandler;
-const http_statuses_1 = require("../../../core/types/http-statuses");
-const errors_handler_1 = require("../../../core/errors/errors.handler");
-const blogs_service_1 = require("../../application/blogs.service");
-function postBlogHandler(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // req.body напрямую!
-            const createdBlogData = yield blogs_service_1.blogsService.create(req.body);
-            res.status(http_statuses_1.HttpStatus.Created).send(createdBlogData);
-        }
-        catch (e) {
-            (0, errors_handler_1.errorsHandler)(e, res);
-        }
-    });
-}
+exports.testingRouter = void 0;
+const express_1 = require("express");
+const http_statuses_1 = require("../../core/types/http-statuses");
+const mongo_db_1 = require("../../db/mongo.db");
+exports.testingRouter = (0, express_1.Router)({});
+exports.testingRouter.delete('/all-data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //truncate db
+    yield Promise.all([
+        mongo_db_1.blogCollection.deleteMany(),
+        mongo_db_1.postCollection.deleteMany()
+    ]);
+    res.sendStatus(http_statuses_1.HttpStatus.NoContent);
+}));

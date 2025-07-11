@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {createBlogHandler} from "./handlers/post-blog.handler";
+import {postBlogHandler} from "./handlers/post-blog.handler";
 import {getBlogListHandler} from "./handlers/get-blog-list.handler";
 import {putBlogHandler} from "./handlers/put-blog.handler";
 import {idValidation} from "../../core/middlewares/validation/params-id.validation-middleware";
@@ -27,7 +27,7 @@ blogsRouter
         superAdminGuardMiddleware,
         blogInputDtoValidation,
         inputValidationResultMiddleware,
-        createBlogHandler)
+        postBlogHandler)
 
     .get("/:id",
         idValidation,

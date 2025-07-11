@@ -46,9 +46,9 @@ exports.blogsRepository = {
             return res;
         });
     },
-    create(newDriver) {
+    create(newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
-            const insertResult = yield mongo_db_1.blogCollection.insertOne(newDriver);
+            const insertResult = yield mongo_db_1.blogCollection.insertOne(newBlog);
             return insertResult.insertedId.toString();
         });
     },
@@ -59,20 +59,12 @@ exports.blogsRepository = {
             }, {
                 $set: {
                     name: dto.name,
-                    phoneNumber: dto.phoneNumber,
-                    email: dto.email,
-                    vehicle: {
-                        make: dto.vehicleMake,
-                        model: dto.vehicleModel,
-                        year: dto.vehicleYear,
-                        licensePlate: dto.vehicleLicensePlate,
-                        description: dto.vehicleDescription,
-                        features: dto.vehicleFeatures,
-                    },
+                    description: dto.description,
+                    websiteUrl: dto.websiteUrl
                 },
             });
             if (updateResult.matchedCount < 1) {
-                throw new repository_not_found_error_1.RepositoryNotFoundError('Driver not exist');
+                throw new repository_not_found_error_1.RepositoryNotFoundError('Blog not exist');
             }
             return;
         });
@@ -83,7 +75,7 @@ exports.blogsRepository = {
                 _id: new mongodb_1.ObjectId(id),
             });
             if (deleteResult.deletedCount < 1) {
-                throw new repository_not_found_error_1.RepositoryNotFoundError('Driver not exist');
+                throw new repository_not_found_error_1.RepositoryNotFoundError('Blog not exist');
             }
             return;
         });

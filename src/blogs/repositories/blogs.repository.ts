@@ -3,12 +3,11 @@ import { blogCollection } from '../../db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
 import { BlogQueryInput } from '../routers/input/blog-query.input';
+import {BlogInputDto} from "../application/dtos/blog.input-dto";
 
 export const blogsRepository = {
 
-    async findMany(
-        queryDto: BlogQueryInput,
-    ): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
+    async findMany( queryDto: BlogQueryInput): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
         const {
             pageNumber,
             pageSize,
@@ -24,7 +23,6 @@ export const blogsRepository = {
         if (searchBlogNameTerm) {
             filter.name = { $regex: searchBlogNameTerm, $options: 'i' };
         }
-
 
         const items = await blogCollection
             .find(filter)
@@ -51,13 +49,12 @@ export const blogsRepository = {
         return res;
     },
 
-    async create(newDriver: Blog): Promise<string> {
-        const insertResult = await blogCollection.insertOne(newDriver);
-
+    async create(newBlog: Blog): Promise<string> {
+        const insertResult = await blogCollection.insertOne(newBlog);
         return insertResult.insertedId.toString();
     },
 
-    async update(id: string, dto: DriverAttributes): Promise<void> {
+    async update(id: string, dto: BlogInputDto): Promise<void> {
         const updateResult = await blogCollection.updateOne(
             {
                 _id: new ObjectId(id),
@@ -65,22 +62,14 @@ export const blogsRepository = {
             {
                 $set: {
                     name: dto.name,
-                    phoneNumber: dto.phoneNumber,
-                    email: dto.email,
-                    vehicle: {
-                        make: dto.vehicleMake,
-                        model: dto.vehicleModel,
-                        year: dto.vehicleYear,
-                        licensePlate: dto.vehicleLicensePlate,
-                        description: dto.vehicleDescription,
-                        features: dto.vehicleFeatures,
+                    description: dto.description,
+                    websiteUrl: dto.websiteUrl
                     },
-                },
             },
         );
 
         if (updateResult.matchedCount < 1) {
-            throw new RepositoryNotFoundError('Driver not exist');
+            throw new RepositoryNotFoundError('Blog not exist');
         }
 
         return;
@@ -92,7 +81,7 @@ export const blogsRepository = {
         });
 
         if (deleteResult.deletedCount < 1) {
-            throw new RepositoryNotFoundError('Driver not exist');
+            throw new RepositoryNotFoundError('Blog not exist');
         }
 
         return;

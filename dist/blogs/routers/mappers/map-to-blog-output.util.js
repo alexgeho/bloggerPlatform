@@ -10,7 +10,7 @@ function mapToBlogOutput(blog) {
         description: blog.description,
         websiteUrl: blog.websiteUrl,
         createdAt: blog.createdAt,
-        isMembership: false
+        isMembership: true
     };
 }
 // import {WithId} from 'mongodb';

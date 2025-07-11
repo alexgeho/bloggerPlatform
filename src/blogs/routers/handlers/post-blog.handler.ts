@@ -1,27 +1,16 @@
 import { Request, Response } from 'express';
-import { BlogInputDto } from '../../application/dtos/blog.input-dto';
 import { HttpStatus } from '../../../core/types/http-statuses';
-import {blogsRepository} from "../../repositories/blogs.repository";
-import {mapToBlogViewModel} from "../mappers/map-to-blog-output.util";
+import { errorsHandler } from '../../../core/errors/errors.handler';
+import {blogsService} from "../../application/blogs.service";
 
-export async function createBlogHandler(
-    req: Request<{}, {}, BlogInputDto>,
-    res: Response) {
-
+export async function postBlogHandler(req: Request, res: Response) {
     try {
-        const newBlog: BlogInputDto = {
-            name: req.body.name,
-            description: req.body.description,
-            websiteUrl: req.body.websiteUrl,
-            createdAt: new Date().toISOString(), // ✅ ISO-строка
-            isMembership: false
-        };
+        // req.body напрямую!
+        const createdBlogData = await blogsService.create(req.body);
 
-const createdBlog = await blogsRepository.create(newBlog);
-const blogViewModel = mapToBlogViewModel(createdBlog);
-res.status(HttpStatus.Created).send(blogViewModel); }
-
-    catch (e: unknown) {
-    res.sendStatus(HttpStatus.InternalServerError);
+        res.status(HttpStatus.Created).send(createdBlogData);
+    } catch (e) {
+        errorsHandler(e, res);
     }
 }
+

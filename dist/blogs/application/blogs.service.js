@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsService = void 0;
 const blogs_repository_1 = require("../repositories/blogs.repository");
-const domain_error_1 = require("../../core/errors/domain.error");
 exports.blogsService = {
     findMany(queryDto) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,10 +28,11 @@ exports.blogsService = {
                 name: dto.name,
                 description: dto.description,
                 websiteUrl: dto.websiteUrl,
-                createdAt: new Date().toISOString(), // Всегда новая дата, как строка
-                isMembership: false
+                createdAt: new Date().toISOString(),
+                isMembership: true,
             };
-            return blogs_repository_1.blogsRepository.create(newBlog);
+            const id = yield blogs_repository_1.blogsRepository.create(newBlog);
+            return Object.assign({ id }, newBlog);
         });
     },
     update(id, dto) {
@@ -43,10 +43,6 @@ exports.blogsService = {
     },
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const activeRide = yield blogs_repository_1.blogsRepository.findActiveRideByDriverId(id);
-            if (activeRide) {
-                throw new domain_error_1.DomainError(`Driver has an active ride. Complete or cancel the ride first`, DriverErrorCode.HasActiveRide);
-            }
             yield blogs_repository_1.blogsRepository.delete(id);
             return;
         });
