@@ -11,4 +11,5 @@ var HttpStatus;
     HttpStatus[HttpStatus["Forbidden"] = 403] = "Forbidden";
     HttpStatus[HttpStatus["NotFound"] = 404] = "NotFound";
     HttpStatus[HttpStatus["InternalServerError"] = 500] = "InternalServerError";
+    HttpStatus[HttpStatus["UnprocessableEntity"] = 501] = "UnprocessableEntity";
 })(HttpStatus || (exports.HttpStatus = HttpStatus = {}));

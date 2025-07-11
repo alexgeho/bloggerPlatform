@@ -10,8 +10,7 @@ function errorsHandler(error, res) {
         const httpStatus = http_statuses_1.HttpStatus.NotFound;
         res.status(httpStatus).send((0, input_validtion_result_middleware_1.createErrorMessages)([
             {
-                status: httpStatus,
-                detail: error.message,
+                field: "common", message: error.message
             },
         ]));
         return;
@@ -20,10 +19,7 @@ function errorsHandler(error, res) {
         const httpStatus = http_statuses_1.HttpStatus.UnprocessableEntity;
         res.status(httpStatus).send((0, input_validtion_result_middleware_1.createErrorMessages)([
             {
-                status: httpStatus,
-                source: error.source,
-                detail: error.message,
-                code: error.code,
+                field: "common", message: error.message
             },
         ]));
         return;
