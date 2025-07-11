@@ -11,32 +11,22 @@ export function errorsHandler(error: unknown, res: Response): void {
         res.status(httpStatus).send(
             createErrorMessages([
                 {
-                    status: httpStatus,
-                    detail: error.message,
-                },
-            ]),
-        );
-
+                    field: "common", message: error.message
+                }, ]), );
         return;
     }
-
     if (error instanceof DomainError) {
         const httpStatus = HttpStatus.UnprocessableEntity;
 
         res.status(httpStatus).send(
             createErrorMessages([
                 {
-                    status: httpStatus,
-                    source: error.source,
-                    detail: error.message,
-                    code: error.code,
+                    field: "common", message: error.message
                 },
             ]),
         );
-
         return;
     }
-
     res.status(HttpStatus.InternalServerError);
     return;
 }
