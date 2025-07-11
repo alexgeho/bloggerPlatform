@@ -1,8 +1,8 @@
 import { PostDb } from '../domain/postDb';
 import { postCollection } from '../../db/mongo.db';
-import { WithId } from 'mongodb';
+import {ObjectId, WithId} from 'mongodb';
 // import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
-// import {BlogInputDto} from "../application/dtos/blog.input-dto";
+import {PostInputDto} from '../application/dtos/post.input-dto';
 import {PostQueryInput} from "../routers/input/post-query.input";
 
 export const postsRepository = {
@@ -36,11 +36,19 @@ export const postsRepository = {
         return {items, totalCount};
     },
 
-}
-//
-//     async findById(id: string): Promise<WithId<Blog> | null> {
-//         return blogCollection.findOne({ _id: new ObjectId(id) });
-//     },
+
+
+
+    async create(newPost: PostDb): Promise<string> {
+        const insertResult = await postCollection.insertOne(newPost);
+        return insertResult.insertedId.toString();
+    },
+
+
+
+    async findById(id: string): Promise<PostDb | null> {
+        return await postCollection.findOne({ _id: new ObjectId(id) });
+    },
 //
 //     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
 //         const res = await blogCollection.findOne({ _id: new ObjectId(id) });
@@ -51,10 +59,7 @@ export const postsRepository = {
 //         return res;
 //     },
 //
-//     async create(newBlog: Blog): Promise<string> {
-//         const insertResult = await blogCollection.insertOne(newBlog);
-//         return insertResult.insertedId.toString();
-//     },
+
 //
 //     async update(id: string, dto: BlogInputDto): Promise<void> {
 //         const updateResult = await blogCollection.updateOne(
@@ -88,4 +93,4 @@ export const postsRepository = {
 //
 //         return;
 //     },
-// };
+};

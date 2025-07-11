@@ -7,20 +7,17 @@ const express_1 = require("express");
 const input_validtion_result_middleware_1 = require("../../core/middlewares/validation/input-validtion-result.middleware");
 //import {blogInputDtoValidation} from "../validation/blog.input-dto.validation-middlewares";
 //import {deleteBlogHandler} from "./handlers/delete-blog.handler";
-//import {superAdminGuardMiddleware} from "../../auth/middlewares/super-admin.guard-middleware";
 //import {getBlogHandler} from "./handlers/get-blog.handler";
 const query_pagination_sorting_validation_middleware_1 = require("../../core/middlewares/validation/query-pagination-sorting.validation-middleware");
-//import {postPostHandler} from "./handlers/post-post.handler";
+const post_post_handler_1 = require("./handlers/post-post.handler");
 const post_sort_field_1 = require("./input/post-sort-field");
 const get_post_list_handler_1 = require("./handlers/get-post-list.handler");
+const super_admin_guard_middleware_1 = require("../../auth/middlewares/super-admin.guard-middleware");
+const post_input_dto_validation_middlewares_1 = require("../validation/post.input-dto.validation-middlewares");
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter
-    .get("/", (0, query_pagination_sorting_validation_middleware_1.paginationAndSortingValidation)(post_sort_field_1.PostSortField), input_validtion_result_middleware_1.inputValidationResultMiddleware, get_post_list_handler_1.getPostListHandler);
-// .post("/",
-//     superAdminGuardMiddleware,
-//     blogInputDtoValidation,
-//     inputValidationResultMiddleware,
-//     postPostHandler)
+    .get("/", (0, query_pagination_sorting_validation_middleware_1.paginationAndSortingValidation)(post_sort_field_1.PostSortField), input_validtion_result_middleware_1.inputValidationResultMiddleware, get_post_list_handler_1.getPostListHandler)
+    .post("/", super_admin_guard_middleware_1.superAdminGuardMiddleware, post_input_dto_validation_middlewares_1.postInputDtoValidation, input_validtion_result_middleware_1.inputValidationResultMiddleware, post_post_handler_1.postPostHandler);
 // .get("/:id",
 //     idValidation,
 //     inputValidationResultMiddleware,

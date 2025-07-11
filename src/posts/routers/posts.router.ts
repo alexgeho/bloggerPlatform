@@ -4,14 +4,15 @@ import {Router} from "express";
 import {inputValidationResultMiddleware} from "../../core/middlewares/validation/input-validtion-result.middleware";
 //import {blogInputDtoValidation} from "../validation/blog.input-dto.validation-middlewares";
 //import {deleteBlogHandler} from "./handlers/delete-blog.handler";
-//import {superAdminGuardMiddleware} from "../../auth/middlewares/super-admin.guard-middleware";
 //import {getBlogHandler} from "./handlers/get-blog.handler";
 import {
     paginationAndSortingValidation
 } from "../../core/middlewares/validation/query-pagination-sorting.validation-middleware";
-//import {postPostHandler} from "./handlers/post-post.handler";
+import {postPostHandler} from "./handlers/post-post.handler";
 import {PostSortField} from "./input/post-sort-field";
 import {getPostListHandler} from "./handlers/get-post-list.handler";
+import {superAdminGuardMiddleware} from "../../auth/middlewares/super-admin.guard-middleware";
+import {postInputDtoValidation} from "../validation/post.input-dto.validation-middlewares";
 
 
 export const postsRouter = Router({});
@@ -23,11 +24,11 @@ postsRouter
         inputValidationResultMiddleware,
         getPostListHandler)
 
-    // .post("/",
-    //     superAdminGuardMiddleware,
-    //     blogInputDtoValidation,
-    //     inputValidationResultMiddleware,
-    //     postPostHandler)
+    .post("/",
+        superAdminGuardMiddleware,
+        postInputDtoValidation,
+        inputValidationResultMiddleware,
+        postPostHandler)
 
     // .get("/:id",
     //     idValidation,

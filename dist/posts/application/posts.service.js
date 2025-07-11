@@ -12,10 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsService = void 0;
 const posts_repository_1 = require("../repositories/posts.repository");
 const blogs_repository_1 = require("../../blogs/repositories/blogs.repository");
-//import { DomainError } from '../../core/errors/domain.error';
-//import { BlogQueryInput } from '../routers/input/blog-query.input';
-//import {BlogInputDto} from "./dtos/blog.input-dto";
-//import {BlogDataOutput} from "../routers/output/blog-data.output";
 exports.postsService = {
     findMany(queryDto) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -27,33 +23,50 @@ exports.postsService = {
             return { items: enrichedPosts, totalCount };
         });
     },
+    //
+    //     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
+    //         return postsRepository.findByIdOrFail(id);
+    //     },
+    //
+    // src/posts/application/posts.service.ts
+    create(dto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const blog = yield blogs_repository_1.blogsRepository.findById(dto.blogId);
+            if (!blog)
+                throw new Error('Blog not found');
+            const newPost = {
+                title: dto.title,
+                shortDescription: dto.shortDescription,
+                content: dto.content,
+                blogId: dto.blogId,
+                blogName: blog.name,
+                createdAt: new Date().toISOString(),
+            };
+            const createdId = yield posts_repository_1.postsRepository.create(newPost); // string (id)
+            const createdPost = yield posts_repository_1.postsRepository.findById(createdId); // возвращает PostDb | null
+            if (!createdPost)
+                throw new Error('Post not found after creation');
+            return {
+                id: createdPost._id ? createdPost._id.toString() : createdPost.id,
+                title: createdPost.title,
+                shortDescription: createdPost.shortDescription,
+                content: createdPost.content,
+                blogId: createdPost.blogId,
+                blogName: createdPost.blogName,
+                createdAt: createdPost.createdAt,
+            };
+        });
+    }
+    // ...
+    //
+    //     async update(id: string, dto: BlogInputDto): Promise<void> {
+    //         await blogsRepository.update(id, dto);
+    //         return;
+    //     },
+    //
+    //     async delete(id: string): Promise<void> {
+    //
+    //         await blogsRepository.delete(id);
+    //         return;
+    //     },
 };
-//
-//     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
-//         return postsRepository.findByIdOrFail(id);
-//     },
-//
-//     async create(dto: BlogInputDto): Promise<BlogDataOutput> {
-//         const newBlog: Blog = {
-//             name: dto.name,
-//             description: dto.description,
-//             websiteUrl: dto.websiteUrl,
-//             createdAt: new Date().toISOString(),
-//             isMembership: true,
-//         };
-//         const id = await blogsRepository.create(newBlog);
-//         return { id, ...newBlog };
-//     },
-//
-//
-//     async update(id: string, dto: BlogInputDto): Promise<void> {
-//         await blogsRepository.update(id, dto);
-//         return;
-//     },
-//
-//     async delete(id: string): Promise<void> {
-//
-//         await blogsRepository.delete(id);
-//         return;
-//     },
-// };
