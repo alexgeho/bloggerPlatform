@@ -11,24 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.putBlogHandler = putBlogHandler;
 const http_statuses_1 = require("../../../core/types/http-statuses");
-const error_utils_1 = require("../../../core/utils/error.utils");
-const blogs_repository_1 = require("../../repositories/blogs.repository");
+const blogs_service_1 = require("../../application/blogs.service");
+const errors_handler_1 = require("../../../core/errors/errors.handler");
 function putBlogHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            const blog = yield blogs_repository_1.blogsRepository.findById(id);
-            if (!blog) {
-                res
-                    .status(http_statuses_1.HttpStatus.NotFound)
-                    .send((0, error_utils_1.createErrorMessages)([{ field: 'id', message: 'Blog not found' }]));
-                return;
-            }
-            yield blogs_repository_1.blogsRepository.update(id, req.body);
+            yield blogs_service_1.blogsService.update(id, req.body);
             res.sendStatus(http_statuses_1.HttpStatus.NoContent);
         }
         catch (e) {
-            res.sendStatus(http_statuses_1.HttpStatus.InternalServerError);
+            (0, errors_handler_1.errorsHandler)(e, res);
         }
     });
 }

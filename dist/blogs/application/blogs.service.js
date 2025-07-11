@@ -32,7 +32,7 @@ exports.blogsService = {
                 isMembership: true,
             };
             const id = yield blogs_repository_1.blogsRepository.create(newBlog);
-            return Object.assign({ id }, newBlog);
+            return { id, name: newBlog.name, description: newBlog.description, websiteUrl: newBlog.websiteUrl, createdAt: newBlog.createdAt, isMembership: newBlog.isMembership };
         });
     },
     update(id, dto) {

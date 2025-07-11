@@ -6,9 +6,7 @@ import { BlogQueryInput } from '../routers/input/blog-query.input';
 import {BlogInputDto} from "./dtos/blog.input-dto";
 import {BlogDataOutput} from "../routers/output/blog-data.output";
 
-
 export const blogsService = {
-
 
     async findMany( queryDto: BlogQueryInput)
         : Promise<{ items: WithId<Blog>[]; totalCount: number }> {
@@ -28,7 +26,7 @@ export const blogsService = {
             isMembership: true,
         };
         const id = await blogsRepository.create(newBlog);
-        return { id, ...newBlog };
+        return { id, name: newBlog.name, description: newBlog.description, websiteUrl: newBlog.websiteUrl, createdAt: newBlog.createdAt, isMembership: newBlog.isMembership };
     },
 
 
