@@ -1,4 +1,4 @@
-import { Post } from '../domain/post';
+import { PostDb } from '../domain/postDb';
 import { postCollection } from '../../db/mongo.db';
 import { WithId } from 'mongodb';
 // import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
@@ -7,7 +7,7 @@ import {PostQueryInput} from "../routers/input/post-query.input";
 
 export const postsRepository = {
 
-    async findMany(queryDto: PostQueryInput): Promise<{ items: WithId<Post>[]; totalCount: number }> {
+    async findMany(queryDto: PostQueryInput): Promise<{ items: WithId<PostDb>[]; totalCount: number }> {
         const {
             pageNumber,
             pageSize,

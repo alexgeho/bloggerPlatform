@@ -1,7 +1,7 @@
 import { postsRepository } from '../repositories/posts.repository';
 import { ObjectId } from 'mongodb';
 import { WithId } from 'mongodb';
-import { Post } from '../domain/post';
+import { PostDb } from '../domain/postDb';
 import {PostQueryInput} from "../routers/input/post-query.input";
 import { blogsRepository } from '../../blogs/repositories/blogs.repository';
 

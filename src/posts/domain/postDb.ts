@@ -1,4 +1,4 @@
-export type Post = {
+export type PostDb = {
     title: string,
     shortDescription: string,
     content: string,
@@ -7,3 +7,6 @@ export type Post = {
     createdAt: string;
 };
 
+export type PostView = PostDb & {
+    blogName: string | null;
+};

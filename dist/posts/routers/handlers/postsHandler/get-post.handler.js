@@ -9,19 +9,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBlogHandler = deleteBlogHandler;
+exports.getPostHandler = getPostHandler;
 const http_statuses_1 = require("../../../core/types/http-statuses");
-const errors_handler_1 = require("../../../core/errors/errors.handler");
-const blogs_service_1 = require("../../application/blogs.service");
-function deleteBlogHandler(req, res) {
+const error_utils_1 = require("../../../core/utils/error.utils");
+const posts_repository_1 = require("../../../posts/repositories/posts.repository");
+const map_to_post_view_model_util_1 = require("../../../posts/mappers/map-to-post-view-model.util");
+function getPostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            yield blogs_service_1.blogsService.delete(id);
-            res.sendStatus(http_statuses_1.HttpStatus.NoContent);
+            const post = yield posts_repository_1.postsRepository.findById(id);
+            if (!post) {
+                res
+                    .status(http_statuses_1.HttpStatus.NotFound)
+                    .send((0, error_utils_1.createErrorMessages)([{ field: 'id', message: 'Post not found' }]));
+                return;
+            }
+            const driverViewModel = (0, map_to_post_view_model_util_1.mapToPostViewModel)(post);
+            res.status(http_statuses_1.HttpStatus.Ok).send(driverViewModel);
         }
         catch (e) {
-            (0, errors_handler_1.errorsHandler)(e, res);
+            res.sendStatus(http_statuses_1.HttpStatus.InternalServerError);
         }
     });
 }

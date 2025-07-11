@@ -9,19 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBlogHandler = deleteBlogHandler;
+exports.deletePostHandler = deletePostHandler;
 const http_statuses_1 = require("../../../core/types/http-statuses");
-const errors_handler_1 = require("../../../core/errors/errors.handler");
-const blogs_service_1 = require("../../application/blogs.service");
-function deleteBlogHandler(req, res) {
+const posts_repository_1 = require("../../../posts/repositories/posts.repository");
+const input_validtion_result_middleware_1 = require("../../../core/middlewares/validation/input-validtion-result.middleware");
+function deletePostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            yield blogs_service_1.blogsService.delete(id);
+            const driver = yield posts_repository_1.postsRepository.findById(id);
+            if (!driver) {
+                res
+                    .status(http_statuses_1.HttpStatus.NotFound)
+                    .send((0, input_validtion_result_middleware_1.createErrorMessages)([{ field: 'id', message: 'Blog not found' }]));
+                return;
+            }
+            yield posts_repository_1.postsRepository.delete(id);
             res.sendStatus(http_statuses_1.HttpStatus.NoContent);
         }
         catch (e) {
-            (0, errors_handler_1.errorsHandler)(e, res);
+            res.sendStatus(http_statuses_1.HttpStatus.InternalServerError);
         }
     });
 }

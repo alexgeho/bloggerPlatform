@@ -4,8 +4,7 @@ export type PostDataOutput = {
     shortDescription: string;
     content: string;
     blogId: string;
-    blogName: string;
-
+    blogName: string | null;
     createdAt: string;     // Обычно как ISO-строка
 
 };
