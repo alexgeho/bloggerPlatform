@@ -1,10 +1,5 @@
 import {Router} from "express";
-//import {putBlogHandler} from "./handlers/put-blog.handler";
-//import {idValidation} from "../../core/middlewares/validation/params-id.validation-middleware";
 import {inputValidationResultMiddleware} from "../../core/middlewares/validation/input-validtion-result.middleware";
-//import {blogInputDtoValidation} from "../validation/blog.input-dto.validation-middlewares";
-//import {deleteBlogHandler} from "./handlers/delete-blog.handler";
-//import {getBlogHandler} from "./handlers/get-blog.handler";
 import {
     paginationAndSortingValidation
 } from "../../core/middlewares/validation/query-pagination-sorting.validation-middleware";
@@ -13,6 +8,8 @@ import {PostSortField} from "./input/post-sort-field";
 import {getPostListHandler} from "./handlers/get-post-list.handler";
 import {superAdminGuardMiddleware} from "../../auth/middlewares/super-admin.guard-middleware";
 import {postInputDtoValidation} from "../validation/post.input-dto.validation-middlewares";
+import {idValidation} from "../../core/middlewares/validation/params-id.validation-middleware";
+import {getPostHandler} from "./handlers/get-post.handler";
 
 
 export const postsRouter = Router({});
@@ -30,11 +27,11 @@ postsRouter
         inputValidationResultMiddleware,
         postPostHandler)
 
-    // .get("/:id",
-    //     idValidation,
-    //     inputValidationResultMiddleware,
-    //     getBlogHandler)
-    //
+    .get("/:id",
+        idValidation,
+        inputValidationResultMiddleware,
+        getPostHandler)
+
     // .put('/:id',
     //     superAdminGuardMiddleware,
     //     idValidation,

@@ -37,17 +37,13 @@ export const postsRepository = {
         return {items, totalCount};
     },
 
-
-
-
     async create(newPost: Omit<PostDb, '_id'>): Promise<string>  {
         const insertResult = await postCollection.insertOne(newPost);
         return insertResult.insertedId.toString();
     },
 
 
-
-    async findById(id: string): Promise<PostDb | null> {
+    async findByIdOrFail(id: string): Promise<PostDb | null> {
         return await postCollection.findOne({ _id: new ObjectId(id) });
     },
 

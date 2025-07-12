@@ -37,7 +37,7 @@ exports.postsRepository = {
             return insertResult.insertedId.toString();
         });
     },
-    findById(id) {
+    findByIdOrFail(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield mongo_db_1.postCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
         });

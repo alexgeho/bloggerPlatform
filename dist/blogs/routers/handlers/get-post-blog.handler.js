@@ -9,18 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPostHandler = getPostHandler;
+exports.getBlogPostsHandler = getBlogPostsHandler;
 const http_statuses_1 = require("../../../core/types/http-statuses");
-const map_to_post_output_util_1 = require("../mappers/map-to-post-output.util");
-const posts_service_1 = require("../../application/posts.service");
+const map_to_blog_output_util_1 = require("../mappers/map-to-blog-output.util");
+const blogs_service_1 = require("../../application/blogs.service");
 const errors_handler_1 = require("../../../core/errors/errors.handler");
-function getPostHandler(req, res) {
+function getBlogPostsHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            const post = yield posts_service_1.postsService.findByIdOrFail(id);
-            const postOutput = (0, map_to_post_output_util_1.mapToPostOutput)(post);
-            res.status(http_statuses_1.HttpStatus.Ok).send(postOutput);
+            const driver = yield blogs_service_1.blogsService.findByIdOrFail(id);
+            const driverOutput = (0, map_to_blog_output_util_1.mapToBlogOutput)(driver);
+            res.status(http_statuses_1.HttpStatus.Ok).send(driverOutput);
         }
         catch (e) {
             (0, errors_handler_1.errorsHandler)(e, res);

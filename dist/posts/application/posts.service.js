@@ -29,12 +29,16 @@ exports.postsService = {
             return yield posts_repository_1.postsRepository.findByBlogIdWithPagination(blogId, pageNumber, pageSize, sortBy, sortDirection);
         });
     },
-    //
-    //     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
-    //         return postsRepository.findByIdOrFail(id);
-    //     },
-    //
-    // src/posts/application/posts.service.ts
+    findByIdOrFail(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const post = yield posts_repository_1.postsRepository.findByIdOrFail(id);
+            if (!post) {
+                throw new Error('Post not found');
+                // или return 404 через http-errors, если у тебя express/fastify
+            }
+            return post; // тут post точно не null, TS доволен
+        });
+    },
     create(dto) {
         return __awaiter(this, void 0, void 0, function* () {
             const blog = yield blogs_repository_1.blogsRepository.findById(dto.blogId);
@@ -49,11 +53,11 @@ exports.postsService = {
                 createdAt: new Date().toISOString(),
             };
             const createdId = yield posts_repository_1.postsRepository.create(newPost); // string (id)
-            const createdPost = yield posts_repository_1.postsRepository.findById(createdId); // возвращает PostDb | null
+            const createdPost = yield posts_repository_1.postsRepository.findByIdOrFail(createdId); // возвращает PostDb | null
             if (!createdPost)
                 throw new Error('Post not found after creation');
             return {
-                id: createdPost.id ? createdPost.id.toString() : createdPost.id,
+                id: createdPost._id.toString(),
                 title: createdPost.title,
                 shortDescription: createdPost.shortDescription,
                 content: createdPost.content,
@@ -61,6 +65,7 @@ exports.postsService = {
                 blogName: createdPost.blogName,
                 createdAt: createdPost.createdAt,
             };
+            ;
         });
     }
     // ...

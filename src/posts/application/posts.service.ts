@@ -3,6 +3,8 @@ import {PostQueryInput} from "../routers/input/post-query.input";
 import { blogsRepository } from '../../blogs/repositories/blogs.repository';
 import {PostInputDto} from "./dtos/post.input-dto";
 import {PostDataOutput} from "../routers/output/post-data.output";
+import {PostDb} from "../domain/postDb";
+import {WithId} from "mongodb";
 
 export const postsService = {
 
@@ -24,11 +26,7 @@ export const postsService = {
     },
 
     async findAllByBlogId(
-        blogId: string,
-        pageNumber: number,
-        pageSize: number,
-        sortBy: string,
-        sortDirection: 'asc' | 'desc'
+        blogId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: 'asc' | 'desc'
     ) {
         // 1. Репозиторий возвращает массив постов и totalCount
         return await postsRepository.findByBlogIdWithPagination(
@@ -36,13 +34,17 @@ export const postsService = {
         );
     },
 
-//
-//     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
-//         return postsRepository.findByIdOrFail(id);
-//     },
-//
 
-    // src/posts/application/posts.service.ts
+    async findByIdOrFail(id: string): Promise<WithId<PostDb>> {
+        const post = await postsRepository.findByIdOrFail(id);
+        if (!post) {
+            throw new Error('Post not found');
+            // или return 404 через http-errors, если у тебя express/fastify
+        }
+        return post; // тут post точно не null, TS доволен
+    },
+
+
 
     async create(dto: PostInputDto): Promise<PostDataOutput> {
         const blog = await blogsRepository.findById(dto.blogId);
@@ -58,12 +60,12 @@ export const postsService = {
         };
 
         const createdId = await postsRepository.create(newPost); // string (id)
-        const createdPost = await postsRepository.findById(createdId); // возвращает PostDb | null
+        const createdPost = await postsRepository.findByIdOrFail(createdId); // возвращает PostDb | null
 
         if (!createdPost) throw new Error('Post not found after creation');
 
         return {
-            id: createdPost.id ? createdPost.id.toString() : createdPost.id,
+            id: createdPost._id.toString(),
             title: createdPost.title,
             shortDescription: createdPost.shortDescription,
             content: createdPost.content,
@@ -71,6 +73,7 @@ export const postsService = {
             blogName: createdPost.blogName,
             createdAt: createdPost.createdAt,
         };
+        ;
     }
 
 
