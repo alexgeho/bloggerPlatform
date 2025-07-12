@@ -1,3 +1,4 @@
+import { Omit } from 'utility-types'; // если нужен import, либо сам объяви тип
 import { PostDb } from '../domain/postDb';
 import { postCollection } from '../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
@@ -39,7 +40,7 @@ export const postsRepository = {
 
 
 
-    async create(newPost: PostDb): Promise<string> {
+    async create(newPost: Omit<PostDb, '_id'>): Promise<string>  {
         const insertResult = await postCollection.insertOne(newPost);
         return insertResult.insertedId.toString();
     },
@@ -59,7 +60,7 @@ export const postsRepository = {
         sortDirection: string
     ) {
         const filter = { blogId: blogId }; // ! blogId должен быть string
-        const sort = { [sortBy]: sortDirection === 'asc' ? 1 : -1 };
+        const sort = { [sortBy]: sortDirection === 'asc' ? 1 : -1 }; // для MongoDB
 
         // 1. Подсчёт общего количества постов
         const totalCount = await postCollection.countDocuments(filter);
@@ -67,7 +68,7 @@ export const postsRepository = {
         // 2. Получение нужной страницы постов
         const items = await postCollection
             .find(filter)
-            .sort(sort)
+            .sort(sort as any)  // <-- вот так
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
             .toArray();

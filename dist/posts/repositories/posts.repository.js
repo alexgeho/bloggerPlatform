@@ -45,13 +45,13 @@ exports.postsRepository = {
     findByBlogIdWithPagination(blogId, pageNumber, pageSize, sortBy, sortDirection) {
         return __awaiter(this, void 0, void 0, function* () {
             const filter = { blogId: blogId }; // ! blogId должен быть string
-            const sort = { [sortBy]: sortDirection === 'asc' ? 1 : -1 };
+            const sort = { [sortBy]: sortDirection === 'asc' ? 1 : -1 }; // для MongoDB
             // 1. Подсчёт общего количества постов
             const totalCount = yield mongo_db_1.postCollection.countDocuments(filter);
             // 2. Получение нужной страницы постов
             const items = yield mongo_db_1.postCollection
                 .find(filter)
-                .sort(sort)
+                .sort(sort) // <-- вот так
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
                 .toArray();

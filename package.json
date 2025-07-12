@@ -21,7 +21,8 @@
     "express-validator": "^7.2.1",
     "mongodb": "^6.17.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "utility-types": "^3.11.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",

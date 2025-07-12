@@ -1,4 +1,8 @@
+import { ObjectId } from 'mongodb';
+
+
 export type PostDb = {
+    _id: ObjectId; // <== добавь это поле!
     title: string,
     shortDescription: string,
     content: string,
