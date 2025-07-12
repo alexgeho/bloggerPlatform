@@ -12,6 +12,7 @@ import {
     paginationAndSortingValidation
 } from "../../core/middlewares/validation/query-pagination-sorting.validation-middleware";
 import {BlogSortField} from "./input/blog-sort-field";
+import {getBlogPostsHandler} from "./handlers/get-blog-posts.handler";
 
 
 export const blogsRouter = Router({});
@@ -43,7 +44,10 @@ blogsRouter
 
     .delete('/:id',
         superAdminGuardMiddleware,
-        deleteBlogHandler
-    )
+        deleteBlogHandler)
 
+    .get('/:blogId/posts', getBlogPostsHandler)
+
+
+    //.post('/:blogId/posts', createBlogPostHandler)
 

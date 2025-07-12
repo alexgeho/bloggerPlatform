@@ -49,6 +49,34 @@ export const postsRepository = {
     async findById(id: string): Promise<PostDb | null> {
         return await postCollection.findOne({ _id: new ObjectId(id) });
     },
+
+
+    async findByBlogIdWithPagination(
+        blogId: string,
+        pageNumber: number,
+        pageSize: number,
+        sortBy: string,
+        sortDirection: string
+    ) {
+        const filter = { blogId: blogId }; // ! blogId должен быть string
+        const sort = { [sortBy]: sortDirection === 'asc' ? 1 : -1 };
+
+        // 1. Подсчёт общего количества постов
+        const totalCount = await postCollection.countDocuments(filter);
+
+        // 2. Получение нужной страницы постов
+        const items = await postCollection
+            .find(filter)
+            .sort(sort)
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .toArray();
+
+        return { items, totalCount };
+    },
+
+
+
 //
 //     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
 //         const res = await blogCollection.findOne({ _id: new ObjectId(id) });

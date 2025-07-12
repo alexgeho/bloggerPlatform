@@ -42,6 +42,22 @@ exports.postsRepository = {
             return yield mongo_db_1.postCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
+    findByBlogIdWithPagination(blogId, pageNumber, pageSize, sortBy, sortDirection) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const filter = { blogId: blogId }; // ! blogId должен быть string
+            const sort = { [sortBy]: sortDirection === 'asc' ? 1 : -1 };
+            // 1. Подсчёт общего количества постов
+            const totalCount = yield mongo_db_1.postCollection.countDocuments(filter);
+            // 2. Получение нужной страницы постов
+            const items = yield mongo_db_1.postCollection
+                .find(filter)
+                .sort(sort)
+                .skip((pageNumber - 1) * pageSize)
+                .limit(pageSize)
+                .toArray();
+            return { items, totalCount };
+        });
+    },
     //
     //     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
     //         const res = await blogCollection.findOne({ _id: new ObjectId(id) });

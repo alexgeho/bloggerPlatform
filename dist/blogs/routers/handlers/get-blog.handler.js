@@ -18,9 +18,9 @@ function getBlogHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            const driver = yield blogs_service_1.blogsService.findByIdOrFail(id);
-            const driverOutput = (0, map_to_blog_output_util_1.mapToBlogOutput)(driver);
-            res.status(http_statuses_1.HttpStatus.Ok).send(driverOutput);
+            const blog = yield blogs_service_1.blogsService.findByIdOrFail(id);
+            const blogOutput = (0, map_to_blog_output_util_1.mapToBlogOutput)(blog);
+            res.status(http_statuses_1.HttpStatus.Ok).send(blogOutput);
         }
         catch (e) {
             (0, errors_handler_1.errorsHandler)(e, res);

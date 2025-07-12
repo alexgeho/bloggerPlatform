@@ -28,6 +28,18 @@ export const postsService = {
         return { items: enrichedPosts, totalCount };
     },
 
+    async findAllByBlogId(
+        blogId: string,
+        pageNumber: number,
+        pageSize: number,
+        sortBy: string,
+        sortDirection: 'asc' | 'desc'
+    ) {
+        // 1. Репозиторий возвращает массив постов и totalCount
+        return await postsRepository.findByBlogIdWithPagination(
+            blogId, pageNumber, pageSize, sortBy, sortDirection
+        );
+    },
 
 //
 //     async findByIdOrFail(id: string): Promise<WithId<Blog>> {

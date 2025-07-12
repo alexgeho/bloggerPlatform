@@ -17,7 +17,6 @@ export async function runDB(url: string): Promise<void> {
     const db: Db = client.db(SETTINGS.DB_NAME);
 
     // initialization of collection
-
     blogCollection = db.collection <Blog>(BLOG_COLLECTION_NAME);
     postCollection = db.collection<PostDb>(POST_COLLECTION_NAME);
 

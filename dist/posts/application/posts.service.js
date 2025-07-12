@@ -23,6 +23,12 @@ exports.postsService = {
             return { items: enrichedPosts, totalCount };
         });
     },
+    findAllByBlogId(blogId, pageNumber, pageSize, sortBy, sortDirection) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // 1. Репозиторий возвращает массив постов и totalCount
+            return yield posts_repository_1.postsRepository.findByBlogIdWithPagination(blogId, pageNumber, pageSize, sortBy, sortDirection);
+        });
+    },
     //
     //     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
     //         return postsRepository.findByIdOrFail(id);

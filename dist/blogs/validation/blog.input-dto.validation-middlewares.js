@@ -12,7 +12,7 @@ const descriptionValidation = (0, express_validator_1.body)('description')
     .isString()
     .withMessage('description should be string')
     .trim()
-    .isLength({ min: 3, max: 15 })
+    .isLength({ min: 3, max: 500 })
     .withMessage('Length of description is not correct');
 const websiteUrlValidation = (0, express_validator_1.body)('websiteUrl')
     .isString()
