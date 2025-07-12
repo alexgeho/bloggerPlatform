@@ -16,6 +16,7 @@ const posts_service_1 = require("../../application/posts.service");
 const errors_handler_1 = require("../../../core/errors/errors.handler");
 function getPostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log('=== TEST GET POST HANDLER===');
         try {
             const id = req.params.id;
             const post = yield posts_service_1.postsService.findByIdOrFail(id);

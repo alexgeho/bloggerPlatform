@@ -71,6 +71,7 @@ exports.postsRepository = {
                     blogId: dto.blogId
                 },
             });
+            console.log('update result', updateResult);
             if (updateResult.matchedCount < 1) {
                 throw new repository_not_found_error_1.RepositoryNotFoundError('Post not exist');
             }

@@ -5,6 +5,7 @@ const http_statuses_1 = require("../../core/types/http-statuses");
 exports.ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 exports.ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'qwerty';
 const superAdminGuardMiddleware = (req, res, next) => {
+    console.log('=== TEST superAdminGuardMiddleware ===');
     const auth = req.headers['authorization']; // 'Basic xxxx'
     if (!auth) {
         res.sendStatus(http_statuses_1.HttpStatus.Unauthorized);

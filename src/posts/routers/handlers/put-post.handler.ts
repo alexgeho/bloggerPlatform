@@ -18,4 +18,6 @@ export async function putPostHandler(
     } catch (e: unknown) {
         errorsHandler(e, res);
     }
+    console.log('PUT HANDLER', req.params.id, req.body);
+
 }

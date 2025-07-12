@@ -33,7 +33,7 @@ postsRouter
         inputValidationResultMiddleware,
         getPostHandler)
 
-    .put('/:id',
+    .put("/:id",
         superAdminGuardMiddleware,
         idValidation,
         postInputDtoValidation,

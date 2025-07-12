@@ -5,9 +5,14 @@ import { postsService } from '../../application/posts.service';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 
 export async function getPostHandler(
+
     req: Request<{ id: string }>,
     res: Response,
-) {
+)
+{
+    console.log('=== TEST GET POST HANDLER===');
+
+
     try {
         const id = req.params.id;
 

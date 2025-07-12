@@ -15,6 +15,7 @@ const errors_handler_1 = require("../../../core/errors/errors.handler");
 const posts_service_1 = require("../../application/posts.service");
 function postPostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log('=== TEST POST POST HANDLER===');
         try {
             // req.body напрямую!
             const createdPostData = yield posts_service_1.postsService.create(req.body);

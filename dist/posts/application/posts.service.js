@@ -69,10 +69,12 @@ exports.postsService = {
     },
     update(id, dto) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('SERVICE UPDATE — до repo.update', id, dto); // Лог до
             yield posts_repository_1.postsRepository.update(id, dto);
+            console.log('SERVICE UPDATE — после repo.update'); // Лог после
             return;
         });
-    },
+    }
     //
     //     async delete(id: string): Promise<void> {
     //

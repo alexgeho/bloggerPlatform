@@ -25,5 +25,6 @@ function putPostHandler(req, res) {
         catch (e) {
             (0, errors_handler_1.errorsHandler)(e, res);
         }
+        console.log('PUT HANDLER', req.params.id, req.body);
     });
 }

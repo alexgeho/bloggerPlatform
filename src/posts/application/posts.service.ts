@@ -76,9 +76,19 @@ export const postsService = {
 
 
     async update(id: string, dto: PostInputDto): Promise<void> {
-        await postsRepository.update(id, dto);
+
+        console.log('SERVICE UPDATE — до repo.update', id, dto); // Лог до
+
+    await postsRepository.update(id, dto);
+
+        console.log('SERVICE UPDATE — после repo.update'); // Лог после
+
         return;
-    },
+
+
+    }
+
+
 //
 //     async delete(id: string): Promise<void> {
 //

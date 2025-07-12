@@ -1,5 +1,5 @@
 export type PostInputDto = {
-    id: number,
+    id: string,
     title: string,
     shortDescription: string,
     content: string,

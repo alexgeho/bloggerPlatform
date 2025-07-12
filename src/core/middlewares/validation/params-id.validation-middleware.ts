@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 
 // Проверяет, что id — валидный MongoDB ObjectId
 export const idValidation = [
+
     param('id')
         .exists()
         .withMessage('ID param is required')
