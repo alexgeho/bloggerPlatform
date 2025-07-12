@@ -5,6 +5,7 @@ import {ObjectId, WithId} from 'mongodb';
 // import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
 import {PostInputDto} from '../application/dtos/post.input-dto';
 import {PostQueryInput} from "../routers/input/post-query.input";
+import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.error";
 
 export const postsRepository = {
 
@@ -74,39 +75,32 @@ export const postsRepository = {
 
 
 
-//
-//     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
-//         const res = await blogCollection.findOne({ _id: new ObjectId(id) });
-//
-//         if (!res) {
-//             throw new RepositoryNotFoundError('Driver not exist');
-//         }
-//         return res;
-//     },
-//
 
-//
-//     async update(id: string, dto: BlogInputDto): Promise<void> {
-//         const updateResult = await blogCollection.updateOne(
-//             {
-//                 _id: new ObjectId(id),
-//             },
-//             {
-//                 $set: {
-//                     name: dto.name,
-//                     description: dto.description,
-//                     websiteUrl: dto.websiteUrl
-//                 },
-//             },
-//         );
-//
-//         if (updateResult.matchedCount < 1) {
-//             throw new RepositoryNotFoundError('Blog not exist');
-//         }
-//
-//         return;
-//     },
-//
+    async update(id: string, dto: PostInputDto): Promise<void> {
+        const updateResult = await postCollection.updateOne(
+            {
+                _id: new ObjectId(id),
+            },
+            {
+                $set: {
+                    title: dto.title,
+                    shortDescription: dto.shortDescription,
+                    content: dto.content,
+                    blogId: dto.blogId
+                },
+            },
+        );
+
+        if (updateResult.matchedCount < 1) {
+            throw new RepositoryNotFoundError('Post not exist');
+        }
+
+        return;
+    },
+
+
+
+
 //     async delete(id: string): Promise<void> {
 //         const deleteResult = await blogCollection.deleteOne({
 //             _id: new ObjectId(id),

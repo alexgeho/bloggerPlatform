@@ -72,20 +72,13 @@ export const postsService = {
             blogId: createdPost.blogId,
             blogName: createdPost.blogName,
             createdAt: createdPost.createdAt,
-        };
-        ;
-    }
+        };},
 
 
-
-    // ...
-
-
-//
-//     async update(id: string, dto: BlogInputDto): Promise<void> {
-//         await blogsRepository.update(id, dto);
-//         return;
-//     },
+    async update(id: string, dto: PostInputDto): Promise<void> {
+        await postsRepository.update(id, dto);
+        return;
+    },
 //
 //     async delete(id: string): Promise<void> {
 //

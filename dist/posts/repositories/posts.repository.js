@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRepository = void 0;
 const mongo_db_1 = require("../../db/mongo.db");
 const mongodb_1 = require("mongodb");
+const repository_not_found_error_1 = require("../../core/errors/repository-not-found.error");
 exports.postsRepository = {
     findMany(queryDto) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -58,38 +59,24 @@ exports.postsRepository = {
             return { items, totalCount };
         });
     },
-    //
-    //     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
-    //         const res = await blogCollection.findOne({ _id: new ObjectId(id) });
-    //
-    //         if (!res) {
-    //             throw new RepositoryNotFoundError('Driver not exist');
-    //         }
-    //         return res;
-    //     },
-    //
-    //
-    //     async update(id: string, dto: BlogInputDto): Promise<void> {
-    //         const updateResult = await blogCollection.updateOne(
-    //             {
-    //                 _id: new ObjectId(id),
-    //             },
-    //             {
-    //                 $set: {
-    //                     name: dto.name,
-    //                     description: dto.description,
-    //                     websiteUrl: dto.websiteUrl
-    //                 },
-    //             },
-    //         );
-    //
-    //         if (updateResult.matchedCount < 1) {
-    //             throw new RepositoryNotFoundError('Blog not exist');
-    //         }
-    //
-    //         return;
-    //     },
-    //
+    update(id, dto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updateResult = yield mongo_db_1.postCollection.updateOne({
+                _id: new mongodb_1.ObjectId(id),
+            }, {
+                $set: {
+                    title: dto.title,
+                    shortDescription: dto.shortDescription,
+                    content: dto.content,
+                    blogId: dto.blogId
+                },
+            });
+            if (updateResult.matchedCount < 1) {
+                throw new repository_not_found_error_1.RepositoryNotFoundError('Post not exist');
+            }
+            return;
+        });
+    },
     //     async delete(id: string): Promise<void> {
     //         const deleteResult = await blogCollection.deleteOne({
     //             _id: new ObjectId(id),

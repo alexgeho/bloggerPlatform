@@ -1,30 +1,21 @@
-// import { Request, Response } from 'express';
-// import { HttpStatus } from '../../../core/types/http-statuses';
-// import { createErrorMessages } from '../../../core/utils/error.utils';
-// import {BlogInputDto} from "../../application/dtos/blog.input-dto";
-// import {blogsRepository} from "../../repositories/blogs.repository";
-//
-// export async function putBlogHandler(
-//     req: Request <{ id: string }, {}, BlogInputDto>,
-//     res: Response
-// ) {
-//     try {
-//
-//         const id = req.params.id;
-//         const blog = await blogsRepository.findById(id);
-//
-//         if (!blog) {
-//             res
-//                 .status(HttpStatus.NotFound)
-//                 .send(
-//                     createErrorMessages([{ field: 'id', message: 'Blog not found' }])
-//                 );
-//             return;
-//         }
-//
-//         await blogsRepository.update(id, req.body);
-//         res.sendStatus(HttpStatus.NoContent);
-//     } catch (e: unknown) {
-//         res.sendStatus(HttpStatus.InternalServerError);
-//     }
-// }
+import { Request, Response } from 'express';
+import { HttpStatus } from '../../../core/types/http-statuses';
+import { postsService } from '../../application/posts.service';
+import { errorsHandler } from '../../../core/errors/errors.handler';
+import {PostUpdateInput} from "../input/post-update.input";
+import { mapToPostInputDto } from '../mappers/map-to-post-input-dto.util'; // путь поправь!
+
+
+export async function putPostHandler(
+    req: Request<{ id: string }, {}, PostUpdateInput>,
+    res: Response
+): Promise<void> {
+    try {
+        const id = req.params.id;
+        const dto = mapToPostInputDto(req.body); // <--- добавь преобразование
+        await postsService.update(id, dto);
+        res.sendStatus(HttpStatus.NoContent);
+    } catch (e: unknown) {
+        errorsHandler(e, res);
+    }
+}

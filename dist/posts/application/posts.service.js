@@ -65,15 +65,14 @@ exports.postsService = {
                 blogName: createdPost.blogName,
                 createdAt: createdPost.createdAt,
             };
-            ;
         });
-    }
-    // ...
-    //
-    //     async update(id: string, dto: BlogInputDto): Promise<void> {
-    //         await blogsRepository.update(id, dto);
-    //         return;
-    //     },
+    },
+    update(id, dto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield posts_repository_1.postsRepository.update(id, dto);
+            return;
+        });
+    },
     //
     //     async delete(id: string): Promise<void> {
     //

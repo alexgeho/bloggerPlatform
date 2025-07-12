@@ -10,6 +10,7 @@ import {superAdminGuardMiddleware} from "../../auth/middlewares/super-admin.guar
 import {postInputDtoValidation} from "../validation/post.input-dto.validation-middlewares";
 import {idValidation} from "../../core/middlewares/validation/params-id.validation-middleware";
 import {getPostHandler} from "./handlers/get-post.handler";
+import {putPostHandler} from "./handlers/put-post.handler";
 
 
 export const postsRouter = Router({});
@@ -32,13 +33,13 @@ postsRouter
         inputValidationResultMiddleware,
         getPostHandler)
 
-    // .put('/:id',
-    //     superAdminGuardMiddleware,
-    //     idValidation,
-    //     blogInputDtoValidation,
-    //     inputValidationResultMiddleware,
-    //     putBlogHandler)
-    //
+    .put('/:id',
+        superAdminGuardMiddleware,
+        idValidation,
+        postInputDtoValidation,
+        inputValidationResultMiddleware,
+        putPostHandler)
+
     // .delete('/:id',
     //     superAdminGuardMiddleware,
     //     deleteBlogHandler
