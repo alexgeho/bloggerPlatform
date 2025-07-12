@@ -15,6 +15,7 @@ import {BlogSortField} from "./input/blog-sort-field";
 import {getBlogPostsHandler} from "./handlers/get-blog-posts.handler";
 import {postInputDtoValidation} from "../../posts/validation/post.input-dto.validation-middlewares";
 import {asyncHandler} from "../../core/utils/express-async-handler";
+import {postBlogPostHandler} from "./handlers/post-blog-post.handler";
 
 
 export const blogsRouter = Router();
@@ -53,11 +54,13 @@ blogsRouter
         asyncHandler(getBlogPostsHandler)
     )
 
-    // .post('/:blogId/posts',
-    //     superAdminGuardMiddleware,
-    //     postInputDtoValidation,
-    //     inputValidationResultMiddleware,
-    //     postBlogPostHandler)
-
+    .post(
+        '/:blogId/posts',
+        superAdminGuardMiddleware,
+       // idValidation, // или blogIdValidation
+        //postInputDtoValidation,
+       // inputValidationResultMiddleware,
+        postBlogPostHandler
+    )
 
 
