@@ -24,6 +24,8 @@ function errorsHandler(error, res) {
         ]));
         return;
     }
-    res.status(http_statuses_1.HttpStatus.InternalServerError);
+    res.status(http_statuses_1.HttpStatus.InternalServerError).send((0, input_validtion_result_middleware_1.createErrorMessages)([
+        { field: "common", message: "Internal server error" }
+    ]));
     return;
 }

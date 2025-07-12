@@ -2,7 +2,6 @@ import { Omit } from 'utility-types'; // если нужен import, либо с
 import { PostDb } from '../domain/postDb';
 import { postCollection } from '../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
-// import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
 import {PostInputDto} from '../application/dtos/post.input-dto';
 import {PostQueryInput} from "../routers/input/post-query.input";
 import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.error";
@@ -96,22 +95,18 @@ export const postsRepository = {
         if (updateResult.matchedCount < 1) {
             throw new RepositoryNotFoundError('Post not exist');
         }
+        return;},
+
+
+    async delete(id: string): Promise<void> {
+        const deleteResult = await postCollection.deleteOne({
+            _id: new ObjectId(id),
+        });
+
+        if (deleteResult.deletedCount < 1) {
+            throw new RepositoryNotFoundError('Post not exist');
+        }
 
         return;
     },
-
-
-
-
-//     async delete(id: string): Promise<void> {
-//         const deleteResult = await blogCollection.deleteOne({
-//             _id: new ObjectId(id),
-//         });
-//
-//         if (deleteResult.deletedCount < 1) {
-//             throw new RepositoryNotFoundError('Blog not exist');
-//         }
-//
-//         return;
-//     },
 };

@@ -78,15 +78,15 @@ exports.postsRepository = {
             return;
         });
     },
-    //     async delete(id: string): Promise<void> {
-    //         const deleteResult = await blogCollection.deleteOne({
-    //             _id: new ObjectId(id),
-    //         });
-    //
-    //         if (deleteResult.deletedCount < 1) {
-    //             throw new RepositoryNotFoundError('Blog not exist');
-    //         }
-    //
-    //         return;
-    //     },
+    delete(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deleteResult = yield mongo_db_1.postCollection.deleteOne({
+                _id: new mongodb_1.ObjectId(id),
+            });
+            if (deleteResult.deletedCount < 1) {
+                throw new repository_not_found_error_1.RepositoryNotFoundError('Post not exist');
+            }
+            return;
+        });
+    },
 };

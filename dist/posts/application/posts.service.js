@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsService = void 0;
 const posts_repository_1 = require("../repositories/posts.repository");
 const blogs_repository_1 = require("../../blogs/repositories/blogs.repository");
+const repository_not_found_error_1 = require("../../core/errors/repository-not-found.error");
 exports.postsService = {
     findMany(queryDto) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,8 +34,7 @@ exports.postsService = {
         return __awaiter(this, void 0, void 0, function* () {
             const post = yield posts_repository_1.postsRepository.findByIdOrFail(id);
             if (!post) {
-                throw new Error('Post not found');
-                // или return 404 через http-errors, если у тебя express/fastify
+                throw new repository_not_found_error_1.RepositoryNotFoundError('Post not exist'); // ← вернёт 404!
             }
             return post; // тут post точно не null, TS доволен
         });
@@ -74,11 +74,11 @@ exports.postsService = {
             console.log('SERVICE UPDATE — после repo.update'); // Лог после
             return;
         });
-    }
-    //
-    //     async delete(id: string): Promise<void> {
-    //
-    //         await blogsRepository.delete(id);
-    //         return;
-    //     },
+    },
+    delete(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield posts_repository_1.postsRepository.delete(id);
+            return;
+        });
+    },
 };

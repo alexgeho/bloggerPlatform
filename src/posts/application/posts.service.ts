@@ -5,6 +5,7 @@ import {PostInputDto} from "./dtos/post.input-dto";
 import {PostDataOutput} from "../routers/output/post-data.output";
 import {PostDb} from "../domain/postDb";
 import {WithId} from "mongodb";
+import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.error";
 
 export const postsService = {
 
@@ -34,17 +35,13 @@ export const postsService = {
         );
     },
 
-
     async findByIdOrFail(id: string): Promise<WithId<PostDb>> {
         const post = await postsRepository.findByIdOrFail(id);
         if (!post) {
-            throw new Error('Post not found');
-            // или return 404 через http-errors, если у тебя express/fastify
+            throw new RepositoryNotFoundError('Post not exist'); // ← вернёт 404!
         }
         return post; // тут post точно не null, TS доволен
     },
-
-
 
     async create(dto: PostInputDto): Promise<PostDataOutput> {
         const blog = await blogsRepository.findById(dto.blogId);
@@ -74,25 +71,16 @@ export const postsService = {
             createdAt: createdPost.createdAt,
         };},
 
-
     async update(id: string, dto: PostInputDto): Promise<void> {
-
         console.log('SERVICE UPDATE — до repo.update', id, dto); // Лог до
-
     await postsRepository.update(id, dto);
-
         console.log('SERVICE UPDATE — после repo.update'); // Лог после
+        return;},
 
+
+    async delete(id: string): Promise<void> {
+
+        await postsRepository.delete(id);
         return;
-
-
-    }
-
-
-//
-//     async delete(id: string): Promise<void> {
-//
-//         await blogsRepository.delete(id);
-//         return;
-//     },
+    },
 };
