@@ -29,7 +29,7 @@ exports.blogsService = {
                 description: dto.description,
                 websiteUrl: dto.websiteUrl,
                 createdAt: new Date().toISOString(),
-                isMembership: true,
+                isMembership: false,
             };
             const id = yield blogs_repository_1.blogsRepository.create(newBlog);
             return { id, name: newBlog.name, description: newBlog.description, websiteUrl: newBlog.websiteUrl, createdAt: newBlog.createdAt, isMembership: newBlog.isMembership };
