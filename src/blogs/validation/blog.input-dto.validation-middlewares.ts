@@ -11,7 +11,7 @@ const descriptionValidation = body('description')
     .isString()
     .withMessage('description should be string')
     .trim()
-    .isLength({ min: 3, max: 15 })
+    .isLength({ min: 3, max: 500 })
     .withMessage('Length of description is not correct');
 
 const websiteUrlValidation = body('websiteUrl')
