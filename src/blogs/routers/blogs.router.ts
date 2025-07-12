@@ -15,7 +15,7 @@ import {BlogSortField} from "./input/blog-sort-field";
 import {getBlogPostsHandler} from "./handlers/get-blog-posts.handler";
 
 
-export const blogsRouter = Router({});
+export const blogsRouter = Router();
 
 blogsRouter
 

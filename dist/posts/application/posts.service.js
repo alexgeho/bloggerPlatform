@@ -53,7 +53,7 @@ exports.postsService = {
             if (!createdPost)
                 throw new Error('Post not found after creation');
             return {
-                id: createdPost._id ? createdPost._id.toString() : createdPost.id,
+                id: createdPost.id ? createdPost.id.toString() : createdPost.id,
                 title: createdPost.title,
                 shortDescription: createdPost.shortDescription,
                 content: createdPost.content,

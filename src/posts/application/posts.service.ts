@@ -1,16 +1,11 @@
 import { postsRepository } from '../repositories/posts.repository';
-import { ObjectId } from 'mongodb';
-import { WithId } from 'mongodb';
-import { PostDb } from '../domain/postDb';
 import {PostQueryInput} from "../routers/input/post-query.input";
 import { blogsRepository } from '../../blogs/repositories/blogs.repository';
-
-//import { DomainError } from '../../core/errors/domain.error';
-//import { BlogQueryInput } from '../routers/input/blog-query.input';
 import {PostInputDto} from "./dtos/post.input-dto";
 import {PostDataOutput} from "../routers/output/post-data.output";
 
 export const postsService = {
+
     async findMany(queryDto: PostQueryInput): Promise<{ items: any[]; totalCount: number }> {
         const { items, totalCount } = await postsRepository.findMany(queryDto);
 
@@ -68,7 +63,7 @@ export const postsService = {
         if (!createdPost) throw new Error('Post not found after creation');
 
         return {
-            id: createdPost._id ? createdPost._id.toString() : createdPost.id,
+            id: createdPost.id ? createdPost.id.toString() : createdPost.id,
             title: createdPost.title,
             shortDescription: createdPost.shortDescription,
             content: createdPost.content,
