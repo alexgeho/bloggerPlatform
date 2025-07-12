@@ -19,6 +19,8 @@ exports.postsService = {
             const { items, totalCount } = yield posts_repository_1.postsRepository.findMany(queryDto);
             const blogIds = [...new Set(items.map(post => post.blogId))];
             const blogs = yield blogs_repository_1.blogsRepository.findByIds(blogIds);
+            if (!blogs || blogs.length === 0)
+                throw new Error('Blog not found');
             const blogsMap = Object.fromEntries(blogs.map((bLog) => [bLog._id.toString(), bLog.name]));
             const enrichedPosts = items.map(post => (Object.assign(Object.assign({}, post), { blogName: blogsMap[post.blogId] || null })));
             return { items: enrichedPosts, totalCount };

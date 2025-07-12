@@ -14,6 +14,8 @@ export const postsService = {
 
         const blogIds = [...new Set(items.map(post => post.blogId))];
         const blogs = await blogsRepository.findByIds(blogIds);
+        if (!blogs || blogs.length === 0) throw new Error('Blog not found');
+
         const blogsMap: { [k: string]: any } = Object.fromEntries(
             blogs.map((bLog: any) => [bLog._id.toString(), bLog.name])
         );
