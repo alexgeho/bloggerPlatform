@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.mapToBlogListPaginatedOutput = mapToBlogListPaginatedOutput;
 function mapToBlogListPaginatedOutput(blogs, meta) {
     return {
-        pageCount: Math.ceil(meta.totalCount / meta.pageSize),
+        pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
         page: meta.pageNumber,
         pageSize: meta.pageSize,
         totalCount: meta.totalCount,

@@ -9,7 +9,7 @@ export function mapToBlogListPaginatedOutput(
     meta: { pageNumber: number; pageSize: number; totalCount: number }
 ): BlogListPaginatedOutput {
     return {
-        pageCount: Math.ceil(meta.totalCount / meta.pageSize),
+        pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
         page: meta.pageNumber,
         pageSize: meta.pageSize,
         totalCount: meta.totalCount,
