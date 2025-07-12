@@ -11,29 +11,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getBlogPostsHandler = getBlogPostsHandler;
 const blogs_service_1 = require("../../application/blogs.service");
-const posts_service_1 = require("../../../posts/application/posts.service"); // путь скорректируй под себя
-const sort_direction_1 = require("../../../core/types/sort-direction");
+const posts_service_1 = require("../../../posts/application/posts.service");
 function getBlogPostsHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const blogId = req.params.blogId;
-            const blog = yield blogs_service_1.blogsService.findByIdOrFail(blogId);
-            if (!blog)
-                return res.sendStatus(404); // 404 если блог не найден
-            // Параметры пагинации и сортировки
+            // Проверка, что блог существует
+            yield blogs_service_1.blogsService.findByIdOrFail(blogId);
+            // Параметры пагинации/сортировки
             const pageNumber = +(req.query.pageNumber || 1);
             const pageSize = +(req.query.pageSize || 10);
-            const sortBy = typeof req.query.sortBy === 'string' ? req.query.sortBy : 'createdAt';
-            // Ограничиваем sortDirection только значениями из enum!
-            const rawSortDirection = typeof req.query.sortDirection === 'string' ? req.query.sortDirection : sort_direction_1.SortDirection.Desc;
-            const sortDirection = rawSortDirection === sort_direction_1.SortDirection.Asc ? sort_direction_1.SortDirection.Asc : sort_direction_1.SortDirection.Desc;
-            // Сервис
+            const sortBy = typeof req.query.sortBy === "string" ? req.query.sortBy : "createdAt";
+            const sortDirection = req.query.sortDirection === "asc" ? "asc" : "desc";
+            // Получение постов
             const postsPage = yield posts_service_1.postsService.findAllByBlogId(blogId, pageNumber, pageSize, sortBy, sortDirection);
-            // Возвращаем результат
-            res.status(200).json(postsPage);
+            // Форматируем ответ как требует Swagger
+            const result = {
+                pagesCount: Math.ceil(postsPage.totalCount / pageSize),
+                page: pageNumber,
+                pageSize: pageSize,
+                totalCount: postsPage.totalCount,
+                items: postsPage.items.map(p => ({
+                    id: p._id ? p._id.toString() : p._id,
+                    title: p.title,
+                    shortDescription: p.shortDescription,
+                    content: p.content,
+                    blogId: p.blogId,
+                    blogName: p.blogName,
+                    createdAt: p.createdAt,
+                }))
+            };
+            return res.status(200).json(result);
         }
         catch (e) {
-            res.sendStatus(500);
+            if (e.message === 'Blog not exist')
+                return res.sendStatus(404);
+            return res.sendStatus(500);
         }
     });
 }
