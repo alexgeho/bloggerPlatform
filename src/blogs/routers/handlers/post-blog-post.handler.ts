@@ -4,20 +4,24 @@ import { errorsHandler } from '../../../core/errors/errors.handler';
 import { postsService } from '../../../posts/application/posts.service';
 import {blogsService} from "../../application/blogs.service";
 
-export async function postBlogPostHandler(req: Request, res: Response) {
+export async function postBlogPostHandler(
+    req: Request,
+    res: Response
+): Promise<void> {
     try {
-
         const blogId = req.params.blogId;
 
-        // Проверяем существование блога!
+        // Проверяем существование блога
         const blog = await blogsService.findByIdOrFail(blogId);
         if (!blog) {
-            return res.status(HttpStatus.NotFound).send({ message: 'Blog not found' });
+            res.status(HttpStatus.NotFound).send({ message: 'Blog not found' });
+            return;
         }
+
         // Объединяем blogId из params и всё из body
         const createdPostData = await postsService.create({
             ...req.body,
-            blogId: req.params.blogId,
+            blogId,
         });
 
         res.status(HttpStatus.Created).send(createdPostData);
@@ -25,3 +29,4 @@ export async function postBlogPostHandler(req: Request, res: Response) {
         errorsHandler(e, res);
     }
 }
+

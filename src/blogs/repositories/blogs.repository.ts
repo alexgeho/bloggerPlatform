@@ -8,6 +8,8 @@ import {BlogInputDto} from "../application/dtos/blog.input-dto";
 export const blogsRepository = {
 
     async findMany( queryDto: BlogQueryInput): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
+        console.log('[findMany] queryDto:', queryDto);
+
         const {
             pageNumber,
             pageSize,

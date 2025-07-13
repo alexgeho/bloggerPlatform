@@ -13,6 +13,7 @@ export const setupApp = (app: Express) => {
     app.get("/", (req, res) => {
         res.status(200).send("Hello world Bitau!");
     });
+    console.log('Монтирую blogsRouter по адресу:', BLOGS_PATH)
 
     app.use(BLOGS_PATH, blogsRouter);
     app.use(TESTING_PATH, testingRouter);
