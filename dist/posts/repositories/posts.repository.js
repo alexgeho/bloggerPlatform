@@ -16,11 +16,11 @@ const repository_not_found_error_1 = require("../../core/errors/repository-not-f
 exports.postsRepository = {
     findMany(queryDto) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { pageNumber, pageSize, sortBy, sortDirection, searchPostNameTerm } = queryDto;
+            const { pageNumber, pageSize, sortBy, sortDirection, searchNameTerm } = queryDto;
             const skip = (pageNumber - 1) * pageSize;
             const filter = {};
-            if (searchPostNameTerm) {
-                filter.name = { $regex: searchPostNameTerm, $options: 'i' };
+            if (searchNameTerm) {
+                filter.name = { $regex: searchNameTerm, $options: 'i' };
             }
             const items = yield mongo_db_1.postCollection
                 .find(filter)

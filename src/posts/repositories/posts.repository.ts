@@ -14,15 +14,15 @@ export const postsRepository = {
             pageSize,
             sortBy,
             sortDirection,
-            searchPostNameTerm
+            searchNameTerm
 
         } = queryDto;
 
         const skip = (pageNumber - 1) * pageSize;
         const filter: any = {};
 
-        if (searchPostNameTerm) {
-            filter.name = {$regex: searchPostNameTerm, $options: 'i'};
+        if (searchNameTerm) {
+            filter.name = {$regex: searchNameTerm, $options: 'i'};
         }
 
         const items = await postCollection

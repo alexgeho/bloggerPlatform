@@ -10,8 +10,9 @@ import {PostSortField} from "../input/post-sort-field";
 export async function getPostListHandler(req: Request, res: Response) {
     try {
         const queryInput = setDefaultSortAndPaginationIfNotExist(
-            req.query as Partial<PaginationAndSorting<PostSortField>>
-        );
+            req.query as Partial<PaginationAndSorting<PostSortField>> & { searchNameTerm?: string }
+        ) as PostQueryInput;
+
         const { items, totalCount } = await postsService.findMany(queryInput);
 
         const postsListOutput = mapToPostListPaginatedOutput(items, {
