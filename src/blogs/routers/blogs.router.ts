@@ -59,6 +59,7 @@ blogsRouter
 
     .post('/:blogId/posts',
         superAdminGuardMiddleware,
+        postInputDtoValidation,
     ...blogIdValidationNested('blogId'),
         inputValidationResultMiddleware,
         postBlogPostHandler
