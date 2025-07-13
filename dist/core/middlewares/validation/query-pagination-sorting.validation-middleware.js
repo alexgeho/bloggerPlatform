@@ -4,7 +4,6 @@ exports.paginationAndSortingDefault = void 0;
 exports.paginationAndSortingValidation = paginationAndSortingValidation;
 const express_validator_1 = require("express-validator");
 const sort_direction_1 = require("../../types/sort-direction");
-// Дефолтные значения
 const DEFAULT_PAGE_NUMBER = 1;
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_SORT_DIRECTION = sort_direction_1.SortDirection.Desc;
