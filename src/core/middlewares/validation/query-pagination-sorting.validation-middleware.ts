@@ -27,7 +27,7 @@ export function paginationAndSortingValidation<T extends string>(
         query('pageSize')
             .optional()
             .default(DEFAULT_PAGE_SIZE)
-            .isInt({ min: 1, max: 100 })
+            .isInt({ min: 1, max: 150 })
             .withMessage('Page size must be between 1 and 100')
             .toInt(),
 

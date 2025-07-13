@@ -1,6 +1,5 @@
 import { WithId } from 'mongodb';
 import { PostDb } from '../../domain/postDb';
-import { ResourceType } from '../../../core/types/resource-type';
 import { PostListPaginatedOutput } from '../output/post-list-paginated.output';
 import {PostDataOutput} from "../output/post-data.output";
 
