@@ -17,9 +17,13 @@ import {postInputDtoValidation} from "../../posts/validation/post.input-dto.vali
 import {asyncHandler} from "../../core/utils/express-async-handler";
 import {postBlogPostHandler} from "./handlers/post-blog-post.handler";
 import {blogIdValidationNested} from "../../core/middlewares/validation/blogId-validation.nested";
+import {
+    postForBlogBodyValidationResultMiddleware
+} from "../../core/middlewares/validation/post-for-blog-body-validation.middleware";
+import {postInputDtoForBlogValidation} from "../validation/post.blogForPostInput.validation-middlewares";
 
 
-export const blogsRouter = Router();
+export const blogsRouter = Router({});
 
 blogsRouter
 
@@ -57,11 +61,12 @@ blogsRouter
         asyncHandler(getBlogPostsHandler)
     )
 
-    .post('/:blogId/posts',
+    .post(
+        '/:blogId/posts',
         superAdminGuardMiddleware,
-        postInputDtoValidation,
-    ...blogIdValidationNested('blogId'),
+        ...postInputDtoForBlogValidation,         // <<<<< только три поля из body!
         inputValidationResultMiddleware,
+        ...blogIdValidationNested('blogId'),      // <<<<< отдельно валидируй path param
         postBlogPostHandler
     )
 
