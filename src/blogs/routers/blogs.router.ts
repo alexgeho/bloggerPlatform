@@ -16,6 +16,7 @@ import {getBlogPostsHandler} from "./handlers/get-blog-posts.handler";
 import {postInputDtoValidation} from "../../posts/validation/post.input-dto.validation-middlewares";
 import {asyncHandler} from "../../core/utils/express-async-handler";
 import {postBlogPostHandler} from "./handlers/post-blog-post.handler";
+import {blogIdValidationNested} from "../../core/middlewares/validation/blogId-validation.nested";
 
 
 export const blogsRouter = Router();
@@ -51,16 +52,21 @@ blogsRouter
 
     .get('/:blogId/posts',
         inputValidationResultMiddleware,
+    ...blogIdValidationNested('blogId'),
+        inputValidationResultMiddleware,
         asyncHandler(getBlogPostsHandler)
     )
 
-    .post(
-        '/:blogId/posts',
+    .post('/:blogId/posts',
         superAdminGuardMiddleware,
-       // idValidation, // или blogIdValidation
-        //postInputDtoValidation,
-       // inputValidationResultMiddleware,
+    ...blogIdValidationNested('blogId'),
+        inputValidationResultMiddleware,
         postBlogPostHandler
     )
 
 
+
+
+// idValidation, // или blogIdValidation
+//postInputDtoValidation,
+// inputValidationResultMiddleware,
