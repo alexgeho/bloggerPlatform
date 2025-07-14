@@ -10,22 +10,22 @@ import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.er
 export const postsService = {
 
     async findMany(queryDto: PostQueryInput): Promise<{ items: any[]; totalCount: number }> {
-        const { items, totalCount } = await postsRepository.findMany(queryDto);
+        return postsRepository.findMany(queryDto);
 
-        const blogIds = [...new Set(items.map(post => post.blogId))];
-        const blogs = await blogsRepository.findByIds(blogIds);
-        if (!blogs || blogs.length === 0) throw new Error('Blog not found');
-
-        const blogsMap: { [k: string]: any } = Object.fromEntries(
-            blogs.map((bLog: any) => [bLog._id.toString(), bLog.name])
-        );
-
-        const enrichedPosts = items.map(post => ({
-            ...post,
-            blogName: blogsMap[post.blogId] || null,
-        }));
-
-        return { items: enrichedPosts, totalCount };
+        // const blogIds = [...new Set(items.map(post => post.blogId))];
+        // const blogs = await blogsRepository.findByIds(blogIds);
+        // if (!blogs || blogs.length === 0) throw new Error('Blog not found');
+        //
+        // const blogsMap: { [k: string]: any } = Object.fromEntries(
+        //     blogs.map((bLog: any) => [bLog._id.toString(), bLog.name])
+        // );
+        //
+        // const enrichedPosts = items.map(post => ({
+        //     ...post,
+        //     blogName: blogsMap[post.blogId] || null,
+        // }));
+        //
+        // return { items: enrichedPosts, totalCount };
     },
 
     async findAllByBlogId(

@@ -9,11 +9,11 @@ const bootstrap = async () => {
 
 // создание приложения
     const app = express();
-    setupApp(app);
+   setupApp(app);
 
     const PORT = SETTINGS.PORT;
+    await runDB (SETTINGS.MONGO_URL);//
 
-    await runDB (SETTINGS.MONGO_URL);// порт приложения
 
 // запуск приложения
     app.listen(PORT, () => {

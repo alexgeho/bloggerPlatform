@@ -6,10 +6,17 @@ export const testingRouter = Router({});
 
 testingRouter.delete('/all-data', async (req: Request, res: Response) => {
     //truncate db
-    await Promise.all([
-        blogCollection.deleteMany(),
-        postCollection.deleteMany()
+    try{
+        await Promise.all([
+            blogCollection.deleteMany(),
+            postCollection.deleteMany()
 
-    ]);
-    res.sendStatus(HttpStatus.NoContent);
+        ]);
+        res.sendStatus(HttpStatus.NoContent);
+
+    } catch (e: unknown) {
+        console.log(e);
+    }
+
+
 });
