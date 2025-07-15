@@ -1,143 +1,174 @@
 import request from 'supertest';
 import { setupApp } from "../../../src/setup-app";
-import express from 'express';
-import {BlogInputDto} from "../../../src/blogs/application/dtos/blog.input-dto";
-import {HttpStatus} from "../../../src/core/types/http-statuses";
+//import { db } from '../../src/index';
 
-import {BLOGS_PATH} from "../../../src/core/paths/paths";
-import {runDB} from "../../../src/db/mongo.db";
-import {SETTINGS} from "../../../src/core/settings/settings";
-// @ts-ignore
-import {clearDb} from "../../utils/clear-db";
+describe('Blog Api body validation check', () => {
 
-describe ('Blog Api body validation check', () => {
-    const app = express();
-    setupApp(app);
+    beforeEach(async () => {
+        await request(setupApp).delete('/__test__/data')
+    })
 
-    const testBlogData: BlogInputDto = {
-        name: "name",
-        description: "title",
-        websiteUrl: "name"
-    };
-
-    beforeAll(async () => {
-        await runDB (SETTINGS.MONGO_URL);//
-       // await clearDb(app);
-
-        await request(app)
-            .get('/')
-            .expect(200)
-    });
-
-
-    it('should create blog; POST /blogs', async () => {
-        const newBlog: BlogInputDto = {
-            ...testBlogData,
-            name: 'Feodor',
-            description: 'feodor@example.com',
-        };
-
-        await request(app)
-            .post(BLOGS_PATH)
-            .set('Authorization', 'adminToken')
-            .send(newBlog)
-            .expect(HttpStatus.Created);
-    });
-
-    
-    
-    it('should return blogs list; GET /blogs', async () => {
-        await request(app)
-            .post(BLOGS_PATH)
-            .set('Authorization', 'adminToken')
-            .send({ ...testBlogData, name: 'Another blog' })
-            .expect(HttpStatus.Created);
-
-        await request(app)
-            .post(BLOGS_PATH)
-            .set('Authorization', 'adminToken')
-            .send({ ...testBlogData, name: 'Another blog2' })
-            .expect(HttpStatus.Created);
-
-        const blogListResponse = await request(app)
-            .get(BLOGS_PATH)
-            .expect(HttpStatus.Ok);
-
-        expect(blogListResponse.body).toBeInstanceOf(Array);
-        expect(blogListResponse.body.length).toBeGreaterThanOrEqual(2);
-    });
-
-    // it('should return blog by id; GET /blogs/:id', async () => {
+})
+    // it('should return 200 and empty array', async () => {
+    //     await request(app)
+    //         .get('/courses')
+    //         .expect(HTTP_STATUSES.OK_200, [])
+    // })
+    //
+    // it('should return 404 for not existing course', async () => {
+    //     await request(app)
+    //         .get('/courses/1')
+    //         .expect(HTTP_STATUSES.NOT_FOUND_404)
+    // })
+    //
+    // it('should NOT create course with incorrect input data', async () => {
+    //     await request(app)
+    //         .post('/courses')
+    //         .send({title: ''})
+    //         .expect(HTTP_STATUSES.BAD_REQUEST_400)
+    //
+    //     await request(app)
+    //         .get('/courses')
+    //         .expect(HTTP_STATUSES.OK_200, [])
+    //
+    // })
+    //
+    // let createdCourse1:any = null;
+    //
+    // it('should create course with correct input data', async () => {
     //     const createResponse = await request(app)
-    //         .post(BLOGS_PATH)
-    //         .set('Authorization', 'adminToken')
-    //         .send({ ...testBlogData, name: 'Another test' })
-    //         .expect(HttpStatus.Created);
+    //         .post('/courses')
+    //         .send({title: 'NewTitle'})
+    //         .expect(HTTP_STATUSES.CREATED_201)
     //
-    //     const getResponse = await request(app)
-    //         .get(/BLOGS_PATH/${createResponse.body.id})
-    //         .expect(HttpStatus.Ok);
+    //     createdCourse1 = createResponse.body;
+    //     console.log('createdCourse1:', createdCourse1); // <-- Добавь сюда
     //
-    //     expect(getResponse.body).toEqual({
-    //         ...createResponse.body,
+    //     expect(createdCourse1).toEqual({
     //         id: expect.any(Number),
-    //         createdAt: expect.any(String),
-    //     });
+    //         title: 'NewTitle'
+    //     })
+    //
+    //     await request(app)
+    //         .get('/courses')
+    //         .expect(HTTP_STATUSES.OK_200, [createdCourse1])})
+    //
+    // let createdCourse2:any = null;
+    //
+    // it('create one more course', async () => {
+    //
+    //     const createResponse1 = await request(app)
+    //         .post('/courses')
+    //         .send({title: 'NewTitle'})
+    //         .expect(HTTP_STATUSES.CREATED_201);
+    //     const createdCourse1 = createResponse1.body;
+    //
+    //     const createResponse = await request(app)
+    //         .post('/courses')
+    //         .send({title: 'it-incubator cc2'})
+    //         .expect(HTTP_STATUSES.CREATED_201)
+    //
+    //     createdCourse2 = createResponse.body;
+    //
+    //     expect(createdCourse2).toEqual({
+    //         id: expect.any(Number),
+    //         title: 'it-incubator cc2'
+    //     })
+    //
+    //     await request(app)
+    //         .get('/courses')
+    //         .expect(HTTP_STATUSES.OK_200, [createdCourse1, createdCourse2])
+    // })
+    //
+    // it('should NOT update course with incorrect input data', async () => {
+    //
+    //     const createResponse = await request(app)
+    //         .post('/courses')
+    //         .send({title: 'it-incubator cc2'})
+    //         .expect(HTTP_STATUSES.CREATED_201)
+    //
+    //     createdCourse1 = createResponse.body;
+    //
+    //     await request(app)
+    //         .put('/courses/' + createdCourse1.id)
+    //         .send({title: ''})
+    //         .expect(HTTP_STATUSES.BAD_REQUEST_400)
+    //
+    //     await request(app)
+    //         .get('/courses/'+ createdCourse1.id)
+    //         .expect(HTTP_STATUSES.OK_200, createdCourse1)
+    // })
+    //
+    // it('should NOT update course that not exist', async () => {
+    //     await request(app)
+    //         .put('/courses/' + -100)
+    //         .send({title: 'good title'})
+    //         .expect(HTTP_STATUSES.NOT_FOUND_404)
+    // })
+    //
+    // let createdCourse3:any = null;
+    //
+    // it('should update course with correct input data', async () => {
+    //     const createResponse = await request(app)
+    //         .post('/courses/')
+    //         .send({title: 'good title3'})
+    //         .expect(HTTP_STATUSES.CREATED_201);
+    //
+    //     createdCourse3 = createResponse.body;
+    //
+    //     await request(app)
+    //         .put('/courses/' + createdCourse3.id)
+    //         .send({title: 'good new title'})
+    //         .expect(HTTP_STATUSES.NO_CONTENT_204);
+    //
+    //     await request(app)
+    //         .get('/courses/' + createdCourse3.id)
+    //         .expect(HTTP_STATUSES.OK_200, {
+    //             id: createdCourse3.id,
+    //             title: 'good new title'
+    //         });
     // });
+    //
+    // let createdCourse5:any = null;
+    // let createdCourse4:any = null;
+    //
+    // it('should delete both courses', async () => {
+    //
+    //     const createResponse = await request(app)
+    //         .post('/courses')
+    //         .send({title: 'NewTitle'})
+    //         .expect(HTTP_STATUSES.CREATED_201)
+    //
+    //     createdCourse5 = createResponse.body;
+    //
+    //     const createResponse2 = await request(app)
+    //         .post('/courses')
+    //         .send({title: 'it-incubator cc2'})
+    //         .expect(HTTP_STATUSES.CREATED_201)
+    //
+    //     createdCourse4 = createResponse2.body;
+    //
+    //     await request(app)
+    //         .delete('/courses/' + createdCourse5.id)
+    //         .expect(HTTP_STATUSES.NO_CONTENT_204)
+    //
+    //     await request(app)
+    //         .get('/courses/' + createdCourse5.id)
+    //         .expect(HTTP_STATUSES.NOT_FOUND_404)
+    //
+    //     await request(app)
+    //         .delete('/courses/' + createdCourse4.id)
+    //         .expect(HTTP_STATUSES.NO_CONTENT_204)
+    //
+    //     await request(app)
+    //         .get('/courses/' + createdCourse4.id)
+    //         .expect(HTTP_STATUSES.NOT_FOUND_404)
+    //
+    //     await request(app)
+    //         .get('/courses')
+    //         .expect(HTTP_STATUSES.OK_200, [])
+    //
+    // })
+    //
 
-    
-    
-    it.skip('should update blog; PUT /blogs/:id', async () => {
-        const createResponse = await request(app)
-            .post(BLOGS_PATH)
-            .set('Authorization', 'adminToken')
-            .send({ ...testBlogData, name: 'Another Test' })
-            .expect(HttpStatus.Created);
-
-        const blogUpdateData: BlogInputDto = {
-            name: "name",
-            description: "title",
-            websiteUrl: "name"
-            
-        };
-
-        await request(app)
-            .put(`/${BLOGS_PATH}/${createResponse.body.id}`)
-            .set('Authorization', 'adminToken')
-            .send(blogUpdateData)
-            .expect(HttpStatus.NoContent);
-
-        const blogResponse = await request(app).get(
-            `/BLOGS_PATH/${createResponse.body.id}`,
-        );
-
-        expect(blogResponse.body).toEqual({
-            ...blogUpdateData,
-            id: createResponse.body.id,
-            createdAt: expect.any(String),
-        });
-    });
-
-    it.skip('DELETE /blogs/:id and check after NOT FOUND', async () => {
-        const {
-            body: { id: createdBlogId },
-        } = await request(app)
-            .post('/BLOGS_PATH')
-            .set('Authorization', 'adminToken')
-            .send({ ...testBlogData, name: 'Another Test Bitau' })
-            .expect(HttpStatus.Created);
-
-        await request(app)
-            .delete(`/BLOGS_PATH/${createdBlogId}`)
-            .expect(HttpStatus.NoContent);
-
-        const blogResponse = await request(app).get(
-            `/BLOGS_PATH/${createdBlogId}`,
-        );
-        expect(blogResponse.status).toBe(HttpStatus.NotFound);
-    });
-
-});
-
-
-
+//it-incubator course

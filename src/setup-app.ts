@@ -4,8 +4,7 @@ import { setupSwagger } from "./core/swagger/setup-swagger"
 import {BLOGS_PATH, POSTS_PATH, TESTING_PATH} from "./core/paths/paths";
 import {testingRouter} from "./testing/routers/testing.router";
 import {postsRouter} from "./posts/routers/posts.router";
-import {runDB} from "./db/mongo.db";
-import {SETTINGS} from "./core/settings/settings";
+
 
 
 export const setupApp = (app: Express) => {
