@@ -1,8 +1,8 @@
 import { WithId } from 'mongodb';
-import { Blog } from '../../domain/blog';
+import { User } from '../../domain/user';
 import {BlogDataOutput} from "../output/blog-data.output";
 
-export function mapToBlogOutput(blog: WithId<Blog>): BlogDataOutput {
+export function mapToBlogOutput(blog: WithId<User>): BlogDataOutput {
     return {
         id: blog._id.toString(),
         name: blog.name,

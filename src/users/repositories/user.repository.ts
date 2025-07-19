@@ -1,4 +1,4 @@
-import { Blog } from '../domain/blog';
+import { User } from '../domain/user';
 import { blogCollection } from '../../db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
@@ -7,7 +7,7 @@ import {UserInputDto} from "../application/dtos/user.input-dto";
 
 export const userRepository = {
 
-    async findMany( queryDto: BlogQueryInput): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
+    async findMany( queryDto: BlogQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
         console.log('[findMany] queryDto:', queryDto);
 
         const {
@@ -38,11 +38,11 @@ export const userRepository = {
         return { items, totalCount };
     },
 
-    async findById(id: string): Promise<WithId<Blog> | null> {
+    async findById(id: string): Promise<WithId<User> | null> {
         return blogCollection.findOne({ _id: new ObjectId(id) });
     },
 
-    async findByIdOrFail(id: string): Promise<WithId<Blog>> {
+    async findByIdOrFail(id: string): Promise<WithId<User>> {
         const res = await blogCollection.findOne({ _id: new ObjectId(id) });
 
         if (!res) {
@@ -51,12 +51,12 @@ export const userRepository = {
         return res;
     },
 
-    async findByIds(ids: string[]): Promise<WithId<Blog>[]> {
+    async findByIds(ids: string[]): Promise<WithId<User>[]> {
         const objectIds = ids.map(id => new ObjectId(id));
         return blogCollection.find({ _id: { $in: objectIds } }).toArray();
     },
 
-    async create(newBlog: Blog): Promise<string> {
+    async create(newBlog: User): Promise<string> {
         const insertResult = await blogCollection.insertOne(newBlog);
         return insertResult.insertedId.toString();},
 

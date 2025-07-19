@@ -1,8 +1,9 @@
 import { userRepository } from '../repositories/user.repository';
 import { WithId } from 'mongodb';
-import { Blog } from '../domain/blog';
+import { User } from '../domain/user';
 import { DomainError } from '../../core/errors/domain.error';
 import {UserInputDto} from "./dtos/user.input-dto";
+import {UserDataOutput} from "../routers/output/user-data.output";
 
 export const userService = {
 
@@ -15,16 +16,16 @@ export const userService = {
         return userRepository.findByIdOrFail(id);
     },
 
-    async create(dto: UserInputDto): Promise<BlogDataOutput> {
-        const newBlog: Blog = {
-            name: dto.name,
-            description: dto.description,
-            websiteUrl: dto.websiteUrl,
-            createdAt: new Date().toISOString(),
-            isMembership: false,
+    async create(dto: UserInputDto): Promise<UserDataOutput> {
+        const newUser: User = {
+            login: dto.login,
+            password: dto.password,
+            email: dto.email,
+            createdAt: new Date().toISOString()
+
         };
-        const id = await userRepository.create(newBlog);
-        return { id, name: newBlog.name, description: newBlog.description, websiteUrl: newBlog.websiteUrl, createdAt: newBlog.createdAt, isMembership: newBlog.isMembership };
+        const id = await userRepository.create(newUser);
+        return { id, name: newUser.name, description: newUser.description, websiteUrl: newBlog.websiteUrl, createdAt: newBlog.createdAt, isMembership: newBlog.isMembership };
     },
 
 
