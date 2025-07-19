@@ -24,7 +24,7 @@ import {postInputDtoForBlogValidation} from "../validation/post.blogForPostInput
 
 
 export const blogsRouter = Router({});
-
+console.log("=== TEST blogsRouter LOADED ===");
 blogsRouter
 
 
@@ -35,9 +35,9 @@ blogsRouter
         getBlogListHandler)
 
     .post("/",
-        superAdminGuardMiddleware,
-        blogInputDtoValidation,
-        inputValidationResultMiddleware,
+       //  superAdminGuardMiddleware,
+       //  blogInputDtoValidation,
+       // inputValidationResultMiddleware,
         postBlogHandler)
 
     .get("/:id",

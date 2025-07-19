@@ -19,9 +19,14 @@ const post_blog_post_handler_1 = require("./handlers/post-blog-post.handler");
 const blogId_validation_nested_1 = require("../../core/middlewares/validation/blogId-validation.nested");
 const post_blogForPostInput_validation_middlewares_1 = require("../validation/post.blogForPostInput.validation-middlewares");
 exports.blogsRouter = (0, express_1.Router)({});
+console.log("=== TEST blogsRouter LOADED ===");
 exports.blogsRouter
     .get("/", (0, query_pagination_sorting_validation_middleware_1.paginationAndSortingValidation)(blog_sort_field_1.BlogSortField), input_validtion_result_middleware_1.inputValidationResultMiddleware, get_blog_list_handler_1.getBlogListHandler)
-    .post("/", super_admin_guard_middleware_1.superAdminGuardMiddleware, blog_input_dto_validation_middlewares_1.blogInputDtoValidation, input_validtion_result_middleware_1.inputValidationResultMiddleware, post_blog_handler_1.postBlogHandler)
+    .post("/", 
+//  superAdminGuardMiddleware,
+//  blogInputDtoValidation,
+// inputValidationResultMiddleware,
+post_blog_handler_1.postBlogHandler)
     .get("/:id", params_id_validation_middleware_1.idValidation, input_validtion_result_middleware_1.inputValidationResultMiddleware, get_blog_handler_1.getBlogHandler)
     .put('/:id', super_admin_guard_middleware_1.superAdminGuardMiddleware, params_id_validation_middleware_1.idValidation, blog_input_dto_validation_middlewares_1.blogInputDtoValidation, input_validtion_result_middleware_1.inputValidationResultMiddleware, put_blog_handler_1.putBlogHandler)
     .delete('/:id', super_admin_guard_middleware_1.superAdminGuardMiddleware, delete_blog_handler_1.deleteBlogHandler)

@@ -1,174 +1,36 @@
-import request from 'supertest';
-import { setupApp } from "../../../src/setup-app";
-//import { db } from '../../src/index';
+import { app } from "../../../src/app"; // ⚡️ Импортируешь готовый app, а не создаёшь новый!
+import request from "supertest";
+import { BLOGS_PATH, TESTING_PATH } from "../../../src/core/paths/paths";
+import { BlogInputDto } from "../../../src/blogs/application/dtos/blog.input-dto";
+import { HttpStatus } from "../../../src/core/types/http-statuses";
 
-describe('Blog Api body validation check', () => {
-
+describe("testing POST to /blogs", () => {
     beforeEach(async () => {
-        await request(setupApp).delete('/__test__/data')
-    })
+        await request(app).delete(`${TESTING_PATH}/all-data`);
+    });
 
-})
-    // it('should return 200 and empty array', async () => {
-    //     await request(app)
-    //         .get('/courses')
-    //         .expect(HTTP_STATUSES.OK_200, [])
-    // })
-    //
-    // it('should return 404 for not existing course', async () => {
-    //     await request(app)
-    //         .get('/courses/1')
-    //         .expect(HTTP_STATUSES.NOT_FOUND_404)
-    // })
-    //
-    // it('should NOT create course with incorrect input data', async () => {
-    //     await request(app)
-    //         .post('/courses')
-    //         .send({title: ''})
-    //         .expect(HTTP_STATUSES.BAD_REQUEST_400)
-    //
-    //     await request(app)
-    //         .get('/courses')
-    //         .expect(HTTP_STATUSES.OK_200, [])
-    //
-    // })
-    //
-    // let createdCourse1:any = null;
-    //
-    // it('should create course with correct input data', async () => {
-    //     const createResponse = await request(app)
-    //         .post('/courses')
-    //         .send({title: 'NewTitle'})
-    //         .expect(HTTP_STATUSES.CREATED_201)
-    //
-    //     createdCourse1 = createResponse.body;
-    //     console.log('createdCourse1:', createdCourse1); // <-- Добавь сюда
-    //
-    //     expect(createdCourse1).toEqual({
-    //         id: expect.any(Number),
-    //         title: 'NewTitle'
-    //     })
-    //
-    //     await request(app)
-    //         .get('/courses')
-    //         .expect(HTTP_STATUSES.OK_200, [createdCourse1])})
-    //
-    // let createdCourse2:any = null;
-    //
-    // it('create one more course', async () => {
-    //
-    //     const createResponse1 = await request(app)
-    //         .post('/courses')
-    //         .send({title: 'NewTitle'})
-    //         .expect(HTTP_STATUSES.CREATED_201);
-    //     const createdCourse1 = createResponse1.body;
-    //
-    //     const createResponse = await request(app)
-    //         .post('/courses')
-    //         .send({title: 'it-incubator cc2'})
-    //         .expect(HTTP_STATUSES.CREATED_201)
-    //
-    //     createdCourse2 = createResponse.body;
-    //
-    //     expect(createdCourse2).toEqual({
-    //         id: expect.any(Number),
-    //         title: 'it-incubator cc2'
-    //     })
-    //
-    //     await request(app)
-    //         .get('/courses')
-    //         .expect(HTTP_STATUSES.OK_200, [createdCourse1, createdCourse2])
-    // })
-    //
-    // it('should NOT update course with incorrect input data', async () => {
-    //
-    //     const createResponse = await request(app)
-    //         .post('/courses')
-    //         .send({title: 'it-incubator cc2'})
-    //         .expect(HTTP_STATUSES.CREATED_201)
-    //
-    //     createdCourse1 = createResponse.body;
-    //
-    //     await request(app)
-    //         .put('/courses/' + createdCourse1.id)
-    //         .send({title: ''})
-    //         .expect(HTTP_STATUSES.BAD_REQUEST_400)
-    //
-    //     await request(app)
-    //         .get('/courses/'+ createdCourse1.id)
-    //         .expect(HTTP_STATUSES.OK_200, createdCourse1)
-    // })
-    //
-    // it('should NOT update course that not exist', async () => {
-    //     await request(app)
-    //         .put('/courses/' + -100)
-    //         .send({title: 'good title'})
-    //         .expect(HTTP_STATUSES.NOT_FOUND_404)
-    // })
-    //
-    // let createdCourse3:any = null;
-    //
-    // it('should update course with correct input data', async () => {
-    //     const createResponse = await request(app)
-    //         .post('/courses/')
-    //         .send({title: 'good title3'})
-    //         .expect(HTTP_STATUSES.CREATED_201);
-    //
-    //     createdCourse3 = createResponse.body;
-    //
-    //     await request(app)
-    //         .put('/courses/' + createdCourse3.id)
-    //         .send({title: 'good new title'})
-    //         .expect(HTTP_STATUSES.NO_CONTENT_204);
-    //
-    //     await request(app)
-    //         .get('/courses/' + createdCourse3.id)
-    //         .expect(HTTP_STATUSES.OK_200, {
-    //             id: createdCourse3.id,
-    //             title: 'good new title'
-    //         });
-    // });
-    //
-    // let createdCourse5:any = null;
-    // let createdCourse4:any = null;
-    //
-    // it('should delete both courses', async () => {
-    //
-    //     const createResponse = await request(app)
-    //         .post('/courses')
-    //         .send({title: 'NewTitle'})
-    //         .expect(HTTP_STATUSES.CREATED_201)
-    //
-    //     createdCourse5 = createResponse.body;
-    //
-    //     const createResponse2 = await request(app)
-    //         .post('/courses')
-    //         .send({title: 'it-incubator cc2'})
-    //         .expect(HTTP_STATUSES.CREATED_201)
-    //
-    //     createdCourse4 = createResponse2.body;
-    //
-    //     await request(app)
-    //         .delete('/courses/' + createdCourse5.id)
-    //         .expect(HTTP_STATUSES.NO_CONTENT_204)
-    //
-    //     await request(app)
-    //         .get('/courses/' + createdCourse5.id)
-    //         .expect(HTTP_STATUSES.NOT_FOUND_404)
-    //
-    //     await request(app)
-    //         .delete('/courses/' + createdCourse4.id)
-    //         .expect(HTTP_STATUSES.NO_CONTENT_204)
-    //
-    //     await request(app)
-    //         .get('/courses/' + createdCourse4.id)
-    //         .expect(HTTP_STATUSES.NOT_FOUND_404)
-    //
-    //     await request(app)
-    //         .get('/courses')
-    //         .expect(HTTP_STATUSES.OK_200, [])
-    //
-    // })
-    //
+    it('TEST should respond with hello world', async () => {
+        const res = await request(app).get('/');
+        console.log(res.text); // Должен увидеть Hello world Bitau!
+    });
 
-//it-incubator course
+    it("should create blog with correct input data ", async () => {
+        const data: BlogInputDto = {
+            name: "My Blog",
+            description: "Best blog ever!",
+            websiteUrl: "https://myblog.com"
+        };
+
+        const response = await request(app)
+            .post(BLOGS_PATH)
+            .set('Authorization', 'Basic admin-qwerty')
+            .send(data)
+            .expect(HttpStatus.Created);
+
+        // Если надо проверить тело ответа:
+        // expect(response.body).toEqual({
+        //     ...data,
+        //     id: expect.any(String), // если есть id
+        // });
+    });
+});

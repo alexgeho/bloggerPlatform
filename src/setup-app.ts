@@ -5,9 +5,8 @@ import {BLOGS_PATH, POSTS_PATH, TESTING_PATH} from "./core/paths/paths";
 import {testingRouter} from "./testing/routers/testing.router";
 import {postsRouter} from "./posts/routers/posts.router";
 
-
-
 export const setupApp = (app: Express) => {
+    console.log("=== setupApp CALLED ===");
     app.use(express.json()); // middleware для парсинга JSON в теле запроса
 
     // основной роут

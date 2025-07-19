@@ -4,11 +4,14 @@ import express from "express";
 import { setupApp } from "./setup-app";
 import { SETTINGS } from "./core/settings/settings";
 import { runDB } from "./db/mongo.db";
+export { app };
+
+const app = express();
+
 
 const bootstrap = async () => {
 
 // создание приложения
-    const app = express();
    setupApp(app);
 
     const PORT = SETTINGS.PORT;

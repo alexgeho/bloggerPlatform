@@ -6,9 +6,8 @@
   "scripts": {
     "dev": "nodemon --inspect dist/index.js",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest -i",
     "watch": "tsc -w",
-    "jest": "jest -i",
     "lint": "eslint --fix .",
     "format": "prettier --write ."
   },

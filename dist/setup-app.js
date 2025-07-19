@@ -11,6 +11,7 @@ const paths_1 = require("./core/paths/paths");
 const testing_router_1 = require("./testing/routers/testing.router");
 const posts_router_1 = require("./posts/routers/posts.router");
 const setupApp = (app) => {
+    console.log("=== setupApp CALLED ===");
     app.use(express_1.default.json()); // middleware для парсинга JSON в теле запроса
     // основной роут
     app.get("/", (req, res) => {
