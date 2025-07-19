@@ -5,5 +5,6 @@ var ResourceType;
 (function (ResourceType) {
     ResourceType["Blogs"] = "blogs";
     ResourceType["Posts"] = "posts";
+    ResourceType["Users"] = "users";
     // ... другие сущности
 })(ResourceType || (exports.ResourceType = ResourceType = {}));
