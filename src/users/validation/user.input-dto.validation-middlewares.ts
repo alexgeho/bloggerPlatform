@@ -1,32 +1,32 @@
 import { body } from 'express-validator';
 
-const nameValidation = body('name')
+const loginValidation = body('login')
     .isString()
     .withMessage('name should be string')
     .trim()
     .isLength({ min: 2, max: 15 })
     .withMessage('Length of name is not correct');
 
-const descriptionValidation = body('description')
+const passwordValidation = body('password')
     .isString()
     .withMessage('description should be string')
     .trim()
     .isLength({ min: 3, max: 500 })
     .withMessage('Length of description is not correct');
 
-const websiteUrlValidation = body('websiteUrl')
+const emailValidation = body('email')
     .isString()
     .withMessage('websiteUrl should be string')
     .trim()
     .isLength({ min: 5, max: 100 })
     .withMessage('Length of websiteUrl is not correct')
-    .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/)
-    .withMessage('websiteUrl format is not valid')
+    .matches(/^[\w\.-]+@[a-zA-Z\d-]+\.[a-zA-Z\d\.-]+$/)
+    .withMessage('email format is not valid')
 
 
 
-export const blogInputDtoValidation = [
-    nameValidation,
-    descriptionValidation,
-    websiteUrlValidation
+export const UserInputDtoValidation = [
+    loginValidation,
+    passwordValidation,
+    emailValidation
 ];

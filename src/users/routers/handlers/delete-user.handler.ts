@@ -1,17 +1,16 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/types/http-statuses';
-import { userService } from '../../application/user.service';
-import { BlogUpdateInput } from '../input/blog-update.input';
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import { userService } from '../../application/user.service';
 
-export async function putBlogHandler(
-    req: Request<{ id: string }, {}, BlogUpdateInput>,
+export async function deleteUserHandler(
+    req: Request<{ id: string }>,
     res: Response,
 ) {
     try {
         const id = req.params.id;
 
-        await userService.update(id, req.body);
+        await userService.delete(id);
 
         res.sendStatus(HttpStatus.NoContent);
     } catch (e: unknown) {

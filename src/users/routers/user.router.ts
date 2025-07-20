@@ -1,32 +1,33 @@
 import {Router} from "express";
-import {postBlogHandler} from "./handlers/post-blog.handler";
-import {getBlogListHandler} from "./handlers/get-blog-list.handler";
+import {postUserHandler} from "./handlers/post-user.handler";
+import {getUserListHandler} from "./handlers/get-user-list.handler";
 import {inputValidationResultMiddleware} from "../../core/middlewares/validation/input-validtion-result.middleware";
-import {deleteBlogHandler} from "./handlers/delete-blog.handler";
+import {deleteUserHandler} from "./handlers/delete-user.handler";
 import {superAdminGuardMiddleware} from "../../auth/middlewares/super-admin.guard-middleware";
 import {
     paginationAndSortingValidation
 } from "../../core/middlewares/validation/query-pagination-sorting.validation-middleware";
 import {UserSortField} from "./input/user-sort-field";
+import {UserInputDtoValidation} from "../validation/user.input-dto.validation-middlewares";
 
 
-export const userRouter = Router({});
+export const usersRouter = Router({});
 console.log("=== TEST blogsRouter LOADED ===");
-userRouter
+usersRouter
 
     .get("/",
         paginationAndSortingValidation(UserSortField),
         inputValidationResultMiddleware,
-        getBlogListHandler)
+        getUserListHandler)
 
     .post("/",
-       //  superAdminGuardMiddleware,
-       //  blogInputDtoValidation,
-       // inputValidationResultMiddleware,
-        postBlogHandler)
+       superAdminGuardMiddleware,
+       UserInputDtoValidation,
+       inputValidationResultMiddleware,
+        postUserHandler)
 
     .delete('/:id',
         superAdminGuardMiddleware,
-        deleteBlogHandler)
+        deleteUserHandler)
 
 

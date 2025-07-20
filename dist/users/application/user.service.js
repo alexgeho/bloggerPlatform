@@ -17,11 +17,6 @@ exports.userService = {
             return user_repository_1.userRepository.findMany(queryDto);
         });
     },
-    findByIdOrFail(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return user_repository_1.userRepository.findByIdOrFail(id);
-        });
-    },
     create(dto) {
         return __awaiter(this, void 0, void 0, function* () {
             const newUser = {
@@ -31,13 +26,7 @@ exports.userService = {
                 createdAt: new Date().toISOString()
             };
             const id = yield user_repository_1.userRepository.create(newUser);
-            return { id, name: newUser.name, description: newUser.description, websiteUrl: newBlog.websiteUrl, createdAt: newBlog.createdAt, isMembership: newBlog.isMembership };
-        });
-    },
-    update(id, dto) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield user_repository_1.userRepository.update(id, dto);
-            return;
+            return { id, login: newUser.login, email: newUser.email, createdAt: newUser.createdAt };
         });
     },
     delete(id) {

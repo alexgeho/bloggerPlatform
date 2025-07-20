@@ -2,10 +2,10 @@ import { WithId } from 'mongodb';
 import { User } from '../../domain/user';
 import { ResourceType } from '../../../core/types/resource-type';
 import { UserListPaginatedOutput } from '../output/user-list-paginated.output';
-import { BlogDataOutput } from '../output/blog-data.output';
+import { UserDataOutput } from '../output/user-data.output';
 
-export function mapToBlogListPaginatedOutput(
-    blogs: WithId<User>[],
+export function mapToUserListPaginatedOutput(
+    users: WithId<User>[],
     meta: { pageNumber: number; pageSize: number; totalCount: number }
 ): UserListPaginatedOutput {
     return {
@@ -13,13 +13,11 @@ export function mapToBlogListPaginatedOutput(
         page: meta.pageNumber,
         pageSize: meta.pageSize,
         totalCount: meta.totalCount,
-        items: blogs.map((blog: WithId<User>): BlogDataOutput => ({
-            id: blog._id.toString(),
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl,
-            createdAt: blog.createdAt,
-            isMembership: blog.isMembership,
+        items: users.map((user: WithId<User>): UserDataOutput => ({
+            id: user._id.toString(),
+            login: user.login,
+            email: user.email,
+            createdAt: user.createdAt,
         })),
     };
 }
