@@ -13,13 +13,9 @@ import {
 } from "../../core/middlewares/validation/query-pagination-sorting.validation-middleware";
 import {BlogSortField} from "./input/blog-sort-field";
 import {getBlogPostsHandler} from "./handlers/get-blog-posts.handler";
-import {postInputDtoValidation} from "../../posts/validation/post.input-dto.validation-middlewares";
 import {asyncHandler} from "../../core/utils/express-async-handler";
 import {postBlogPostHandler} from "./handlers/post-blog-post.handler";
 import {blogIdValidationNested} from "../../core/middlewares/validation/blogId-validation.nested";
-import {
-    postForBlogBodyValidationResultMiddleware
-} from "../../core/middlewares/validation/post-for-blog-body-validation.middleware";
 import {postInputDtoForBlogValidation} from "../validation/post.blogForPostInput.validation-middlewares";
 
 

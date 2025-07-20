@@ -11,6 +11,7 @@ const paths_1 = require("./core/paths/paths");
 const testing_router_1 = require("./testing/routers/testing.router");
 const posts_router_1 = require("./posts/routers/posts.router");
 const user_router_1 = require("./users/routers/user.router");
+const auth_router_1 = require("./auth/routers/auth.router");
 const setupApp = (app) => {
     console.log("=== setupApp CALLED ===");
     app.use(express_1.default.json()); // middleware для парсинга JSON в теле запроса
@@ -23,6 +24,7 @@ const setupApp = (app) => {
     app.use(paths_1.TESTING_PATH, testing_router_1.testingRouter);
     app.use(paths_1.POSTS_PATH, posts_router_1.postsRouter);
     app.use(paths_1.USERS_PATH, user_router_1.usersRouter);
+    app.use(paths_1.AUTH_PATH, auth_router_1.authRouter);
     (0, setup_swagger_1.setupSwagger)(app);
     return app;
 };
