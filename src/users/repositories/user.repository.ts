@@ -2,28 +2,32 @@ import { User } from '../domain/user';
 import { blogCollection } from '../../db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
-import { BlogQueryInput } from '../routers/input/user-query.input';
+import { UserQueryInput } from '../routers/input/user-query.input';
 import {UserInputDto} from "../application/dtos/user.input-dto";
 
 export const userRepository = {
 
-    async findMany( queryDto: BlogQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
-        console.log('[findMany] queryDto:', queryDto);
+    async findMany( queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
 
         const {
             pageNumber,
             pageSize,
             sortBy,
             sortDirection,
-            searchNameTerm
+            login,
+            email
 
         } = queryDto;
 
         const skip = (pageNumber - 1) * pageSize;
         const filter: any = {};
 
-        if (searchNameTerm) {
-            filter.name = { $regex: searchNameTerm, $options: 'i' };
+        if (login) {
+            filter.name = { $regex: login, $options: 'i' };
+        }
+
+        if (email) {
+            filter.name = { $regex: email, $options: 'i' };
         }
 
         const items = await blogCollection

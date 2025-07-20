@@ -1,14 +1,12 @@
-import { userRepository } from '../repositories/user.repository';
-import { WithId } from 'mongodb';
-import { User } from '../domain/user';
-import { DomainError } from '../../core/errors/domain.error';
+import {userRepository} from '../repositories/user.repository';
+import {WithId} from 'mongodb';
+import {User} from '../domain/user';
 import {UserInputDto} from "./dtos/user.input-dto";
 import {UserDataOutput} from "../routers/output/user-data.output";
 
 export const userService = {
 
-    async findMany( queryDto: UserInputDto)
-        : Promise<{ items: WithId<User>[]; totalCount: number }> {
+    async findMany( queryDto: UserInputDto): Promise<{ items: WithId<User>[]; totalCount: number }> {
         return userRepository.findMany(queryDto);
     },
 
@@ -25,9 +23,8 @@ export const userService = {
 
         };
         const id = await userRepository.create(newUser);
-        return { id, name: newUser.name, description: newUser.description, websiteUrl: newBlog.websiteUrl, createdAt: newBlog.createdAt, isMembership: newBlog.isMembership };
+        return { id, login: newUser.login, email: newUser.email, createdAt: newUser.createdAt };
     },
-
 
     async update(id: string, dto: UserInputDto): Promise<void> {
         await userRepository.update(id, dto);
