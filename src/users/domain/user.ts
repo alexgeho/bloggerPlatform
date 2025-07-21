@@ -1,8 +1,10 @@
+import {ObjectId} from "mongodb";
 
 export type User = {
+    _id: ObjectId;
     login: string;
-    password: string;
     email: string;
-    createdAt: string;
+    passwordHash: string;
+    passwordSalt: string;
+    createdAt: Date;
 };
-

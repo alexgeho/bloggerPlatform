@@ -8,10 +8,12 @@ export async function postUserHandler(req: Request, res: Response) {
         const createdUserData = await userService.create(req.body);
 
         if ('errorsMessages' in createdUserData) {
-            return res.status(400).json(createdUserData);
+             res.status(400).json(createdUserData);
+            return;
         }
 
-        return res.status(HttpStatus.Created).send(createdUserData);
+         res.status(HttpStatus.Created).send(createdUserData);
+        return;
 
 
     } catch (e) {

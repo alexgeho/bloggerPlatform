@@ -2,6 +2,7 @@ import {authCollection} from '../../db/mongo.db';
 import { Auth } from '../domain/auth';
 
 export const authRepository = {
+
     async create(newAuth: Auth): Promise<Auth> {
         await authCollection.insertOne(newAuth);
         return newAuth;

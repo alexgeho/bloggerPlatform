@@ -1,5 +1,5 @@
 import { User } from '../domain/user';
-import {blogCollection, userCollection} from '../../db/mongo.db';
+import {authCollection, blogCollection, userCollection} from '../../db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
 import { UserQueryInput } from '../routers/input/user-query.input';
@@ -69,6 +69,13 @@ export const userRepository = {
             return null;
         }
         return userCollection.findOne(filter);
+    },
+
+    async findByLoginOrEmail(loginOrEmail: string) {
+
+        const user = await userCollection.findOne({$or: [ {email: loginOrEmail}, {login: loginOrEmail}]})
+
+        return user
     }
 
 };

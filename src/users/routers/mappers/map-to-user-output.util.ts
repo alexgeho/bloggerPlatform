@@ -7,6 +7,6 @@ export function mapToUserOutput(user: WithId<User>): UserDataOutput {
         id: user._id.toString(),
         login: user.login,
         email: user.email,
-        createdAt: user.createdAt
+        createdAt: new Date().toISOString()
     };
 }

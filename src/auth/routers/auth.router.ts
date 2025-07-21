@@ -1,21 +1,12 @@
 import { Router, Request, Response } from "express";
+import {userService} from "../../users/application/user.service";
 import { authService } from "../application/auth.service";
+
 
 export const authRouter = Router();
 
-console.log("=== TEST authRouter LOADED ===");
-
-// Регистрация (создание пользователя)
-authRouter.post("/create", async (req: Request, res: Response) => {
-    console.log("=== TEST authRouter CREATE ===");
-        const newAuth = await authService.createAuth(req.body.login, req.body.email, req.body.password);
-        res.status(201).send(newAuth);
+authRouter.post("/login", async (Request, Response) => {
+    const isValid = await authService.checkCredentials(Request.body.loginOrEmail, Request.body.password);
+    if (isValid) return Response.sendStatus(204);
+    return Response.sendStatus(401);
 });
-
-// Логин
-authRouter.post("/login",
-    async (req: Request, res: Response) => {
-    const result = await authService.checkCredentials(req.body.loginOrEmail, req.body.password)
-    res.status(200);
-});
-
