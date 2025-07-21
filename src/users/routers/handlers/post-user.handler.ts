@@ -5,12 +5,18 @@ import {userService} from "../../application/user.service";
 
 export async function postUserHandler(req: Request, res: Response) {
     try {
-        // req.body напрямую!
         const createdUserData = await userService.create(req.body);
 
-        res.status(HttpStatus.Created).send(createdUserData);
+        if ('errorsMessages' in createdUserData) {
+            return res.status(400).json(createdUserData);
+        }
+
+        return res.status(HttpStatus.Created).send(createdUserData);
+
+
     } catch (e) {
         errorsHandler(e, res);
     }
 }
+
 

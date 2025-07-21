@@ -56,4 +56,19 @@ export const userRepository = {
         }
         return;
     },
+
+    async findOne({ login, email }: { login?: string, email?: string }): Promise<WithId<User> | null> {
+        const filter: any = {};
+        if (login && email) {
+            filter.$or = [{ login }, { email }];
+        } else if (login) {
+            filter.login = login;
+        } else if (email) {
+            filter.email = email;
+        } else {
+            return null;
+        }
+        return userCollection.findOne(filter);
+    }
+
 };
