@@ -1,12 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
-import express from "express";
+
 import { setupApp } from "./setup-app";
 import { SETTINGS } from "./core/settings/settings";
 import { runDB } from "./db/mongo.db";
-export { app };
+import {app} from "./app";
 
-const app = express();
+
 
 
 const bootstrap = async () => {

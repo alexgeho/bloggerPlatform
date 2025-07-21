@@ -15,6 +15,9 @@ export const setupApp = (app: Express) => {
     app.get("/", (req, res) => {
         res.status(200).send("Hello world Bitau!");
     });
+    // app.all('*', (req, res) => {
+    //     console.log(req.url)
+    // })
     console.log('Монтирую blogsRouter по адресу:', BLOGS_PATH)
 
     app.use(BLOGS_PATH, blogsRouter);
@@ -23,7 +26,7 @@ export const setupApp = (app: Express) => {
     app.use(USERS_PATH, usersRouter);
     app.use(AUTH_PATH, authRouter);
 
-   setupSwagger(app);
+    setupSwagger(app);
 
 
     return app;

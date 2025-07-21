@@ -31,9 +31,9 @@ blogsRouter
         getBlogListHandler)
 
     .post("/",
-       //  superAdminGuardMiddleware,
-       //  blogInputDtoValidation,
-       // inputValidationResultMiddleware,
+        //superAdminGuardMiddleware,
+        blogInputDtoValidation,
+       inputValidationResultMiddleware,
         postBlogHandler)
 
     .get("/:id",
