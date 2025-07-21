@@ -1,10 +1,19 @@
-import { app } from "../../../src/app"; // ⚡️ Импортируешь готовый app, а не создаёшь новый!
+import { doSomething} from "../../../src/app"; // ⚡️ Импортируешь готовый app, а не создаёшь новый!
 import request from "supertest";
 import { USERS_PATH, TESTING_PATH } from "../../../src/core/paths/paths";
 import { UserInputDto } from "../../../src/users/application/dtos/user.input-dto";
 import { HttpStatus } from "../../../src/core/types/http-statuses";
-
+import {runDB} from "../../../src/db/mongo.db";
+import {SETTINGS} from "../../../src/core/settings/settings";
+import * as setupAppConfig from "../../../src/setup-app";
+import express from "express";
+const app = setupAppConfig.setupApp(express());
 describe("testing POST to /blogs", () => {
+    beforeAll(() => {
+        doSomething()
+        runDB(SETTINGS.MONGO_URL)
+    })
+
     beforeEach(async () => {
         await request(app).delete(`${TESTING_PATH}/all-data`);
     });
@@ -14,7 +23,7 @@ describe("testing POST to /blogs", () => {
         console.log(res.text); // Должен увидеть Hello world Bitau!
     });
 
-    it("should create blog with correct input data ", async () => {
+    it("should create User with correct input data ", async () => {
         const data: UserInputDto = {
             login: "CulQnv0ISj",
             password: "string",
@@ -23,8 +32,8 @@ describe("testing POST to /blogs", () => {
 
         const response = await request(app)
             .post(USERS_PATH)
-            .set('Authorization', 'Basic admin-qwerty')
             .send(data)
+            .auth("admin", "qwerty")
             .expect(HttpStatus.Created);
 
         // Если надо проверить тело ответа:

@@ -7,6 +7,7 @@ console.log("=== TEST authRouter LOADED ===");
 
 // Регистрация (создание пользователя)
 authRouter.post("/create", async (req: Request, res: Response) => {
+    console.log("=== TEST authRouter CREATE ===");
         const newAuth = await authService.createAuth(req.body.login, req.body.email, req.body.password);
         res.status(201).send(newAuth);
 });
