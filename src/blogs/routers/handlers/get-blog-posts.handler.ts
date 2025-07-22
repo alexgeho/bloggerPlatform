@@ -37,9 +37,5 @@ export async function getBlogPostsHandler(req:Request, res:Response ) {
         };
 
         return res.status(200).json(result);
-    } catch (e: any) {
-        if (e.message === 'Blog not exist') return res.sendStatus(404);
-        return res.sendStatus(500);
-    }
-
+    } catch (e) Changes
 }
