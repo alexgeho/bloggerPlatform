@@ -11,10 +11,12 @@ export async function postAuthHandler(req: Request, res: Response) {
         const result = await authService.checkCredentials(loginOrEmail, password);
 
         if (result === true) {
-            return res.sendStatus(204);
+            res.sendStatus(204);
+            return
         } else {
             // result — это объект с errorsMessages
-            return res.status(401).json(result);
+             res.status(401).json(result);
+             return
         }
     }catch (e) {
         errorsHandler(e, res);

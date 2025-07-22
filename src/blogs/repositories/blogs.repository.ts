@@ -46,7 +46,7 @@ export const blogsRepository = {
         const res = await blogCollection.findOne({ _id: new ObjectId(id) });
 
         if (!res) {
-            throw new RepositoryNotFoundError('Blog not exist');
+            throw new RepositoryNotFoundError('Blog not exist2');
         }
         return res;
     },

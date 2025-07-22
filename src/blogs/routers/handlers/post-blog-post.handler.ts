@@ -1,12 +1,14 @@
-import { Request, Response } from 'express';
+import {NextFunction, Request, Response} from 'express';
 import { HttpStatus } from '../../../core/types/http-statuses';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 import { postsService } from '../../../posts/application/posts.service';
 import {blogsService} from "../../application/blogs.service";
+import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
 
 export async function postBlogPostHandler(
     req: Request,
-    res: Response
+    res: Response,
+    next: NextFunction
 ): Promise<void> {
     try {
         const blogId = req.params.blogId;
@@ -26,7 +28,19 @@ export async function postBlogPostHandler(
 
         res.status(HttpStatus.Created).send(createdPostData);
     } catch (e) {
-        errorsHandler(e, res);
+        console.log(e, ' error')
+
+        console.log(e, ' here')
+        console.log(e instanceof  Error, ' is error')
+        // Если блог не найден — 404, иначе просто пробрасываем ошибку дальше (или можно логировать)
+        if (e instanceof RepositoryNotFoundError) {
+            console.log('handled')
+            res.status(e.status).send({ message: 'Blog not found' });
+            return;
+        } else {
+
+
+            errorsHandler(e, res); // <-- если вдруг какая-то другая непредвиденная ошибка
+        }
     }
 }
-

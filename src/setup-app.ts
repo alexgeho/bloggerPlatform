@@ -1,4 +1,4 @@
-import express, {Express} from "express";
+import express, {Express, RequestHandler} from "express";
 import {blogsRouter} from "./blogs/routers/blogs.router";
 import { setupSwagger } from "./core/swagger/setup-swagger"
 import {AUTH_PATH, BLOGS_PATH, POSTS_PATH, TESTING_PATH, USERS_PATH} from "./core/paths/paths";
@@ -26,8 +26,15 @@ export const setupApp = (app: Express) => {
     app.use(USERS_PATH, usersRouter);
     app.use(AUTH_PATH, authRouter);
 
+
     setupSwagger(app);
 
-
+    function errorHandler  (err: any, req: Request, res: Response)  {
+        console.log(arguments, 'err midleware');
+        console.log( 'req.url');
+    }
+    console.log(errorHandler, 'handler')
+    // @ts-ignore
+    app.use(errorHandler)
     return app;
 };

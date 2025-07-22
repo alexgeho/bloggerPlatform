@@ -9,5 +9,6 @@ export const authRouter = Router();
 
 authRouter.post("/login",
     authInputDtoValidation,
+
     postAuthHandler)
 
