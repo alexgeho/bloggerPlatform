@@ -1,12 +1,20 @@
-import { Router, Request, Response } from "express";
+import {Router, Request, Response} from "express";
 import {userService} from "../../users/application/user.service";
-import { authService } from "../application/auth.service";
+import {authService} from "../application/auth.service";
 
 
 export const authRouter = Router();
 
-authRouter.post("/login", async (Request, Response) => {
-    const isValid = await authService.checkCredentials(Request.body.loginOrEmail, Request.body.password);
-    if (isValid) return Response.sendStatus(204);
-    return Response.sendStatus(401);
+authRouter.post("/login", async (req: Request, res: Response) => {
+    const { loginOrEmail, password } = req.body;
+
+    const result = await authService.checkCredentials(loginOrEmail, password);
+
+    if (result === true) {
+        return res.sendStatus(204);
+    } else {
+        // result — это объект с errorsMessages
+        return res.status(401).json(result);
+    }
 });
+
