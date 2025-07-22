@@ -31,7 +31,7 @@ blogsRouter
         getBlogListHandler)
 
     .post("/",
-        //superAdminGuardMiddleware,
+        superAdminGuardMiddleware,
         blogInputDtoValidation,
        inputValidationResultMiddleware,
         postBlogHandler)
