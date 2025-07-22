@@ -4,14 +4,14 @@ const loginValidation = body('login')
     .isString()
     .withMessage('name should be string')
     .trim()
-    .isLength({ min: 2, max: 15 })
+    .isLength({ min: 2, max: 10 })
     .withMessage('Length of name is not correct');
 
 const passwordValidation = body('password')
     .isString()
     .withMessage('description should be string')
     .trim()
-    .isLength({ min: 3, max: 500 })
+    .isLength({ min: 6, max: 20 })
     .withMessage('Length of description is not correct');
 
 const emailValidation = body('email')
@@ -20,7 +20,7 @@ const emailValidation = body('email')
     .trim()
     .isLength({ min: 5, max: 100 })
     .withMessage('Length of websiteUrl is not correct')
-    .matches(/^[\w\.-]+@[a-zA-Z\d-]+\.[a-zA-Z\d\.-]+$/)
+    .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
     .withMessage('email format is not valid')
 
 
