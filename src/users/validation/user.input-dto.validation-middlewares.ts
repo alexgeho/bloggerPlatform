@@ -5,7 +5,9 @@ const loginValidation = body('login')
     .withMessage('name should be string')
     .trim()
     .isLength({ min: 2, max: 10 })
-    .withMessage('Length of name is not correct');
+    .withMessage('Length of name is not correct')
+    .matches(/^[a-zA-Z0-9_-]*$/)
+    .withMessage('login format is not valid');
 
 const passwordValidation = body('password')
     .isString()
