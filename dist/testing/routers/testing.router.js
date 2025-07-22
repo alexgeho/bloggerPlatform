@@ -49,7 +49,8 @@ exports.testingRouter.delete('/all-data', function (req, res) { return __awaiter
                 _a.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, Promise.all([
                         mongo_db_1.blogCollection.deleteMany(),
-                        mongo_db_1.postCollection.deleteMany()
+                        mongo_db_1.postCollection.deleteMany(),
+                        mongo_db_1.userCollection.deleteMany()
                     ])];
             case 1:
                 _a.sent();
