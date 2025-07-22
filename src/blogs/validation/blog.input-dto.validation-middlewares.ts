@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-const nameValidation = body('name')
+const nameValidation = body('loginOrEmail')
     .isString()
     .withMessage('name should be string')
     .trim()

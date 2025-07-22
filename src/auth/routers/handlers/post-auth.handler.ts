@@ -5,13 +5,18 @@ import {authService} from "../../application/auth.service";
 
 export async function postAuthHandler(req: Request, res: Response) {
     try {
-        // req.body напрямую!
-        const { login, email, password } = req.body;
-        const createdAuthData = await authService.createAuth(login, email, password);
 
+        const { loginOrEmail, password } = req.body;
 
-        res.status(HttpStatus.Created).send(createdAuthData);
-    } catch (e) {
+        const result = await authService.checkCredentials(loginOrEmail, password);
+
+        if (result === true) {
+            return res.sendStatus(204);
+        } else {
+            // result — это объект с errorsMessages
+            return res.status(401).json(result);
+        }
+    }catch (e) {
         errorsHandler(e, res);
     }
 }
