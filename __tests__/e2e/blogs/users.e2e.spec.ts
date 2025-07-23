@@ -7,7 +7,9 @@ import {runDB} from "../../../src/db/mongo.db";
 import {SETTINGS} from "../../../src/core/settings/settings";
 import * as setupAppConfig from "../../../src/setup-app";
 import express from "express";
+import {usersRouter} from "../../../src/users/routers/user.router";
 const app = setupAppConfig.setupApp(express());
+
 describe("testing POST to /blogs", () => {
     beforeAll(() => {
         doSomething()
@@ -25,9 +27,9 @@ describe("testing POST to /blogs", () => {
 
     it("should create User with correct input data ", async () => {
         const data: UserInputDto = {
-            login: "CulQnv0ISj",
-            password: "string",
-            email: "example@example.com"
+            login: "Cu0ISj",
+            password: "st2ring",
+            email: "exam2ple@example.com"
         };
 
         const response = await request(app)
@@ -35,11 +37,44 @@ describe("testing POST to /blogs", () => {
             .send(data)
             .auth("admin", "qwerty")
             .expect(HttpStatus.Created);
-
-        // Если надо проверить тело ответа:
-        // expect(response.body).toEqual({
-        //     ...data,
-        //     id: expect.any(String), // если есть id
-        // });
     });
+
+    it(`shouldn't create User with incorrect email`, async () => {
+        const data: UserInputDto = {
+            login: "Cv0ISj",
+            password: "string",
+            email: "exampleexamplecom"
+        };
+
+        const response = await request(app)
+            .post(USERS_PATH)
+            .send(data)
+            .auth("admin", "qwerty")
+            .expect(HttpStatus.BadRequest);
+    });
+
+    it("should delete User", async () => {
+
+        const data1: UserInputDto = {
+            login: "Alex",
+            password: "1234567a",
+            email: "exam5@eexample.com"
+        }
+
+        let createdUser: any;
+
+        const createResponse = await request(app)
+            .post(USERS_PATH)
+            .send(data1)
+            .auth("admin", "qwerty")
+            .expect(HttpStatus.Created)
+
+        createdUser = createResponse.body;
+
+        await request(app)
+            .delete(`${USERS_PATH}/${createdUser.id}`)
+            .auth("admin", "qwerty")
+            .expect(HttpStatus.NoContent)
+    });
+
 });

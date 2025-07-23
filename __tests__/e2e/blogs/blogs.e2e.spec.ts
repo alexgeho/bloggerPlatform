@@ -13,6 +13,7 @@ console.log('123')
 console.log(setupAppConfig, ' setupAppConfig')
 const app = setupAppConfig.setupApp(express());
 console.log(appContent)
+
 describe("testing POST to /blogs", () => {
     beforeAll(() => {
         doSomething()
@@ -42,7 +43,7 @@ describe("testing POST to /blogs", () => {
             .expect(HttpStatus.Created);
     })
 
-    it(`shouldn't create blog with correct input data`, async () => {
+    it(`shouldn't create blog with incorrect input data`, async () => {
         const data = {
             name: "My Blog",
             description: 12345,
