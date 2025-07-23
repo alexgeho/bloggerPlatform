@@ -17,7 +17,7 @@ export function mapToUserListPaginatedOutput(
             id: user._id.toString(),
             login: user.login,
             email: user.email,
-            createdAt: new Date().toISOString()
+            createdAt: user.createdAt.toISOString()
         })),
     };
 }

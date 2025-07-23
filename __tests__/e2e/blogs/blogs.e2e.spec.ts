@@ -38,7 +38,7 @@ describe("testing POST to /blogs", () => {
 
         const response = await request(app)
             .post(BLOGS_PATH)
-            .set('Authorization', 'Basic admin-qwerty')
+            .auth("admin", "qwerty")
             .send(data)
             .expect(HttpStatus.Created);
     })
@@ -52,7 +52,7 @@ describe("testing POST to /blogs", () => {
 
         const response = await request(app)
             .post(BLOGS_PATH)
-            .set('Authorization', 'Basic admin-qwerty')
+            .auth("admin", "qwerty")
             .send(data)
             .expect(HttpStatus.BadRequest);
 

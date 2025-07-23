@@ -49,8 +49,10 @@ export const userService = {
             createdAt: now
         }
         const id = await userRepository.create(newUser);
+
         return {id, login: newUser.login, email: newUser.email, createdAt: new Date().toISOString()};
     },
+
     async _generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
         return hash;
