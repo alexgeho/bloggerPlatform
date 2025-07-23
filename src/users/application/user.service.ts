@@ -45,11 +45,11 @@ export const userService = {
             email: dto.email,
             passwordHash,
             passwordSalt,
-            createdAt: new Date().toISOString(),
+            createdAt: new Date(),
         }
         const id = await userRepository.create(newUser);
 
-        return {id, login: newUser.login, email: newUser.email, createdAt: new Date().toISOString()};
+        return {id, login: newUser.login, email: newUser.email, createdAt: newUser.createdAt.toISOString()};
     },
 
     async _generateHash(password: string, salt: string) {

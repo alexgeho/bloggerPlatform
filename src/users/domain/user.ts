@@ -6,5 +6,5 @@ export type User = {
     email: string;
     passwordHash: string;
     passwordSalt: string;
-    createdAt: Date |string
+    createdAt: Date
 };
