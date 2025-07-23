@@ -14,6 +14,7 @@ export const paginationAndSortingDefault: PaginationAndSorting<string> = {
     pageSize: DEFAULT_PAGE_SIZE,
     sortBy: DEFAULT_SORT_BY,
     sortDirection: DEFAULT_SORT_DIRECTION,
+
 };
 
 // Главная функция-валидатор для пагинации и сортировки

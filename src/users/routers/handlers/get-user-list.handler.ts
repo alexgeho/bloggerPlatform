@@ -9,9 +9,16 @@ import {usersQwRepository} from "../../repositories/usersQwRepository";
 
 export async function getUserListHandler(req: Request, res: Response) {
     try {
-        const queryInput = setDefaultSortAndPaginationIfNotExist( req.query as Partial<PaginationAndSorting<UserSortField>>
-                & { searchNameTerm?: string }
-        ) as UserQueryInput;
+        const paginationAndSorting = setDefaultSortAndPaginationIfNotExist(
+            req.query as Partial<PaginationAndSorting<UserSortField>>
+        );
+
+        // Вот здесь добавляем нужные поля для поиска!
+        const queryInput: UserQueryInput = {
+            ...paginationAndSorting,
+            login: req.query.searchLoginTerm ?? "",
+            email: req.query.searchEmailTerm ?? "",
+        };
 
         const { items, totalCount } = await usersQwRepository.findMany(queryInput);
 
@@ -26,3 +33,4 @@ export async function getUserListHandler(req: Request, res: Response) {
         errorsHandler(e, res);
     }
 }
+

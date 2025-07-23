@@ -16,11 +16,13 @@ export const usersQwRepository = {
             sortDirection,
             login,
             email
-
         } = queryDto;
 
+
         const skip = (pageNumber - 1) * pageSize;
-        const filter: any = {};
+        const filter: any = {
+
+        };
 
         if (login) {
             filter.login = { $regex: login, $options: 'i' };
