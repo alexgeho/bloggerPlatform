@@ -38,7 +38,6 @@ export const userService = {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash: any = await this._generateHash(dto.password, passwordSalt)
 
-        const now = new Date(); // <--- вот тут создаём дату один раз
 
         const newUser: User = {
             _id: new ObjectId(),
@@ -46,7 +45,7 @@ export const userService = {
             email: dto.email,
             passwordHash,
             passwordSalt,
-            createdAt: now
+            createdAt: new Date()
         }
         const id = await userRepository.create(newUser);
 
