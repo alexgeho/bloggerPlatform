@@ -6,6 +6,7 @@ import { BlogQueryInput } from '../input/blog-query.input';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set-default-sort-and-pagination';
 import {PaginationAndSorting} from "../../../core/types/pagination-and-sorting";
 import {BlogSortField} from "../input/blog-sort-field";
+import {blogsQwRepository} from "../../repositories/blogsQwRepository";
 
 export async function getBlogListHandler(req: Request, res: Response) {
     try {
@@ -13,7 +14,7 @@ export async function getBlogListHandler(req: Request, res: Response) {
             req.query as Partial<PaginationAndSorting<BlogSortField>> & { searchNameTerm?: string }
         ) as BlogQueryInput;
 
-        const { items, totalCount } = await blogsService.findMany(queryInput);
+        const { items, totalCount } = await blogsQwRepository.findMany(queryInput);
 
         const blogsListOutput = mapToBlogListPaginatedOutput(items, {
             pageNumber: queryInput.pageNumber,

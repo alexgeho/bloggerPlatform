@@ -5,7 +5,7 @@ import { UserQueryInput } from '../input/user-query.input';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../core/helpers/set-default-sort-and-pagination';
 import {PaginationAndSorting} from "../../../core/types/pagination-and-sorting";
 import {UserSortField} from "../input/user-sort-field";
-import {userGetRepository} from "../../repositories/user.get.repository";
+import {usersQwRepository} from "../../repositories/usersQwRepository";
 
 export async function getUserListHandler(req: Request, res: Response) {
     try {
@@ -13,7 +13,7 @@ export async function getUserListHandler(req: Request, res: Response) {
                 & { searchNameTerm?: string }
         ) as UserQueryInput;
 
-        const { items, totalCount } = await userGetRepository.findMany(queryInput);
+        const { items, totalCount } = await usersQwRepository.findMany(queryInput);
 
         const usersListOutput = mapToUserListPaginatedOutput(items, {
             pageNumber: queryInput.pageNumber,

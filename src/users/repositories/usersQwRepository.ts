@@ -5,7 +5,7 @@ import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.
 import { UserQueryInput } from '../routers/input/user-query.input';
 import {UserInputDto} from "../application/dtos/user.input-dto";
 
-export const userGetRepository = {
+export const usersQwRepository = {
 
     async findMany( queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
 

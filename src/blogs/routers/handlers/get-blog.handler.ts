@@ -4,6 +4,7 @@ import { mapToBlogOutput } from '../mappers/map-to-blog-output.util';
 import { blogsService } from '../../application/blogs.service';
 import { postsService} from "../../../posts/application/posts.service";
 import { errorsHandler } from '../../../core/errors/errors.handler';
+import {blogsQwRepository} from "../../repositories/blogsQwRepository";
 
 export async function getBlogHandler(
     req: Request<{ id: string }>,
@@ -12,7 +13,7 @@ export async function getBlogHandler(
     try {
         const id = req.params.id;
 
-        const blog = await blogsService.findByIdOrFail(id);
+        const blog = await blogsQwRepository.findByIdOrFail(id);
 
         const blogOutput = mapToBlogOutput(blog);
 
