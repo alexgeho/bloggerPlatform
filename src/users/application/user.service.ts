@@ -45,7 +45,7 @@ export const userService = {
             email: dto.email,
             passwordHash,
             passwordSalt,
-            createdAt: new Date()
+            createdAt: new Date().toISOString(),
         }
         const id = await userRepository.create(newUser);
 
