@@ -14,20 +14,20 @@ export const userRepository = {
             pageSize,
             sortBy,
             sortDirection,
-            login,
-            email
+            searchLoginTerm,
+            searchEmailTerm
 
         } = queryDto;
 
         const skip = (pageNumber - 1) * pageSize;
         const filter: any = {};
 
-        if (login) {
-            filter.login = { $regex: login, $options: 'i' };
+        if (searchLoginTerm) {
+            filter.login = { $regex: searchLoginTerm, $options: 'i' };
         }
 
-        if (email) {
-            filter.email = { $regex: email, $options: 'i' };
+        if (searchEmailTerm) {
+            filter.email = { $regex: searchEmailTerm, $options: 'i' };
         }
 
         const items = await userCollection
