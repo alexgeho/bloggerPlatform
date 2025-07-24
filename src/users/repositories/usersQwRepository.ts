@@ -8,7 +8,6 @@ import {UserInputDto} from "../application/dtos/user.input-dto";
 export const usersQwRepository = {
 
     async findMany( queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
-
         const {
             pageNumber,
             pageSize,
@@ -31,7 +30,7 @@ export const usersQwRepository = {
         if (email) {
             filter.email = { $regex: email, $options: 'i' };
         }
-
+          console.log("filter ", filter)
         const items = await userCollection
             .find(filter)
             .sort({ [sortBy]: sortDirection })
