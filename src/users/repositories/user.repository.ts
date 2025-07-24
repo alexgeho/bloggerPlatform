@@ -20,24 +20,25 @@ export const userRepository = {
         } = queryDto;
 
         const skip = (pageNumber - 1) * pageSize;
-        const filter: any = {};
-
-        if (searchLoginTerm) {
-            filter.login = { $regex: searchLoginTerm, $options: 'i' };
-        }
-
-        if (searchEmailTerm) {
-            filter.email = { $regex: searchEmailTerm, $options: 'i' };
+        const searchLogin = searchLoginTerm
+            ? {login: {$regex: searchLoginTerm, $options: 'i'}}
+            : {}
+        const searchEmail = searchEmailTerm
+            ? {email: {$regex: searchEmailTerm, $options: 'i'}}
+            : {}
+        const filter = {
+            ...searchLogin,
+            ...searchEmail,
         }
 
         const items = await userCollection
-            .find(filter)
+            .find({$or: [searchLogin, searchEmail]})
             .sort({ [sortBy]: sortDirection })
             .skip(skip)
             .limit(pageSize)
             .toArray();
 
-        const totalCount = await userCollection.countDocuments(filter);
+        const totalCount = await userCollection.countDocuments({$or: [searchLogin, searchEmail]});
 
         return { items, totalCount };
     },
