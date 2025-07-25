@@ -9,10 +9,19 @@ export const authService = {
     async checkCredentials(
         loginOrEmail: string,
         password: string
+
     ): Promise<Result<{ accessToken: string } | null>> {
+
         const result = await userService.checkUserCredentials(loginOrEmail, password);
 
-        if (result.status !== ResultStatus.Success) return result;
+        if (result.status !== ResultStatus.Success) {
+            return {
+                status: result.status, // например: NotFound, BadRequest
+                errorMessage: result.errorMessage ?? 'Login failed',
+                extensions: result.extensions ?? [],
+                data: null,
+            };
+        }
 
         const user: WithId<IUserDB> = result.data!;
         const accessToken = await jwtService.createToken(user._id.toString());

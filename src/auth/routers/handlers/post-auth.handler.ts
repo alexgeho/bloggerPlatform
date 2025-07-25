@@ -12,7 +12,7 @@ export async function postAuthHandler(req: RequestWithBody<LoginDto>, res: Respo
 
         const result = await authService.checkCredentials(loginOrEmail, password);
 
-        if (result === true) {
+        if (result) {
             res.sendStatus(204);
             return
         } else {
