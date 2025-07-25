@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { appConfig } from "../../common/config/config";
+import { appConfig } from "../common/config/config";
 
 export const jwtService = {
     async createToken(userId: string): Promise<string> {

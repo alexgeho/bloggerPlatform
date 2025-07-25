@@ -3,7 +3,7 @@ import { ResultStatus } from '../common/result/resultCode';
 import { Result } from '../common/result/result.type';
 import { jwtService } from '../adapters/jwt.service';
 import { WithId } from 'mongodb';
-import { IUserDB } from '../../users/types/user.db.interface';
+import { IUserDB } from '../types/user.db.interface';
 
 export const authService = {
     async checkCredentials(
