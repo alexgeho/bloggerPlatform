@@ -2,8 +2,10 @@ import { Request, Response } from 'express';
 import { HttpStatus } from '../../../core/types/http-statuses';
 import { errorsHandler } from '../../../core/errors/errors.handler';
 import {authService} from "../../application/auth.service";
+import {RequestWithBody} from "../../common/types/requests";
+import {LoginDto} from "../../types/login.dto";
 
-export async function postAuthHandler(req: Request, res: Response) {
+export async function postAuthHandler(req: RequestWithBody<LoginDto>, res: Response) {
     try {
 
         const { loginOrEmail, password } = req.body;

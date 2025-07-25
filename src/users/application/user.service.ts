@@ -8,6 +8,10 @@ import {UserDataOutput} from "../routers/output/user-data.output";
 import {UserQueryInput} from "../routers/input/user-query.input";
 import {response} from "express";
 import {authRepository} from "../../auth/repositories/auth.repository";
+import {Result} from "../../auth/common/result/result.type";
+import {IUserDB} from "../../auth/types/user.db.interface";
+import {ResultStatus} from "../../auth/common/result/resultCode";
+import {bcryptService} from "../../auth/adapters/bcrypt.service";
 
 export const userService = {
 
@@ -64,16 +68,33 @@ export const userService = {
         return;
     },
 
-    async checkCredentials(loginOrEmail: string, password: string) {
-        const user = await userRepository.findByLoginOrEmail(loginOrEmail)
-        if (!user) return false
+    async checkUserCredentials(
+        loginOrEmail: string,
+        password: string,
+    ): Promise<Result<WithId<IUserDB> | null>> {
+        const user = await userRepository.findByLoginOrEmail(loginOrEmail);
+        if (!user)
+            return {
+                status: ResultStatus.NotFound,
+                data: null,
+                errorMessage: 'Not Found',
+                extensions: [{ field: 'loginOrEmail', message: 'Not Found' }],
+            };
 
-        const passwordHash = await this._generateHash(password, user.passwordSalt)
+        const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash);
+        if (!isPassCorrect)
+            return {
+                status: ResultStatus.BadRequest,
+                data: null,
+                errorMessage: 'Bad Request',
+                extensions: [{ field: 'password', message: 'Wrong password' }],
+            };
 
-        if (user.passwordHash !== passwordHash) {
-            return false
-        }
-        return true
+        return {
+            status: ResultStatus.Success,
+            data: user,
+            extensions: [],
+        };
     },
 
 
