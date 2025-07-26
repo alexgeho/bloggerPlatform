@@ -4,6 +4,7 @@ import { ObjectId, WithId } from 'mongodb';
 import { RepositoryNotFoundError } from '../../core/errors/repository-not-found.error';
 import { UserQueryInput } from '../routers/input/user-query.input';
 import {UserInputDto} from "../application/dtos/user.input-dto";
+import {UserDataOutput} from "../routers/output/user-data.output";
 
 export const usersQwRepository = {
 
@@ -57,9 +58,28 @@ export const usersQwRepository = {
 
     async findByLoginOrEmail(loginOrEmail: string) {
 
-        const user = await userCollection.findOne({$or: [ {email: loginOrEmail}, {login: loginOrEmail}]})
+        const user =
+            await userCollection.findOne({$or: [ {email: loginOrEmail}, {login: loginOrEmail}]})
 
         return user
-    }
+    },
+
+    async findById(id: string): Promise<UserDataOutput | null> {
+        const user = await userCollection.findOne({ _id: new ObjectId(id) });
+        return user ? this._getInView(user) : null;
+    },
+
+    _getInView(user: WithId<User>): UserDataOutput {
+        return {
+            id: user._id.toString(),
+            login: user.login,
+            email: user.email,
+            createdAt: user.createdAt.toISOString(),
+        };
+    },
+
+    _checkObjectId(id: string): boolean {
+        return ObjectId.isValid(id);
+    },
 
 };

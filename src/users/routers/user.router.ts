@@ -12,7 +12,6 @@ import {UserInputDtoValidation} from "../validation/user.input-dto.validation-mi
 
 
 export const usersRouter = Router({});
-console.log("=== TEST blogsRouter LOADED ===");
 usersRouter
 
     .get("/",

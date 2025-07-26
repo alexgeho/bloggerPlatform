@@ -9,16 +9,12 @@ import {authRouter} from "./auth/routers/auth.router";
 
 export const setupApp = (app: Express) => {
     console.log("=== setupApp CALLED ===");
-    app.use(express.json()); // middleware для парсинга JSON в теле запроса
+    app.use(express.json());
 
-    // основной роут
+
     app.get("/", (req, res) => {
         res.status(200).send("Hello world Bitau!");
     });
-    // app.all('*', (req, res) => {
-    //     console.log(req.url)
-    // })
-    console.log('Монтирую blogsRouter по адресу:', BLOGS_PATH)
 
     app.use(BLOGS_PATH, blogsRouter);
     app.use(TESTING_PATH, testingRouter);
@@ -34,7 +30,7 @@ export const setupApp = (app: Express) => {
         console.log( 'req.url');
     }
     console.log(errorHandler, 'handler')
-    // @ts-ignore
+
     app.use(errorHandler)
     return app;
 };
