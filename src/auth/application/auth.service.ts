@@ -13,7 +13,8 @@ export const authService = {
         password: string,
     ): Promise<Result <{ accessToken: string} | null>> {
 
-        const result = await this.checkUserCredentials (loginOrEmail, password);
+        const result = await
+            this.checkUserCredentials (loginOrEmail, password);
 
         if (result.status !== ResultStatus.Success)
 return {
@@ -23,7 +24,8 @@ return {
     data: null,
 };
 
-const accessToken = await jwtService.createToken(result.data!._id.toString());
+const accessToken = await jwtService
+    .createToken(result.data!._id.toString());
 
 return {
     status: ResultStatus.Success,
@@ -49,7 +51,8 @@ return {
             }
         }
 
-        const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash);
+        const isPassCorrect = await bcryptService
+            .checkPassword(password, user.passwordHash);
 
         if (!isPassCorrect) {
             return {
