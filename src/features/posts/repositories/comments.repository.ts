@@ -1,19 +1,21 @@
 import { Omit } from 'utility-types'; // если нужен import, либо сам объяви тип
 import { PostDb } from '../domain/postDb';
-import { postCollection } from '../../../db/mongo.db';
+import {commentCollection, postCollection} from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {PostInputDto} from '../application/dtos/post.input-dto';
 import {PostQueryInput} from "../routers/input/post-query.input";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
+import {CommentDb} from "../domain/commentDb";
 
 export const commentsRepository = {
 
 
 
-    async create(comment: Omit<PostDb, '_id'>): Promise<string>  {
-        const insertResult = await postCollection.insertOne(newPost);
+    async create(commentToSave: CommentDb): Promise<string> {
+        const insertResult = await commentCollection.insertOne(commentToSave);
         return insertResult.insertedId.toString();
-    },
+    }
+
     //
     // async findMany(queryDto: PostQueryInput): Promise<{ items: WithId<PostDb>[]; totalCount: number }> {
     //     const {

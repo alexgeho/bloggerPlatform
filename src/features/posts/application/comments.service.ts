@@ -3,36 +3,61 @@ import {blogsRepository} from '../../blogs/repositories/blogs.repository';
 import {CommentDataOutput} from "../routers/output/comment-data.output";
 import {CommentInputDto} from "./dtos/comment.input-dto";
 import {commentsRepository} from "../repositories/comments.repository";
+import {response} from "express";
+import {ObjectId} from "mongodb";
+import {CommentDb} from "../domain/commentDb";
 
 export const commentsService = {
-
     async create(
         postId: string,
         dto: CommentInputDto,
-        user: { userId: string; userLogin: string}
+        user: { userId: string; userLogin: string }
+    ): Promise<CommentDataOutput> {
+        const post = await postsRepository.findByIdOrFail(postId);
+        if (!post) throw new Error('Post not found');
 
-        ): Promise<CommentDataOutput> {
-
-
-        const commentNew = {
-            content: dto.content
+        const commentToSave: CommentDb = {
+            _id: new ObjectId(),
+            postId: new ObjectId(postId),
+            content: dto.content,
+            commentatorInfo: {
+                userId: user.userId,
+                userLogin: user.userLogin,
+            },
+            createdAt: new Date().toISOString(),
         };
 
-        const createdId = await commentsRepository.create(commentNew); // string (id)
-        const createdComment = await postsRepository.findByIdOrFail(createdId); // возвращает PostDb | null
-
-        if (!commentNew) throw new Error('Post not found after creation');
+        const savedCommentId = await commentsRepository.create(commentToSave);
 
         return {
-            id: commentNew._id.toString(),
-            content: commentNew.content,
-            commentatorInfo: {
-                "userId": "string",
-                "userLogin": "string"
-            }
-            createdAt: commentNew.createdAt,
-        };}
+            id: savedCommentId,
+            content: commentToSave.content,
+            commentatorInfo: commentToSave.commentatorInfo,
+            createdAt: commentToSave.createdAt,
+        };
+    },
+};
 
+//////////////////
+//         const commentNew = {
+//             content: dto.content
+//         };
+//
+//         const createdId = await commentsRepository.create(commentNew); // string (id)
+//         const createdComment = await postsRepository.findByIdOrFail(createdId); // возвращает PostDb | null
+//
+//         if (!commentNew) throw new Error('Post not found after creation');
+//
+//         return {
+//             id: commentNew._id.toString(),
+//             content: commentNew.content,
+//             commentatorInfo: {
+//                 "userId": "string",
+//                 "userLogin": "string"
+//             }
+//             createdAt: commentNew.createdAt,
+
+//////////////////
     // async findMany(queryDto: PostQueryInput): Promise<{ items: any[]; totalCount: number }> {
     //     return postsRepository.findMany(queryDto);
     //
@@ -81,5 +106,3 @@ export const commentsService = {
 //
 //         await postsRepository.delete(id);
 //         return;
-//     },
-};
