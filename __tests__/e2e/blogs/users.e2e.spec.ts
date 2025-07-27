@@ -1,13 +1,13 @@
 import { doSomething} from "../../../src/app"; // ⚡️ Импортируешь готовый app, а не создаёшь новый!
 import request from "supertest";
 import { USERS_PATH, TESTING_PATH } from "../../../src/core/paths/paths";
-import { UserInputDto } from "../../../src/users/application/dtos/user.input-dto";
+import { UserInputDto } from "../../../src/features/users/application/dtos/user.input-dto";
 import { HttpStatus } from "../../../src/core/types/http-statuses";
 import {runDB} from "../../../src/db/mongo.db";
 import {SETTINGS} from "../../../src/core/settings/settings";
 import * as setupAppConfig from "../../../src/setup-app";
 import express from "express";
-import {usersRouter} from "../../../src/users/routers/user.router";
+import {usersRouter} from "../../../src/features/users/routers/user.router";
 const app = setupAppConfig.setupApp(express());
 
 describe("testing POST to /blogs", () => {

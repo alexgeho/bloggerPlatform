@@ -1,9 +1,9 @@
 import { Collection, Db, OptionalId, WithId, MongoClient, ObjectId } from "mongodb";
-import {Blog} from "../blogs/domain/blog";
-import {PostDb} from "../posts/domain/postDb";
+import {Blog} from "../features/blogs/domain/blog";
+import {PostDb} from "../features/posts/domain/postDb";
 import { SETTINGS } from "../core/settings/settings";
-import {User} from "../users/domain/user";
-import {Auth} from "../auth/domain/auth";
+import {User} from "../features/users/domain/user";
+import {Auth} from "../features/auth/domain/auth";
 
 const BLOG_COLLECTION_NAME = "blogs";
 const POST_COLLECTION_NAME = "posts";

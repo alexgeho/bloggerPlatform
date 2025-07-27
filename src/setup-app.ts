@@ -1,11 +1,12 @@
 import express, {Express, RequestHandler} from "express";
-import {blogsRouter} from "./blogs/routers/blogs.router";
+import {blogsRouter} from "./features/blogs/routers/blogs.router";
 import { setupSwagger } from "./core/swagger/setup-swagger"
-import {AUTH_PATH, BLOGS_PATH, POSTS_PATH, TESTING_PATH, USERS_PATH} from "./core/paths/paths";
-import {testingRouter} from "./testing/routers/testing.router";
-import {postsRouter} from "./posts/routers/posts.router";
-import {usersRouter} from "./users/routers/user.router";
-import {authRouter} from "./auth/routers/auth.router";
+import {AUTH_PATH, BLOGS_PATH, COMMENTS_PATH, POSTS_PATH, TESTING_PATH, USERS_PATH} from "./core/paths/paths";
+import {testingRouter} from "./features/testing/routers/testing.router";
+import {postsRouter} from "./features/posts/routers/posts.router";
+import {usersRouter} from "./features/users/routers/user.router";
+import {commentsRouter} from "./features/comments/comments.router";
+import {authRouter} from "./features/auth/routers/auth.router";
 
 export const setupApp = (app: Express) => {
     console.log("=== setupApp CALLED ===");
@@ -21,6 +22,8 @@ export const setupApp = (app: Express) => {
     app.use(POSTS_PATH, postsRouter);
     app.use(USERS_PATH, usersRouter);
     app.use(AUTH_PATH, authRouter);
+    app.use(COMMENTS_PATH, commentsRouter);
+
 
 
     setupSwagger(app);
@@ -29,8 +32,6 @@ export const setupApp = (app: Express) => {
         console.log(arguments, 'err midleware');
         console.log( 'req.url');
     }
-    console.log(errorHandler, 'handler')
 
-    app.use(errorHandler)
     return app;
 };
