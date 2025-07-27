@@ -8,13 +8,10 @@ import {getMeHandler} from "./handlers/get-me.handler";
 export const authRouter = Router();
 
 
-
-
 authRouter.post("/login",
     authInputDtoValidation,
     postAuthHandler)
 
-    authRouter.get("/me",
-        accessTokenGuard,
-        getMeHandler
-);
+authRouter.get("/me",
+    accessTokenGuard,
+    getMeHandler);

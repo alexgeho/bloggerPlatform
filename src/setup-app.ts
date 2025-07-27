@@ -5,11 +5,10 @@ import {AUTH_PATH, BLOGS_PATH, COMMENTS_PATH, POSTS_PATH, TESTING_PATH, USERS_PA
 import {testingRouter} from "./features/testing/routers/testing.router";
 import {postsRouter} from "./features/posts/routers/posts.router";
 import {usersRouter} from "./features/users/routers/user.router";
-import {commentsRouter} from "./features/comments/comments.router";
+// import {commentsRouter} from "./features/comments/comments.router";
 import {authRouter} from "./features/auth/routers/auth.router";
 
 export const setupApp = (app: Express) => {
-    console.log("=== setupApp CALLED ===");
     app.use(express.json());
 
 
@@ -22,7 +21,7 @@ export const setupApp = (app: Express) => {
     app.use(POSTS_PATH, postsRouter);
     app.use(USERS_PATH, usersRouter);
     app.use(AUTH_PATH, authRouter);
-    app.use(COMMENTS_PATH, commentsRouter);
+    // app.use(COMMENTS_PATH, commentsRouter);
 
 
 

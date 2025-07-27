@@ -27,6 +27,7 @@ export function errorsHandler(error: unknown, res: Response): void {
         );
         return;
     }
+    console.error('error', error);
     res.status(HttpStatus.InternalServerError).send(
         createErrorMessages([
             { field: "common", message: "Internal server error" }

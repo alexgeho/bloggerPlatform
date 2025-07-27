@@ -20,7 +20,6 @@ import {postInputDtoForBlogValidation} from "../validation/post.blogForPostInput
 
 
 export const blogsRouter = Router({});
-console.log("=== TEST blogsRouter LOADED ===");
 blogsRouter
 
 
@@ -69,8 +68,3 @@ blogsRouter
     )
 
 
-
-
-// idValidation, // или blogIdValidation
-//postInputDtoValidation,
-// inputValidationResultMiddleware,

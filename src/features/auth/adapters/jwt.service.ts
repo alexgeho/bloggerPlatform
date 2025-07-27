@@ -4,7 +4,7 @@ import { appConfig } from "../common/config/config";
 export const jwtService = {
 
     async createToken(userId: string): Promise<string> {
-        return jwt.sign({ userId }, appConfig.AC_SECRET, {expiresIn:`${appConfig.AC_TIME}s`})
+        return jwt.sign({ userId }, appConfig.AC_SECRET, {expiresIn: `${appConfig.AC_TIME}s`})
     },
     async decodeToken(token: string): Promise<any> {
         try {
