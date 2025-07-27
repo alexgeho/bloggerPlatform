@@ -8,11 +8,11 @@ import {getMeHandler} from "../auth/routers/handlers/get-me.handler";
 export const commentsRouter = Router();
 
 
-commentsRouter.post("/login",
-    authInputDtoValidation,
-    postAuthHandler)
+commentsRouter.put("/:commentId",
+    putCommentsHandler)
 
-commentsRouter.get("/me",
-    accessTokenGuard,
-    getMeHandler
-);
+commentsRouter.get("/:commentId",
+    getCommentsHandler)
+
+commentsRouter.delete("/:id",
+    deleteCommentsHandler)
