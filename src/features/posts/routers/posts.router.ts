@@ -12,6 +12,8 @@ import {idValidation} from "../../../core/middlewares/validation/params-id.valid
 import {getPostHandler} from "./handlers/get-post.handler";
 import {putPostHandler} from "./handlers/put-post.handler";
 import {deletePostHandler} from "./handlers/delete-post.handler";
+import {contentInputDtoValidation} from "../validation/comment.input-dto.validation-middlewares";
+import {createCommentHandler} from "./handlers/create-comment.handler";
 
 
 export const postsRouter = Router({});
@@ -44,7 +46,12 @@ postsRouter
     .delete('/:id',
         superAdminGuardMiddleware,
         idValidation,
-        deletePostHandler
+        deletePostHandler)
+
+.post('/:id/comments',
+    contentInputDtoValidation,
+    createCommentHandler
+
     )
 
 
