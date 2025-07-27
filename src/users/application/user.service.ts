@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import {ObjectId} from "mongodb";
 import {userRepository} from '../repositories/user.repository';
 import {WithId} from 'mongodb';
