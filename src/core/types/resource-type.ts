@@ -1,7 +1,8 @@
 export enum ResourceType {
     Blogs = 'blogs',
     Posts = 'posts',
-    Users = 'users'
+    Users = 'users',
+    Comments = 'comments',
 
     // ... другие сущности
 

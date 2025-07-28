@@ -4,7 +4,7 @@ import {PostDb} from "../features/posts/domain/postDb";
 import { SETTINGS } from "../core/settings/settings";
 import {User} from "../features/users/domain/user";
 import {Auth} from "../features/auth/domain/auth";
-import {CommentDb} from "../features/posts/domain/commentDb";
+import {CommentDb} from "../features/comments/domain/commentDb";
 
 const BLOG_COLLECTION_NAME = "blogs";
 const POST_COLLECTION_NAME = "posts";
