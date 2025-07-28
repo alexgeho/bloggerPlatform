@@ -31,7 +31,7 @@ blogsRouter
         getBlogListHandler)
 
     .post("/",
-        accessTokenGuard,
+        superAdminGuardMiddleware,
         blogInputDtoValidation,
        inputValidationResultMiddleware,
         postBlogHandler)
@@ -42,14 +42,14 @@ blogsRouter
         getBlogHandler)
 
     .put('/:id',
-        accessTokenGuard,
+        superAdminGuardMiddleware,
         idValidation,
         blogInputDtoValidation,
         inputValidationResultMiddleware,
         putBlogHandler)
 
     .delete('/:id',
-        accessTokenGuard,
+        superAdminGuardMiddleware,
         deleteBlogHandler)
 
     .get('/:blogId/posts',
