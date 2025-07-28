@@ -25,9 +25,10 @@ return {
 };
 
 const accessToken = await jwtService
-    .createToken(result.data!._id.toString());
+    .createToken(result.data!._id.toString(), result.data!.login);
 
-return {
+
+        return {
     status: ResultStatus.Success,
     data: {accessToken},
     extensions: [],

@@ -1,6 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
 import { jwtService } from '../../adapters/jwt.service';
-import { IdType } from '../../common/types/id';
+
+export type JwtPayloadUser = {
+    userId: string;
+    userLogin: string;
+};
+
+declare global {
+    namespace Express {
+        interface Request {
+            user: JwtPayloadUser;
+        }
+    }
+}
 
 export const accessTokenGuard = async (
     req: Request,
@@ -26,6 +38,10 @@ export const accessTokenGuard = async (
         return;
     }
 
-    req.user = { id: payload.userId } as IdType;
+    req.user = {
+        userId: payload.userId,
+        userLogin: payload.userLogin,
+    };
+
     next();
 };

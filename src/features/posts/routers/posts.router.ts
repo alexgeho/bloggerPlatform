@@ -14,6 +14,7 @@ import {putPostHandler} from "./handlers/put-post.handler";
 import {deletePostHandler} from "./handlers/delete-post.handler";
 import {contentInputDtoValidation} from "../validation/comment.input-dto.validation-middlewares";
 import {createCommentHandler} from "./handlers/create-comment.handler";
+import {accessTokenGuard} from "../../auth/routers/guards/access.token.guard";
 
 
 export const postsRouter = Router({});
@@ -26,7 +27,6 @@ postsRouter
         getPostListHandler)
 
     .post("/",
-        superAdminGuardMiddleware,
         postInputDtoValidation,
         inputValidationResultMiddleware,
         postPostHandler)
@@ -49,9 +49,9 @@ postsRouter
         deletePostHandler)
 
 .post('/:id/comments',
+    accessTokenGuard,
     contentInputDtoValidation,
     createCommentHandler
-
     )
 
 
