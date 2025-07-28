@@ -61,7 +61,7 @@ blogsRouter
 
     .post(
         '/:blogId/posts',
-        accessTokenGuard,
+        superAdminGuardMiddleware,
         ...postInputDtoForBlogValidation,         // <<<<< только три поля из body!
         inputValidationResultMiddleware,
         ...blogIdValidationNested('blogId'),      // <<<<< отдельно валидируй path param

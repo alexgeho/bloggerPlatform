@@ -21,13 +21,13 @@ usersRouter
         getUserListHandler)
 
     .post("/",
-        accessTokenGuard,
+        superAdminGuardMiddleware,
        UserInputDtoValidation,
        inputValidationResultMiddleware,
         postUserHandler)
 
     .delete('/:id',
-        accessTokenGuard,
+        superAdminGuardMiddleware,
         deleteUserHandler)
 
 
