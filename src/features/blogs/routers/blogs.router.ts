@@ -17,6 +17,7 @@ import {asyncHandler} from "../../../core/utils/express-async-handler";
 import {postBlogPostHandler} from "./handlers/post-blog-post.handler";
 import {blogIdValidationNested} from "../../../core/middlewares/validation/blogId-validation.nested";
 import {postInputDtoForBlogValidation} from "../validation/post.blogForPostInput.validation-middlewares";
+import {accessTokenGuard} from "../../auth/routers/guards/access.token.guard";
 
 
 export const blogsRouter = Router({});
@@ -30,7 +31,7 @@ blogsRouter
         getBlogListHandler)
 
     .post("/",
-        superAdminGuardMiddleware,
+        accessTokenGuard,
         blogInputDtoValidation,
        inputValidationResultMiddleware,
         postBlogHandler)
@@ -41,14 +42,14 @@ blogsRouter
         getBlogHandler)
 
     .put('/:id',
-        superAdminGuardMiddleware,
+        accessTokenGuard,
         idValidation,
         blogInputDtoValidation,
         inputValidationResultMiddleware,
         putBlogHandler)
 
     .delete('/:id',
-        superAdminGuardMiddleware,
+        accessTokenGuard,
         deleteBlogHandler)
 
     .get('/:blogId/posts',
@@ -60,7 +61,7 @@ blogsRouter
 
     .post(
         '/:blogId/posts',
-        superAdminGuardMiddleware,
+        accessTokenGuard,
         ...postInputDtoForBlogValidation,         // <<<<< только три поля из body!
         inputValidationResultMiddleware,
         ...blogIdValidationNested('blogId'),      // <<<<< отдельно валидируй path param

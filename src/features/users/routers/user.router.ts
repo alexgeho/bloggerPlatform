@@ -9,6 +9,7 @@ import {
 } from "../../../core/middlewares/validation/query-pagination-sorting.validation-middleware";
 import {UserSortField} from "./input/user-sort-field";
 import {UserInputDtoValidation} from "../validation/user.input-dto.validation-middlewares";
+import {accessTokenGuard} from "../../auth/routers/guards/access.token.guard";
 
 
 export const usersRouter = Router({});
@@ -20,13 +21,13 @@ usersRouter
         getUserListHandler)
 
     .post("/",
-       superAdminGuardMiddleware,
+        accessTokenGuard,
        UserInputDtoValidation,
        inputValidationResultMiddleware,
         postUserHandler)
 
     .delete('/:id',
-        superAdminGuardMiddleware,
+        accessTokenGuard,
         deleteUserHandler)
 
 

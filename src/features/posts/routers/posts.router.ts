@@ -37,14 +37,14 @@ postsRouter
         getPostHandler)
 
     .put("/:id",
-        superAdminGuardMiddleware,
+        accessTokenGuard,
         idValidation,
         postInputDtoValidation,
         inputValidationResultMiddleware,
         putPostHandler)
 
     .delete('/:id',
-        superAdminGuardMiddleware,
+        accessTokenGuard,
         idValidation,
         deletePostHandler)
 
