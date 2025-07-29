@@ -15,13 +15,16 @@ export async function postAuthHandler(
         const {loginOrEmail, password} = newReq.body;
         const result
             = await authService.loginUser(loginOrEmail, password);
+
         if (result.status !== ResultStatus.Success) {
             res
-                .status(resultCodeToHttpException(result.status))
+                .status(401)
                 .send(result.extensions);
             return
         }
-        res.status(200).send(result.data);
+
+        res.status(200)
+            .send(result.data);
         return
 
     } catch (e) {

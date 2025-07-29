@@ -20,7 +20,7 @@ export const authService = {
 return {
     status: ResultStatus.Unauthorized,
     errorMessage: 'Unauthorized',
-    extensions: [{ field: 'loginOrEmail', message: 'Wrong credentials'}],
+    extensions: [{ field: 'loginOrEmail', message: 'Wrong credentials bitau'}],
     data: null,
 };
 
