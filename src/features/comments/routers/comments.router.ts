@@ -8,8 +8,8 @@ export const commentsRouter = Router();
 commentsRouter.put("/:id",
     putCommentsHandler)
 
-// commentsRouter.get("/:commentId",
-//     getCommentsHandler)
-//
+commentsRouter.get("/:id",
+    getCommentsHandler)
+
 // commentsRouter.delete("/:id",
 //     deleteCommentsHandler)
