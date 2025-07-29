@@ -38,6 +38,7 @@ export const commentsRepository = {
     },
 
 async updateComment (id: string, content: string): Promise <void>{
+
 const updateResult = await commentCollection.updateOne(
     {_id: new ObjectId(id)},
     {$set: {content: content}},
