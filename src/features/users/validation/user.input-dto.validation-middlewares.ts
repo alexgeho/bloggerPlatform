@@ -13,7 +13,7 @@ const passwordValidation = body('password')
     .isString()
     .withMessage('password should be string')
     .trim()
-    .isLength({ min: 5, max: 20 })
+    .isLength({ min: 6, max: 20 })
     .withMessage('Length of password should be minumum 6 symbols');
 
 const emailValidation = body('email')
