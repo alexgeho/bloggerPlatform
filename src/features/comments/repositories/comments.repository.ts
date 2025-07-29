@@ -21,7 +21,7 @@ export const commentsRepository = {
         sort: Record<string, 1 | -1>
     ): Promise<WithId<CommentDb>[]> {
         return commentCollection
-            .find({ postId: new ObjectId(postId) })
+            .find({postId: new ObjectId(postId)})
             .sort(sort)
             .skip(skip)
             .limit(limit)
@@ -29,24 +29,24 @@ export const commentsRepository = {
     },
 
     async countByPostId(postId: string): Promise<number> {
-        return commentCollection.countDocuments({ postId: new ObjectId(postId) });
+        return commentCollection.countDocuments({postId: new ObjectId(postId)});
     },
 
     async findById(id: string): Promise<WithId<CommentDb> | null> {
-        return commentCollection.findOne({ _id: new ObjectId(id) });
+        return commentCollection.findOne({_id: new ObjectId(id)});
     },
 
     async updateComment(id: string, content: string): Promise<Result<null>> {
         try {
             const result = await commentCollection.updateOne(
-                { _id: new ObjectId(id) },
-                { $set: { content } }
+                {_id: new ObjectId(id)},
+                {$set: {content}}
             );
 
             if (result.matchedCount === 0) {
                 return {
                     status: ResultStatus.NotFound,
-                    extensions: [{ field: "id", message: "Comment not found" }],
+                    extensions: [{field: "id", message: "Comment not found"}],
                     data: null,
                 };
             }
@@ -59,11 +59,21 @@ export const commentsRepository = {
         } catch (error) {
             return {
                 status: ResultStatus.InternalError,
-                extensions: [{ field: "unknown", message: "Unexpected error" }],
+                extensions: [{field: "unknown", message: "Unexpected error"}],
                 data: null,
             };
         }
-    }
+    },
+async deleteById (id:string): Promise<void> {
 
+        const deleteResult
+            = await commentCollection.deleteOne({_id: new ObjectId(id)});
+
+        if (deleteResult.deletedCount < 1) {
+            throw new RepositoryNotFoundError('Comment not exist');
+        }
+        return;
+
+}
 
 };

@@ -6,7 +6,6 @@ import { ObjectId } from 'mongodb';
 import { CommentDb } from '../domain/commentDb';
 import { CommentQueryInput } from '../routers/input/comment-query.input';
 import { mapToCommentListPaginatedOutput } from '../routers/mappers/map-to-comment-list-paginated-output.util';
-import {PromiseHooks} from "node:v8";
 import { Result } from "../../auth/common/result/result.type";
 import {ResultStatus} from "../../auth/common/result/resultCode";
 
@@ -86,6 +85,11 @@ export const commentsService = {
             extensions: [],
             data: null,
         };
+    },
+
+    async deleteById(id: string): Promise<void> {
+        await commentsRepository.deleteById(id);
+        return;
     }
 
 };

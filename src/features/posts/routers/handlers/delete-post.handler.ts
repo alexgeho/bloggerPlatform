@@ -13,6 +13,7 @@ export async function deletePostHandler(
         await postsService.delete(id);
 
         res.sendStatus(HttpStatus.NoContent);
+
     } catch (e: unknown) {
         errorsHandler(e, res);
     }
