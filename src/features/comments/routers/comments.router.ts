@@ -5,11 +5,11 @@ import {putCommentsHandler} from "./handlers/put-comments.handler";
 export const commentsRouter = Router();
 
 
-commentsRouter.put("/:commentId",
+commentsRouter.put("/:id",
     putCommentsHandler)
 
-commentsRouter.get("/:commentId",
-    getCommentsHandler)
-
-commentsRouter.delete("/:id",
-    deleteCommentsHandler)
+// commentsRouter.get("/:commentId",
+//     getCommentsHandler)
+//
+// commentsRouter.delete("/:id",
+//     deleteCommentsHandler)

@@ -3,6 +3,9 @@ import {ObjectId, WithId} from 'mongodb';
 import {CommentDb} from "./domain/commentDb";
 import {CommentQueryInput} from "./routers/input/comment-query.input";
 import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.error";
+import {ResultStatus} from "../auth/common/result/resultCode";
+import {Result} from "../auth/common/result/result.type";
+
 
 export const commentsRepository = {
 
@@ -37,17 +40,34 @@ export const commentsRepository = {
         return commentCollection.findOne({ _id: new ObjectId(id) });
     },
 
-async updateComment (id: string, content: string): Promise <void>{
+    async updateComment(id: string, content: string): Promise<Result<null>> {
+        try {
+            const result = await commentCollection.updateOne(
+                { _id: new ObjectId(id) },
+                { $set: { content } }
+            );
 
-const updateResult = await commentCollection.updateOne(
-    {_id: new ObjectId(id)},
-    {$set: {content: content}},
-)
-    if (updateResult.matchedCount < 1) {
-        throw new RepositoryNotFoundError('Comment not exist');
+            if (result.matchedCount === 0) {
+                return {
+                    status: ResultStatus.NotFound,
+                    extensions: [{ field: "id", message: "Comment not found" }],
+                    data: null,
+                };
+            }
+
+            return {
+                status: ResultStatus.Success,
+                extensions: [],
+                data: null,
+            };
+        } catch (error) {
+            return {
+                status: ResultStatus.InternalError,
+                extensions: [{ field: "unknown", message: "Unexpected error" }],
+                data: null,
+            };
+        }
     }
-    return;
 
-}
 
 };

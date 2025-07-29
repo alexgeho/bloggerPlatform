@@ -7,7 +7,7 @@ import { CommentDb } from '../domain/commentDb';
 import { CommentQueryInput } from '../routers/input/comment-query.input';
 import { mapToCommentListPaginatedOutput } from '../routers/mappers/map-to-comment-list-paginated-output.util';
 import {PromiseHooks} from "node:v8";
-import {Result} from "express-validator";
+import { Result } from "../../auth/common/result/result.type";
 import {ResultStatus} from "../../auth/common/result/resultCode";
 
 export const commentsService = {
@@ -71,9 +71,9 @@ export const commentsService = {
     },
 
     async updateComment(id: string, content: string): Promise<Result<null>> {
-        const isUpdated = await commentsRepository.updateComment(id, content);
+        const updateResult = await commentsRepository.updateComment(id, content);
 
-        if (!isUpdated) {
+        if (!updateResult) {
             return {
                 status: ResultStatus.NotFound,
                 extensions: [{ field: "id", message: "Comment not found" }],
