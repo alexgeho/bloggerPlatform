@@ -6,8 +6,12 @@ import { ObjectId } from 'mongodb';
 import { CommentDb } from '../domain/commentDb';
 import { CommentQueryInput } from '../routers/input/comment-query.input';
 import { mapToCommentListPaginatedOutput } from '../routers/mappers/map-to-comment-list-paginated-output.util';
+import {PromiseHooks} from "node:v8";
+import {Result} from "express-validator";
+import {ResultStatus} from "../../auth/common/result/resultCode";
 
 export const commentsService = {
+
     async create(
         postId: string,
         dto: CommentInputDto,
@@ -62,5 +66,26 @@ export const commentsService = {
             pageSize,
             totalCount,
         });
+
+
     },
+
+    async updateComment(id: string, content: string): Promise<Result<null>> {
+        const isUpdated = await commentsRepository.updateComment(id, content);
+
+        if (!isUpdated) {
+            return {
+                status: ResultStatus.NotFound,
+                extensions: [{ field: "id", message: "Comment not found" }],
+                data: null,
+            };
+        }
+
+        return {
+            status: ResultStatus.Success,
+            extensions: [],
+            data: null,
+        };
+    }
+
 };

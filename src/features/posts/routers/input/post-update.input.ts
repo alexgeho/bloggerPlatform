@@ -11,3 +11,10 @@ export type PostUpdateInput = {
         createdAt?: string;
 
 };
+
+
+export type CommentUpdateInput = {
+
+        content: string;
+
+};

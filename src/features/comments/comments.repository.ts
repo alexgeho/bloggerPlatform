@@ -2,6 +2,7 @@ import {commentCollection} from '../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {CommentDb} from "./domain/commentDb";
 import {CommentQueryInput} from "./routers/input/comment-query.input";
+import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.error";
 
 export const commentsRepository = {
 
@@ -36,6 +37,16 @@ export const commentsRepository = {
         return commentCollection.findOne({ _id: new ObjectId(id) });
     },
 
+async updateComment (id: string, content: string): Promise <void>{
+const updateResult = await commentCollection.updateOne(
+    {_id: new ObjectId(id)},
+    {$set: {content: content}},
+)
+    if (updateResult.matchedCount < 1) {
+        throw new RepositoryNotFoundError('Comment not exist');
+    }
+    return;
 
+}
 
 };

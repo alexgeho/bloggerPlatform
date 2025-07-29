@@ -88,9 +88,7 @@ export const postsRepository = {
                     blogId: dto.blogId
                 },
             },
-        )
-        console.log('update result', updateResult)
-        ;
+        );
 
         if (updateResult.matchedCount < 1) {
             throw new RepositoryNotFoundError('Post not exist');
