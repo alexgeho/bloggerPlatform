@@ -1,15 +1,13 @@
-import {commentCollection} from '../../db/mongo.db';
+import {commentCollection} from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
-import {CommentDb} from "./domain/commentDb";
-import {CommentQueryInput} from "./routers/input/comment-query.input";
-import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.error";
-import {ResultStatus} from "../auth/common/result/resultCode";
-import {Result} from "../auth/common/result/result.type";
+import {CommentDb} from "../domain/commentDb";
+import {CommentQueryInput} from "../routers/input/comment-query.input";
+import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
+import {ResultStatus} from "../../auth/common/result/resultCode";
+import {Result} from "../../auth/common/result/result.type";
 
 
 export const commentsRepository = {
-
-
 
     async create(commentToSave: CommentDb): Promise<string> {
         const insertResult = await commentCollection.insertOne(commentToSave);
@@ -28,9 +26,7 @@ export const commentsRepository = {
             .skip(skip)
             .limit(limit)
             .toArray();
-    }
-
-,
+    },
 
     async countByPostId(postId: string): Promise<number> {
         return commentCollection.countDocuments({ postId: new ObjectId(postId) });

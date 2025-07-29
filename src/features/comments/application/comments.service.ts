@@ -1,5 +1,5 @@
 import { postsRepository } from '../../posts/repositories/posts.repository';
-import { commentsRepository } from '../comments.repository';
+import { commentsRepository } from '../repositories/comments.repository';
 import { CommentDataOutput } from '../../posts/routers/output/comment-data.output';
 import { CommentInputDto } from './dtos/comment.input-dto';
 import { ObjectId } from 'mongodb';

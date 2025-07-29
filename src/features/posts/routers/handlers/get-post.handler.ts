@@ -10,7 +10,6 @@ export async function getPostHandler(
     res: Response,
 )
 {
-    console.log('=== TEST GET POST HANDLER===');
 
 
     try {

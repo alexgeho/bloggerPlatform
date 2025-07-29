@@ -1,30 +1,43 @@
-import express, {response} from "express";
 import {Request, Response} from "express";
-import {CommentUpdateInput} from "../../../posts/routers/input/post-update.input";
-import {commentsService} from "../../application/comments.service";
-import {ResultStatus} from "../../../auth/common/result/resultCode";
-import {resultCodeToHttpException} from "../../../auth/common/result/resultCodeToHttpException";
-import {commentsQwRepository} from "../../comments.repository";
+import {commentsQwRepository} from "../../repositories/commentsQwRepository";
 
-async const getCommentHandler = async (
-    req: Request,
-    res: Response
-) => {
+export async function getCommentHandler  (req: Request, res: Response)
+:Promise<void> {
 
-    const {id} = req.params;
+    try {
 
-    const comment = await commentsQwRepository.findById(id);
+        const {id} = req.params;
+        const comment = await commentsQwRepository.findById(id);
 
-    if(!comment){
+        if(!comment){
+             res.sendStatus(404).send({message: 'Comment not found'});
+            return
+        }
+        res.status(200).send(comment);
 
-        return res.sendStatus(404).send({message: 'Comment not found'});
     }
 
-    res.status(200).send(comment);
+    catch (e: unknown) {
+
+    }
 
 }
 
 
-
-
-)
+// => {
+//
+//     const {id} = req.params;
+//
+//     const comment = await commentsQwRepository.findById(id);
+//
+//     if(!comment){
+//
+//         return res.sendStatus(404).send({message: 'Comment not found'});
+//     }
+//
+//     res.status(200).send(comment);
+//
+//
+//
+//
+// }
