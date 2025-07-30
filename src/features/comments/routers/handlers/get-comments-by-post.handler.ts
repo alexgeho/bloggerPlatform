@@ -24,7 +24,8 @@ export async function getCommentsByPostHandler(req: Request, res: Response) {
             return;
         }
 
-        const result = await commentsService.findManyByPostId(postId, queryInput);
+        const result
+            = await commentsService.findManyByPostId(postId, queryInput);
 
         res.send(result);
     } catch (e: unknown) {

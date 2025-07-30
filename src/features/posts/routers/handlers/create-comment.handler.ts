@@ -3,6 +3,7 @@ import { HttpStatus } from '../../../../core/types/http-statuses';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
 import {CommentDataOutput} from "../../../comments/routers/output/comment-data.output";
 import {commentsService} from "../../../comments/application/comments.service";
+import {postsQwRepository} from "../../repositories/postsQwrepository";
 
 export async function createCommentHandler (req: Request, res: Response) {
 
@@ -10,6 +11,14 @@ export async function createCommentHandler (req: Request, res: Response) {
         const postId = req.params.id;
         const dto = req.body;
         const user = req.user;
+
+        const checkIfPostExist = await postsQwRepository.findById(postId)
+
+        if (!checkIfPostExist) {
+            res.sendStatus(404);
+            return;
+        }
+
         const createdCommentData: CommentDataOutput = await commentsService.create(postId, dto, user);
 
         res.status(HttpStatus.Created).send(createdCommentData);
