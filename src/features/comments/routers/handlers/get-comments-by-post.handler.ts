@@ -7,6 +7,7 @@ import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/
 import { PaginationAndSorting } from '../../../../core/types/pagination-and-sorting';
 import { CommentSortField } from '../input/comment-sort-field';
 import { CommentQueryInput } from '../input/comment-query.input';
+import {postsQwRepository} from "../../../posts/repositories/postsQwrepository";
 
 export async function getCommentsByPostHandler(req: Request, res: Response) {
     try {
@@ -15,6 +16,13 @@ export async function getCommentsByPostHandler(req: Request, res: Response) {
         const queryInput = setDefaultSortAndPaginationIfNotExist(
             req.query as Partial<PaginationAndSorting<CommentSortField>>
         ) as CommentQueryInput;
+
+        const checkIfPostExist = await postsQwRepository.findById(postId)
+
+        if (!checkIfPostExist) {
+            res.sendStatus(404);
+            return;
+        }
 
         const result = await commentsService.findManyByPostId(postId, queryInput);
 
