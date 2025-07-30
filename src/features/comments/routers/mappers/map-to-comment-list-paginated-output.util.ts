@@ -1,6 +1,6 @@
 import {WithId} from 'mongodb';
 import {CommentDb} from '../../domain/commentDb';
-import {CommentDataOutput} from '../../../posts/routers/output/comment-data.output';
+import {CommentDataOutput} from '../output/comment-data.output';
 import {PaginatedOutput} from "../../../../core/types/paginated.output";
 
 export function mapToCommentListPaginatedOutput(
@@ -17,7 +17,7 @@ export function mapToCommentListPaginatedOutput(
             content: comment.content,
             commentatorInfo: {
                 userId: comment.commentatorInfo.userId,
-                userLogin: comment.commentatorInfo.userLogin,
+              userLogin: comment.commentatorInfo.userLogin,
             },
             createdAt: comment.createdAt,
         })),

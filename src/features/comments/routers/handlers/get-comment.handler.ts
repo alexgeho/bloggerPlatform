@@ -1,23 +1,34 @@
 import {Request, Response} from "express";
 import {commentsQwRepository} from "../../repositories/commentsQwRepository";
 
-export async function getCommentHandler  (req: Request, res: Response)
-:Promise<void> {
+export async function getCommentHandler(req: Request, res: Response)
+    : Promise<void> {
 
     try {
 
         const {id} = req.params;
         const comment = await commentsQwRepository.findById(id);
 
-        if(!comment){
-             res.sendStatus(404).send({message: 'Comment not found'});
+        if (!comment) {
+            res.sendStatus(404).send({message: 'Comment not found'});
             return
         }
-        res.status(200).send(comment);
 
-    }
+        const viewModel = {
+            id: comment._id.toString(),
+            content: comment.content,
+            commentatorInfo: {
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userLogin,
+            },
+            createdAt: comment.createdAt
 
-    catch (e: unknown) {
+        }
+
+
+        res.status(200).send(viewModel);
+
+    } catch (e: unknown) {
 
     }
 

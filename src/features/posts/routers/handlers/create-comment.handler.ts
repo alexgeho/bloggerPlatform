@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../../core/types/http-statuses';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
-import {CommentDataOutput} from "../output/comment-data.output";
+import {CommentDataOutput} from "../../../comments/routers/output/comment-data.output";
 import {commentsService} from "../../../comments/application/comments.service";
 
 export async function createCommentHandler (req: Request, res: Response) {
