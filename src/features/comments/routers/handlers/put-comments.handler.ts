@@ -4,6 +4,7 @@ import {CommentUpdateInput} from "../../../posts/routers/input/post-update.input
 import {commentsService} from "../../application/comments.service";
 import {ResultStatus} from "../../../auth/common/result/resultCode";
 import {resultCodeToHttpException} from "../../../auth/common/result/resultCodeToHttpException";
+import {commentsQwRepository} from "../../repositories/commentsQwRepository";
 
 
 
@@ -14,6 +15,14 @@ export async function putCommentsHandler(
 ): Promise<void> {
     const { id } = req.params;
     const { content } = req.body;
+
+    const checkIfIdExist = await commentsQwRepository.findById(id);
+
+    if (!checkIfIdExist){
+        res.sendStatus(404);
+        return;
+    }
+
 
     const result = await commentsService.updateComment(id, content);
 
