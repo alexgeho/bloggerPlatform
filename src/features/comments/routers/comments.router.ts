@@ -5,6 +5,7 @@ import {idValidation} from "../../../core/middlewares/validation/params-id.valid
 import {accessTokenGuard} from "../../auth/routers/guards/access.token.guard";
 import {contentInputDtoValidation} from "../comment.input-dto.validation-middlewares";
 import {deleteCommentsHandler} from "./handlers/delete-comments.handler";
+import {inputValidationResultMiddleware} from "../../../core/middlewares/validation/input-validtion-result.middleware";
 
 
 export const commentsRouter = Router();
@@ -14,6 +15,7 @@ commentsRouter.put("/:id",
     accessTokenGuard,
     idValidation,
     contentInputDtoValidation,
+    inputValidationResultMiddleware,
     putCommentsHandler)
 
 commentsRouter.get("/:id",
