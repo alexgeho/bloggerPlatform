@@ -3,10 +3,14 @@ import {postAuthHandler} from "./handlers/post-auth.handler";
 import {authInputDtoValidation} from "../validation/auth.input-dto.validation-middlewares";
 import {accessTokenGuard} from "./guards/access.token.guard";
 import {getMeHandler} from "./handlers/get-me.handler";
+import {registrationHandler} from "./handlers/registration-handler";
 
 
 export const authRouter = Router();
 
+
+authRouter.post("/registration",
+    registrationHandler);
 
 authRouter.post("/login",
     authInputDtoValidation,
