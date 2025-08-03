@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { User } from '../../domain/user';
+import { User } from '../../../auth/domain/user';
 import {UserDataOutput} from "../output/user-data.output";
 
 export function mapToUserOutput(user: WithId<User>): UserDataOutput {

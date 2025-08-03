@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import {ObjectId} from "mongodb";
 import {userRepository} from '../repositories/user.repository';
 import {WithId} from 'mongodb';
-import {User} from '../domain/user';
+import {User} from '../../auth/domain/user';
 import {UserInputDto} from "./dtos/user.input-dto";
 import {UserDataOutput} from "../routers/output/user-data.output";
 import {UserQueryInput} from "../routers/input/user-query.input";

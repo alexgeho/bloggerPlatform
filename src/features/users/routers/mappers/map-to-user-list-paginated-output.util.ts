@@ -1,5 +1,5 @@
 import { WithId } from 'mongodb';
-import { User } from '../../domain/user';
+import { User } from '../../../auth/domain/user';
 import { ResourceType } from '../../../../core/types/resource-type';
 import { UserListPaginatedOutput } from '../output/user-list-paginated.output';
 import { UserDataOutput } from '../output/user-data.output';

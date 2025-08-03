@@ -1,4 +1,4 @@
-import { User } from '../domain/user';
+import { User } from '../../auth/domain/user';
 import {authCollection, blogCollection, userCollection} from '../../../db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { RepositoryNotFoundError } from '../../../core/errors/repository-not-found.error';

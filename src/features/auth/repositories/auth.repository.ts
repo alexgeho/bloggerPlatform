@@ -9,6 +9,7 @@ export const authRepository = {
     },
 
     // auth.repository.ts
+
     async findByLoginOrEmail(loginOrEmail: string) {
 
         const auth = await authCollection.findOne({$or: [ {email: loginOrEmail}, {login: loginOrEmail}]})
