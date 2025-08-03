@@ -11,6 +11,10 @@ import bcrypt from "bcrypt";
 import {randomUUID} from "node:crypto";
 import {User} from "../domain/user";
 import { add } from "date-fns";
+import {emailManager} from "../adapters/email.manager";
+
+
+
 
 
 
@@ -45,7 +49,8 @@ export const authService = {
 
         await userRepository.create(userNew)
 
-        await emailManager.sendConfirmationEmail(userNew.accountData.email, confirmationCode);
+        await emailManager
+            .sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
 
         return userNew;
     },
