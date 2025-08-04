@@ -47,6 +47,18 @@ export const userRepository = {
         const insertResult = await userCollection.insertOne(newUser);
         return insertResult.insertedId.toString();},
 
+    async update(user: User): Promise<boolean> {
+        const result = await userCollection.updateOne(
+            { _id: new ObjectId(user._id) },
+            {
+                $set: {
+                    'emailConfirmation.isConfirmed': true
+                }
+            }
+        );
+        return result.matchedCount === 1;
+    },
+
     async delete(id: string): Promise<void> {
         const deleteResult = await userCollection.deleteOne({
             _id: new ObjectId(id),
