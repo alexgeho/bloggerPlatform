@@ -9,9 +9,8 @@ export async function emailConfirmationHandler(
     res: Response) {
 
     const code = req.params.code;
-    const userId = req.params.id;
 
-    let userExist: User | null = await usersQwRepository.findById(userId);
+    let userExist: User | null = await usersQwRepository.findByCode(code);
 
     if (!userExist) {
         res.sendStatus(404);

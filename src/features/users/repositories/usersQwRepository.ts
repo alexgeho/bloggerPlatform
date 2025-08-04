@@ -67,8 +67,17 @@ export const usersQwRepository = {
     async findById(id: string): Promise<User | null> {
         const user = await userCollection.findOne({ _id: new ObjectId(id) });
         return user
-            //? this._getInView(user) : null;
     },
+
+
+    async findByCode(code: string): Promise<User | null> {
+        return await userCollection.findOne({ "emailConfirmation.confirmationCode": code });
+
+    },
+
+
+
+    //? this._getInView(user) : null;
 
     // _getInView(user: WithId<User>): UserDataOutput {
     //     return {
