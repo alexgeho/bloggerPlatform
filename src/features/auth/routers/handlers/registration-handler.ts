@@ -10,10 +10,7 @@ try {
 
    const userCreated = await authService.create(dto)
 
-    res.status(204).json({
-        message: "Input data is accepted. Email with confirmation code will be send to passed email address." +
-            " Confirmation code should be inside link as query param, for example:" +
-            " https://some-front.com/confirm-registration?code=youtcodehere"});
+    res.sendStatus(204);
 
 } catch (error) {
     res.status(400).json({message: "Please try again later"});
