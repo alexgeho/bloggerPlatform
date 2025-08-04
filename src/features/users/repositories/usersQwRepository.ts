@@ -69,6 +69,11 @@ export const usersQwRepository = {
         return user
     },
 
+    async findByEmail(email: string): Promise<User | null> {
+        return await userCollection.findOne({ "accountData.email": email });
+    },
+
+
 
     async findByCode(code: string): Promise<User | null> {
         return await userCollection.findOne({ "emailConfirmation.confirmationCode": code });

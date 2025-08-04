@@ -5,12 +5,15 @@ import {accessTokenGuard} from "./guards/access.token.guard";
 import {getMeHandler} from "./handlers/get-me.handler";
 import {registrationHandler} from "./handlers/registration-handler";
 import {emailConfirmationHandler} from "./handlers/registration-confirmation.handler";
+import {inputValidationResultMiddleware} from "../../../core/middlewares/validation/input-validtion-result.middleware";
+import {emailResendHandler} from "./handlers/email-resend.handler";
 
 
 export const authRouter = Router();
 
 
-
+authRouter.post("/registration-email-resending",
+    emailResendHandler);
 
 
 authRouter.post("/registration-confirmation",
@@ -22,6 +25,7 @@ authRouter.post("/registration",
 
 authRouter.post("/login",
     authInputDtoValidation,
+    inputValidationResultMiddleware,
     postAuthHandler)
 
 authRouter.get("/me",

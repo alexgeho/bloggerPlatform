@@ -28,7 +28,8 @@
     "nodemailer": "^7.0.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "utility-types": "^3.11.0"
+    "utility-types": "^3.11.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
