@@ -64,19 +64,20 @@ export const usersQwRepository = {
         return user
     },
 
-    async findById(id: string): Promise<UserDataOutput | null> {
+    async findById(id: string): Promise<User | null> {
         const user = await userCollection.findOne({ _id: new ObjectId(id) });
-        return user ? this._getInView(user) : null;
+        return user
+            //? this._getInView(user) : null;
     },
 
-    _getInView(user: WithId<User>): UserDataOutput {
-        return {
-            id: user._id.toString(),
-            login: user.login,
-            email: user.email,
-            createdAt: user.createdAt.toISOString(),
-        };
-    },
+    // _getInView(user: WithId<User>): UserDataOutput {
+    //     return {
+    //         id: user._id.toString(),
+    //         login: user.login,
+    //         email: user.email,
+    //         createdAt: user.createdAt.toISOString(),
+    //     };
+    // },
 
     _checkObjectId(id: string): boolean {
         return ObjectId.isValid(id);

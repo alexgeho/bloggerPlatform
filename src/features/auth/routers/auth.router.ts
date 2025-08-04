@@ -4,17 +4,17 @@ import {authInputDtoValidation} from "../validation/auth.input-dto.validation-mi
 import {accessTokenGuard} from "./guards/access.token.guard";
 import {getMeHandler} from "./handlers/get-me.handler";
 import {registrationHandler} from "./handlers/registration-handler";
+import {emailConfirmationHandler} from "./handlers/registration-confirmation.handler";
 
 
 export const authRouter = Router();
 
 
 
-authRouter.get("/confirm-email",
-    emailConfirmationHandler);
+
 
 authRouter.post("/registration-confirmation",
-    registrationConfirmationHandler);
+    emailConfirmationHandler);
 
 
 authRouter.post("/registration",
@@ -27,3 +27,7 @@ authRouter.post("/login",
 authRouter.get("/me",
     accessTokenGuard,
     getMeHandler)
+
+
+// authRouter.get("/confirm-email",
+//     emailConfirmationHandler);
