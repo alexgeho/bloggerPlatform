@@ -8,7 +8,7 @@ export async function emailConfirmationHandler(
     req: Request,
     res: Response) {
 
-    const code = req.params.code;
+    const code: string = req.body.code;
 
     let userExist: User | null = await usersQwRepository.findByCode(code);
 
