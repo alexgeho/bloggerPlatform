@@ -2,11 +2,13 @@ import {Request, Response} from 'express';
 import {usersQwRepository} from "../../../users/repositories/usersQwRepository";
 import {User} from "../../domain/user";
 import {userRepository} from "../../../users/repositories/user.repository";
+import {authService} from "../../application/auth.service";
 
 
 export async function emailConfirmationHandler(
+
     req: Request,
-    res: Response) {
+    res: Response): Promise <void> {
 
     const code: string = req.body.code;
 
@@ -22,12 +24,14 @@ export async function emailConfirmationHandler(
         userExist.emailConfirmation.isConfirmed ||
         userExist.emailConfirmation.expirationDate < new Date()
     ) {
-        return res.sendStatus(400);
-        }
+        res.sendStatus(400);
+        return;
+    }
 
-     userExist.emailConfirmation.isConfirmed = true;
 
-    await userRepository.update(userExist);
+    userExist.emailConfirmation.isConfirmed = true;
+
+    await authService.update(userExist);
 
     res.sendStatus(204);
 

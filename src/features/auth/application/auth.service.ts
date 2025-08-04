@@ -12,6 +12,7 @@ import {randomUUID} from "node:crypto";
 import {User} from "../domain/user";
 import { add } from "date-fns";
 import {emailManager} from "../adapters/email.manager";
+import {userCollection} from "../../../db/mongo.db";
 
 
 export const authService = {
@@ -54,6 +55,10 @@ export const authService = {
     async _generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
         return hash;
+    },
+
+    async update(user: User): Promise<void> {
+        await userRepository.updateConfirmation(user)
     },
 
     // async checkUserCredentials(

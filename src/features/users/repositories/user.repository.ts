@@ -47,7 +47,7 @@ export const userRepository = {
         const insertResult = await userCollection.insertOne(newUser);
         return insertResult.insertedId.toString();},
 
-    async update(user: User): Promise<boolean> {
+    async updateConfirmation(user: User): Promise<boolean> {
         const result = await userCollection.updateOne(
             { _id: new ObjectId(user._id) },
             {

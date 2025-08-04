@@ -7,26 +7,30 @@ import {registrationHandler} from "./handlers/registration-handler";
 import {emailConfirmationHandler} from "./handlers/registration-confirmation.handler";
 import {inputValidationResultMiddleware} from "../../../core/middlewares/validation/input-validtion-result.middleware";
 import {emailResendHandler} from "./handlers/email-resend.handler";
+import {userInputDtoValidation} from "../validation/user.input-dto.validation-middlewares";
+import {codeInputDtoValidation} from "../validation/registration.confirmation.input-dto.validation-middlewares";
 
 
 export const authRouter = Router();
 
 
-authRouter.post("/registration-email-resending",
-    emailResendHandler);
-
-
-authRouter.post("/registration-confirmation",
-    emailConfirmationHandler);
-
-
-authRouter.post("/registration",
-    registrationHandler);
-
 authRouter.post("/login",
     authInputDtoValidation,
     inputValidationResultMiddleware,
-    postAuthHandler)
+    postAuthHandler);
+
+authRouter.post("/registration-confirmation",
+    codeInputDtoValidation,
+    inputValidationResultMiddleware,
+    emailConfirmationHandler);
+
+authRouter.post("/registration",
+    userInputDtoValidation,
+    inputValidationResultMiddleware,
+    registrationHandler);
+
+authRouter.post("/registration-email-resending",
+    emailResendHandler);
 
 authRouter.get("/me",
     accessTokenGuard,
