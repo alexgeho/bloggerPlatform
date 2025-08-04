@@ -5,11 +5,13 @@ import {AUTH_PATH, BLOGS_PATH, COMMENTS_PATH, POSTS_PATH, TESTING_PATH, USERS_PA
 import {testingRouter} from "./features/testing/routers/testing.router";
 import {postsRouter} from "./features/posts/routers/posts.router";
 import {usersRouter} from "./features/users/routers/user.router";
+import cors from "cors";
 // import {commentsRouter} from "./features/comments/comments.router";
 import {authRouter} from "./features/auth/routers/auth.router";
 import {commentsRouter} from "./features/comments/routers/comments.router";
 
 export const setupApp = (app: Express) => {
+    app.use(cors());
     app.use(express.json());
 
 
