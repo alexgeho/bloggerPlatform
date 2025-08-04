@@ -9,6 +9,14 @@ import {registrationHandler} from "./handlers/registration-handler";
 export const authRouter = Router();
 
 
+
+authRouter.get("/confirm-email",
+    emailConfirmationHandler);
+
+authRouter.post("/registration-confirmation",
+    registrationConfirmationHandler);
+
+
 authRouter.post("/registration",
     registrationHandler);
 
@@ -18,4 +26,4 @@ authRouter.post("/login",
 
 authRouter.get("/me",
     accessTokenGuard,
-    getMeHandler);
+    getMeHandler)
