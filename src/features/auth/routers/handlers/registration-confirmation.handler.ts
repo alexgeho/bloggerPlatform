@@ -14,19 +14,36 @@ export async function emailConfirmationHandler(
 
     let userExist: User | null = await usersQwRepository.findByCode(code);
 
+
     if (!userExist) {
-        res.sendStatus(404);
+         res.status(404).json({
+            errorsMessages: [{ message: "User not found", field: "code" }],
+
+        });
         return;
     }
 
-    if (
-        userExist.emailConfirmation.confirmationCode !== code ||
-        userExist.emailConfirmation.isConfirmed ||
-        userExist.emailConfirmation.expirationDate < new Date()
-    ) {
-        res.status(400).json({ message: "Code is already confirmed or invalid" });
+    if (userExist.emailConfirmation.isConfirmed) {
+         res.status(400).json({
+            errorsMessages: [{ message: "Email already confirmed", field: "code" }],
+        });
         return;
     }
+
+    if (userExist.emailConfirmation.confirmationCode !== code) {
+         res.status(400).json({
+            errorsMessages: [{ message: "Invalid confirmation code", field: "code" }],
+        });
+        return;
+    }
+
+    if (userExist.emailConfirmation.expirationDate < new Date()) {
+         res.status(400).json({
+            errorsMessages: [{ message: "Confirmation code expired", field: "code" }],
+        });
+        return;
+    }
+
 
 
     userExist.emailConfirmation.isConfirmed = true;
