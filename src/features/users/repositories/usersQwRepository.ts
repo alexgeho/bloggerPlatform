@@ -56,12 +56,15 @@ export const usersQwRepository = {
         return userCollection.findOne(filter);
     },
 
-    async findByLoginOrEmail(loginOrEmail: string) {
+    async findByLoginOrEmail(login: string, email: string) {
+        const user = await userCollection.findOne({
+            $or: [
+                { "accountData.email": email },
+                { "accountData.login": login }
+            ]
+        });
 
-        const user =
-            await userCollection.findOne({$or: [ {email: loginOrEmail}, {login: loginOrEmail}]})
-
-        return user
+        return user;
     },
 
     async findById(id: string): Promise<User | null> {

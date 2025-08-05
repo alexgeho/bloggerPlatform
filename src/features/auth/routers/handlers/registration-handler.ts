@@ -9,7 +9,7 @@ try {
 
    const dto: RegistrationDto = req.body;
 
-   const userExist = await usersQwRepository.findByLoginOrEmail(dto.login || dto.email);
+   const userExist = await usersQwRepository.findByLoginOrEmail(dto.login, dto.email);
 
    if (userExist) {
        res.sendStatus(400);
