@@ -46,7 +46,7 @@ export const authService = {
 
         await userRepository.create(userNew)
 
-        await emailManager
+         emailManager
             .sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
 
         return userNew;
