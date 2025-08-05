@@ -11,10 +11,21 @@ try {
 
    const userExist = await usersQwRepository.findByLoginOrEmail(dto.login, dto.email);
 
-   if (userExist) {
-       res.sendStatus(400);
-       return;
-   }
+    if (userExist) {
+        if (userExist.accountData.email === dto.email) {
+            return res.status(400).json({
+                errorsMessages: [{ message: "email is already exist", field: "email" }],
+            });
+        }
+
+        if (userExist.accountData.login === dto.login) {
+            return res.status(400).json({
+                errorsMessages: [{ message: "login is already exist", field: "login" }],
+            });
+        }
+    }
+
+
 
    await authService.create(dto)
 
