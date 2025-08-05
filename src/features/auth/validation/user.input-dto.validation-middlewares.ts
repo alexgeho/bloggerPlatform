@@ -18,8 +18,6 @@ const  emailValidation = body('email')
     .isString()
     .withMessage('Email should be string')
     .trim()
-    .isLength({ min: 2, max: 20 })
-    .withMessage('Length of name is not correct')
     .matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/)
     .withMessage('Email pattern is not valid');
 
