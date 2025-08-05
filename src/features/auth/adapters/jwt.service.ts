@@ -7,6 +7,7 @@ interface JwtPayload {
 }
 
 export const jwtService = {
+
     async createToken(userId: string, userLogin: string): Promise<string> {
         return jwt.sign({ userId, userLogin }, appConfig.AC_SECRET, {
             expiresIn: `${appConfig.AC_TIME}s`,

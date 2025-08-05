@@ -1,18 +1,13 @@
-import {ResultStatus} from '../common/result/resultCode';
-import {Result} from '../common/result/result.type';
-import {jwtService} from "../adapters/jwt.service";
-import {ObjectId, WithId} from "mongodb";
-import {IUserDB} from "../types/user.db.interface";
+import {ObjectId} from "mongodb";
 import {userRepository} from "../../users/repositories/user.repository";
-import {bcryptService} from "../adapters/bcrypt.service";
 import {RegistrationDto} from "../types/registration.dto";
-import {UserAccountDBType} from "../types/UserAccountDBType";
 import bcrypt from "bcrypt";
 import {randomUUID} from "node:crypto";
 import {User} from "../domain/user";
-import { add } from "date-fns";
+import {add} from "date-fns";
 import {emailManager} from "../adapters/email.manager";
-import {userCollection} from "../../../db/mongo.db";
+import {ResultStatus} from "../common/result/resultCode";
+import {jwtService} from "../adapters/jwt.service";
 
 
 export const authService = {
@@ -59,6 +54,43 @@ export const authService = {
 
     async update(user: User): Promise<void> {
         await userRepository.updateConfirmation(user)
+    },
+
+    async loginUser(loginOrEmail: string, password: string) {
+        const user = await userRepository.findByLoginOrEmail(loginOrEmail);
+
+        if (!user) {
+            return {
+                status: ResultStatus.Unauthorized,
+                extensions: [{ field: "loginOrEmail", message: "User not found" }]
+            };
+        }
+
+        if (!user.emailConfirmation.isConfirmed) {
+            return {
+                status: ResultStatus.Unauthorized,
+                extensions: [{ field: "email", message: "Email not confirmed" }]
+            };
+        }
+
+        const isValid = await bcrypt.compare(password, user.accountData.passwordHash);
+
+        if (!isValid) {
+            return {
+                status: ResultStatus.Unauthorized,
+                extensions: [{ field: "password", message: "Invalid password" }]
+            };
+        }
+
+        const accessToken = await jwtService.createToken(
+            user._id.toString(),
+            user.accountData.login
+        );
+
+        return {
+            status: ResultStatus.Success,
+            data: { accessToken }
+        };
     },
 
     // async checkUserCredentials(
