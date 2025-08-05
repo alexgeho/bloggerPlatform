@@ -33,7 +33,7 @@ export async function emailResendHandler(
 
     await emailManager.sendConfirmationEmail(email, newCode);
 
-    await userRepository.update(user); // обязательно обнови в базе
+    await userRepository.updateConfirmation(user); // обязательно обнови в базе
 
     res.sendStatus(204);
 
