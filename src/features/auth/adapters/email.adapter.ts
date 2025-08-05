@@ -5,11 +5,11 @@ type MailResult = boolean;
 export const emailAdapter = {
     async sendEmail(to: string, subject: string, html: string): Promise<MailResult> {
         const transporter = nodemailer.createTransport({
-            host: 'sandbox.smtp.mailtrap.io',
-            port: 2525,
+            host: 'smtp.ethereal.email',
+            port: 587,
             auth: {
-                user: process.env.SMTP_USER || '66c2097e93aa55',
-                pass: process.env.SMTP_PASS || '15b615951a856c',
+                user: process.env.SMTP_USER || 'rasheed33@ethereal.email',
+                pass: process.env.SMTP_PASS || 'dQXmchT8HR3Fs8R4Pb',
             },
         });
 
