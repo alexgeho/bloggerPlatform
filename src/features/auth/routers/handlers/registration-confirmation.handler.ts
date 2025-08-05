@@ -24,7 +24,7 @@ export async function emailConfirmationHandler(
         userExist.emailConfirmation.isConfirmed ||
         userExist.emailConfirmation.expirationDate < new Date()
     ) {
-        res.sendStatus(400);
+        res.status(400).json({ message: "Code is already confirmed or invalid" });
         return;
     }
 

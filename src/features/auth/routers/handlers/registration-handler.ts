@@ -21,7 +21,15 @@ try {
     res.sendStatus(204);
 
 } catch (error) {
-    res.status(400).json({message: "Please try again later"});
+    return res.status(400).json({
+        errorsMessages: [
+            {
+                message: "User with this email or login already exists",
+                field: "email", // или "login" — в зависимости от того, что совпало
+            },
+        ],
+    });
+
 
 }
 
