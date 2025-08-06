@@ -6,15 +6,15 @@ import {LoginDto} from "../../types/login.dto";
 import {ResultStatus} from "../../common/result/resultCode";
 import {resultCodeToHttpException} from "../../common/result/resultCodeToHttpException";
 
-export async function postAuthHandler(
+export async function loginHandler(
     req: Request,
     res: Response) {
-    const newReq = req as RequestWithBody<LoginDto>;
+
     try {
 
-        const {loginOrEmail, password} = newReq.body;
-        const result
-            = await authService.loginUser(loginOrEmail, password);
+        const {loginOrEmail, password} = req.body;
+
+        const result = await authService.loginUser(loginOrEmail, password);
 
         if (result.status !== ResultStatus.Success) {
             res
