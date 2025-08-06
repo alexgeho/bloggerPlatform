@@ -12,6 +12,8 @@ import {Result} from "../../auth/common/result/result.type";
 import {IUserDB} from "../../auth/types/user.db.interface";
 import {ResultStatus} from "../../auth/common/result/resultCode";
 import {bcryptService} from "../../auth/adapters/bcrypt.service";
+import {randomUUID} from "node:crypto";
+import {mapUserToUserDB} from "../routers/mappers/map-to-user-output.util";
 
 export const userService = {
 
@@ -29,12 +31,12 @@ export const userService = {
 
         if (existingUser) {
             // Проверяем, что именно совпало
-            if (existingUser.email === dto.email) {
+            if (existingUser.accountData.email === dto.email) {
                 return {
                     errorsMessages: [{field: 'email', message: 'email should be unique'}]
                 }
             }
-            if (existingUser.login === dto.login) {
+            if (existingUser.accountData.login === dto.login) {
                 return {
                     errorsMessages: [{field: 'login', message: 'login should be unique'}]
                 }
@@ -44,18 +46,25 @@ export const userService = {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash: any = await this._generateHash(dto.password, passwordSalt)
 
-
         const newUser: User = {
             _id: new ObjectId(),
-            login: dto.login,
-            email: dto.email,
-            passwordHash,
-            passwordSalt,
-            createdAt: new Date(),
-        }
+            accountData: {
+                login: dto.login,
+                email: dto.email,
+                passwordHash,
+                passwordSalt,
+                createdAt: new Date(),
+            },
+            emailConfirmation: {
+                confirmationCode: randomUUID(),
+                expirationDate: new Date(Date.now() + 60 * 60 * 1000), // пример: через 1 час
+                isConfirmed: false,
+            },
+        };
+
         const id = await userRepository.create(newUser);
 
-        return {id, login: newUser.login, email: newUser.email, createdAt: newUser.createdAt.toISOString()};
+        return {id, login: newUser.accountData.login, email: newUser.accountData.email, createdAt: newUser.accountData.createdAt.toISOString()};
     },
 
     async _generateHash(password: string, salt: string) {
@@ -83,7 +92,7 @@ export const userService = {
                 extensions: [{ field: 'loginOrEmail', message: 'Not Found' }],
             };
 
-        const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash);
+        const isPassCorrect = await bcryptService.checkPassword(password, user.accountData.passwordHash);
         if (!isPassCorrect)
             return {
                 status: ResultStatus.BadRequest,
@@ -94,7 +103,7 @@ export const userService = {
 
         return {
             status: ResultStatus.Success,
-            data: user,
+            data: mapUserToUserDB(user),
             extensions: [],
         };
     },

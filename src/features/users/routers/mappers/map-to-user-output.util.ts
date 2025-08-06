@@ -1,12 +1,14 @@
-// import { WithId } from 'mongodb';
-// import { User } from '../../../auth/domain/user';
-// import {UserDataOutput} from "../output/user-data.output";
-//
-// export function mapToUserOutput(user: WithId<User>): UserDataOutput {
-//     return {
-//         id: user._id.toString(),
-//         login: user.login,
-//         email: user.email,
-//         createdAt: new Date().toISOString()
-//     };
-// }
+import { WithId } from 'mongodb';
+import { User } from '../../../auth/domain/user';
+import { IUserDB } from '../../../auth/types/user.db.interface';
+
+export function mapUserToUserDB(user: WithId<User>): WithId<IUserDB> {
+    return {
+        _id: user._id,
+        login: user.accountData.login,
+        email: user.accountData.email,
+        passwordHash: user.accountData.passwordHash,
+        createdAt: user.accountData.createdAt,
+        // Добавь другие поля, если есть
+    };
+}
