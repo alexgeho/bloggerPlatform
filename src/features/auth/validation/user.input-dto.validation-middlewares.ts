@@ -18,8 +18,8 @@ const  emailValidation = body('email')
     .isString()
     .withMessage('Email should be string')
     .trim()
-    // .matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/)
-    // .withMessage('Email pattern is not valid');
+    .matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/)
+    .withMessage('Email pattern is not valid');
 
 
 
