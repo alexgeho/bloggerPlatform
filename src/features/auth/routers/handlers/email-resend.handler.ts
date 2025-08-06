@@ -21,10 +21,11 @@ export async function emailResendHandler(
     }
 
     if (
-        user.emailConfirmation.isConfirmed ||
-        user.emailConfirmation.expirationDate < new Date()
+        user.emailConfirmation.isConfirmed
     ) {
-        res.sendStatus(400);
+        res.status(400).json({
+            errorsMessages: [{ message: "Email already confirmed", field: "email" }]
+        })
     }
 
 
