@@ -8,8 +8,8 @@ export const emailAdapter = {
             host: 'smtp.ethereal.email',
             port: 587,
             auth: {
-                user: process.env.SMTP_USER || 'abel24@ethereal.email',
-                pass: process.env.SMTP_PASS || 'dYCfTdAFyscsshzNp5',
+                user: process.env.SMTP_USER || 'lazaro.langosh2@ethereal.email',
+                pass: process.env.SMTP_PASS || 'nNEbymPMHt8m5aCC7C',
             },
         });
 
