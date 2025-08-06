@@ -13,8 +13,10 @@ export async function emailResendHandler(
 
     const user = await usersQwRepository.findByEmail(email);
 
-    if ( !user ) {
-        res.sendStatus(404);
+    if (!user) {
+        res.status(400).json({
+            errorsMessages: [{ message: "User not found", field: "email" }]
+        });
         return;
     }
 
@@ -24,6 +26,7 @@ export async function emailResendHandler(
     ) {
         res.sendStatus(400);
     }
+
 
     const newCode = uuidv4();
     const newExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
