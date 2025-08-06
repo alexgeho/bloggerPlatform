@@ -16,7 +16,7 @@ export async function emailConfirmationHandler(
 
 
     if (!userExist) {
-         res.status(404).json({
+         res.status(400).json({
             errorsMessages: [{ message: "User not found", field: "code" }],
 
         });
