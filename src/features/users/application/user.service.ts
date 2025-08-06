@@ -21,42 +21,42 @@ export const userService = {
 
 
 
-    // async create(dto: UserInputDto): Promise<UserDataOutput | {
-    //     errorsMessages: { field: string, message: string }[]
-    // }> {
-    //
-    //     const existingUser = await userRepository.findOne({login: dto.login, email: dto.email});
-    //
-    //     if (existingUser) {
-    //         // Проверяем, что именно совпало
-    //         if (existingUser.email === dto.email) {
-    //             return {
-    //                 errorsMessages: [{field: 'email', message: 'email should be unique'}]
-    //             }
-    //         }
-    //         if (existingUser.login === dto.login) {
-    //             return {
-    //                 errorsMessages: [{field: 'login', message: 'login should be unique'}]
-    //             }
-    //         }
-    //     }
-    //
-    //     const passwordSalt = await bcrypt.genSalt(10)
-    //     const passwordHash: any = await this._generateHash(dto.password, passwordSalt)
-    //
-    //
-    //     const newUser: User = {
-    //         _id: new ObjectId(),
-    //         login: dto.login,
-    //         email: dto.email,
-    //         passwordHash,
-    //         passwordSalt,
-    //         createdAt: new Date(),
-    //     }
-    //     const id = await userRepository.create(newUser);
-    //
-    //     return {id, login: newUser.login, email: newUser.email, createdAt: newUser.createdAt.toISOString()};
-    // },
+    async create(dto: UserInputDto): Promise<UserDataOutput | {
+        errorsMessages: { field: string, message: string }[]
+    }> {
+
+        const existingUser = await userRepository.findOne({login: dto.login, email: dto.email});
+
+        if (existingUser) {
+            // Проверяем, что именно совпало
+            if (existingUser.email === dto.email) {
+                return {
+                    errorsMessages: [{field: 'email', message: 'email should be unique'}]
+                }
+            }
+            if (existingUser.login === dto.login) {
+                return {
+                    errorsMessages: [{field: 'login', message: 'login should be unique'}]
+                }
+            }
+        }
+
+        const passwordSalt = await bcrypt.genSalt(10)
+        const passwordHash: any = await this._generateHash(dto.password, passwordSalt)
+
+
+        const newUser: User = {
+            _id: new ObjectId(),
+            login: dto.login,
+            email: dto.email,
+            passwordHash,
+            passwordSalt,
+            createdAt: new Date(),
+        }
+        const id = await userRepository.create(newUser);
+
+        return {id, login: newUser.login, email: newUser.email, createdAt: newUser.createdAt.toISOString()};
+    },
 
     async _generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)

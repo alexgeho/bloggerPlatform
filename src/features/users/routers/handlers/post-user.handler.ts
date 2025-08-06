@@ -8,7 +8,6 @@ export async function postUserHandler(req: Request, res: Response) {
     try {
         const createdUserData = await userService.create(req.body);
 
-        //  const newUser = await usersQwRepository.findById(createdUserData);
 
         if ('errorsMessages' in createdUserData) {
              res.status(400).json(createdUserData);
@@ -17,7 +16,6 @@ export async function postUserHandler(req: Request, res: Response) {
 
          res.status(HttpStatus.Created).send(createdUserData);
 
-        //          res.status(HttpStatus.Created).send(newUser!);
 
         return;
 

@@ -5,17 +5,18 @@ type MailResult = boolean;
 export const emailAdapter = {
     async sendEmail(to: string, subject: string, html: string): Promise<MailResult> {
         const transporter = nodemailer.createTransport({
-            host: 'smtp.ethereal.email',
-            port: 587,
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
-                user: process.env.SMTP_USER || 'lazaro.langosh2@ethereal.email',
-                pass: process.env.SMTP_PASS || 'nNEbymPMHt8m5aCC7C',
+                user: process.env.SMTP_USER || 'aleksandrgerhard@gmail.com',
+                pass: process.env.GMAIL_PASS || 'efes-wngd-wytr-dwqp',
             },
         });
 
         try {
             await transporter.sendMail({
-                from: '"Alexander Gerhard" <alex@itgeho.com>',
+                from: `"Alexander Gerhard" <${process.env.GMAIL_USER}>`,
                 to,
                 subject,
                 html,
