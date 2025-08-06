@@ -3,7 +3,7 @@ import {RegistrationDto} from "../../types/registration.dto";
 import {authService} from "../../application/auth.service";
 import {usersQwRepository} from "../../../users/repositories/usersQwRepository";
 
-export const registrationHandler = async (req: Request, res: Response) => {
+export const registrationHandler = async (req: Request, res: Response):Promise<void> => {
 
     try {
 
@@ -13,13 +13,13 @@ export const registrationHandler = async (req: Request, res: Response) => {
 
         if (userExist) {
             if (userExist.accountData.email === dto.email) {
-                return res.status(400).json({
+                 res.status(400).json({
                     errorsMessages: [{message: "email is already exist", field: "email"}],
                 });
             }
 
             if (userExist.accountData.login === dto.login) {
-                return res.status(400).json({
+                 res.status(400).json({
                     errorsMessages: [{message: "login is already exist", field: "login"}],
                 });
             }
@@ -31,7 +31,7 @@ export const registrationHandler = async (req: Request, res: Response) => {
         res.sendStatus(204);
 
     } catch (error) {
-        return res.status(400).json({
+         res.status(400).json({
             errorsMessages: [
                 {
                     message: "User with this email or login already exists",

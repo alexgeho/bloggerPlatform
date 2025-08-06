@@ -9,7 +9,8 @@
     "test": "jest -i",
     "watch": "tsc -w",
     "lint": "eslint --fix .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "localhost:run": "ssh -R 80:localhost:5003 nokey@localhost.run"
   },
   "keywords": [],
   "author": "",
