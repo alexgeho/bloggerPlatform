@@ -59,6 +59,20 @@ export const userRepository = {
         return result.matchedCount === 1;
     },
 
+    async uptateCodeAndDate(user: User): Promise<boolean> {
+        const result = await userCollection.updateOne(
+            { _id: new ObjectId(user._id) },
+            {
+                $set: {
+                    'emailConfirmation.expirationDate': user.emailConfirmation.expirationDate,
+                    'emailConfirmation.confirmationCode': user.emailConfirmation.confirmationCode,
+                }
+            }
+        );
+
+        return result.modifiedCount === 1;
+    },
+
     async delete(id: string): Promise<void> {
         const deleteResult = await userCollection.deleteOne({
             _id: new ObjectId(id),

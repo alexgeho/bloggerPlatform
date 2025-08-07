@@ -3,7 +3,8 @@ import {usersQwRepository} from "../../../users/repositories/usersQwRepository";
 import {emailManager} from "../../adapters/email.manager";
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
-import {userRepository} from "../../../users/repositories/user.repository"; // если используешь date-fns
+import {userRepository} from "../../../users/repositories/user.repository";
+import {authService} from "../../application/auth.service"; // если используешь date-fns
 
 export async function emailResendHandler(
     req: Request,
@@ -20,24 +21,15 @@ export async function emailResendHandler(
         return;
     }
 
-    if (
-        user.emailConfirmation.isConfirmed
-    ) {
+    if (user.emailConfirmation.isConfirmed) {
         res.status(400).json({
             errorsMessages: [{ message: "Email already confirmed", field: "email" }]
         })
     }
 
 
-    const newCode = uuidv4();
-    const newExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
+    await authService.resendEmail(user)
 
-    user.emailConfirmation.confirmationCode = newCode;
-    user.emailConfirmation.expirationDate = newExpirationDate;
-
-    await emailManager.sendConfirmationEmail(email, newCode);
-
-    await userRepository.updateConfirmation(user); // обязательно обнови в базе
 
     res.sendStatus(204);
 

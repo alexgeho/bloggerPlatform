@@ -8,6 +8,7 @@ import {add} from "date-fns";
 import {emailManager} from "../adapters/email.manager";
 import {ResultStatus} from "../common/result/resultCode";
 import {jwtService} from "../adapters/jwt.service";
+import {v4 as uuidv4} from "uuid";
 
 
 export const authService = {
@@ -92,6 +93,25 @@ export const authService = {
             data: { accessToken }
         };
     },
+
+    async resendEmail(user: User): Promise<void> {
+
+        const newCode = uuidv4();
+        const newExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
+
+        user.emailConfirmation.confirmationCode = newCode;
+        user.emailConfirmation.expirationDate = newExpirationDate;
+
+        await userRepository.uptateCodeAndDate(user);
+
+        await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
+
+    }
+
+
+
+
+
 
     // async checkUserCredentials(
     //     loginOrEmail: string,
