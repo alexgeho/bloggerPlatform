@@ -67,12 +67,12 @@ export const authService = {
             };
         }
 
-        if (!user.emailConfirmation.isConfirmed) {
-            return {
-                status: ResultStatus.Unauthorized,
-                extensions: [{ field: "email", message: "Email not confirmed" }]
-            };
-        }
+        // if (!user.emailConfirmation.isConfirmed) {
+        //     return {
+        //         status: ResultStatus.Unauthorized,
+        //         extensions: [{ field: "email", message: "Email not confirmed" }]
+        //     };
+        // }
 
         const isValid = await bcrypt.compare(password, user.accountData.passwordHash);
 
