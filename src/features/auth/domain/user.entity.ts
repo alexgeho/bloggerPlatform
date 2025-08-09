@@ -1,0 +1,44 @@
+import { ObjectId } from 'mongodb';
+import { randomUUID } from 'crypto';
+import { add } from 'date-fns';
+
+
+export class UserEntity {
+    _id: ObjectId;
+    accountData: {
+        login: string;
+        email: string;
+        passwordHash: string;
+        passwordSalt: string;
+        createdAt: Date;
+    };
+
+    emailConfirmation: {
+        confirmationCode: string;
+        expirationDate: Date;
+        isConfirmed: boolean;
+    };
+
+    constructor(login: string, email: string, passwordHash: string, passwordSalt: string) {
+    this._id = new ObjectId();
+    this.accountData = {
+        login,
+        email,
+        passwordHash,
+        passwordSalt,
+        createdAt: new Date(),
+    };
+
+    this.emailConfirmation = {
+        confirmationCode: randomUUID(),
+        expirationDate: add(new Date(), { hours: 1, minutes: 30 }),
+        isConfirmed: false
+    };
+
+    }
+
+
+
+
+
+}
