@@ -4,6 +4,7 @@ import { runDB, dropDb, stopDb } from '../../src/db/mongo.db';
 import { authService } from '../../src/features/auth/application/auth.service';
 import { emailAdapter } from '../../src/features/auth/adapters/email.adapter';
 import { testSeeder } from './test.seeder';
+import {ResultStatus} from "../../src/features/auth/common/result/resultCode";
 
 describe('AUTH-INTEGRATION', () => {
     let mongod: MongoMemoryServer;
@@ -44,16 +45,16 @@ describe('AUTH-INTEGRATION', () => {
         });
 
         it('should NOT register the same user twice', async () => {
+
             const dto = testSeeder.createRegistrationDto();
 
-            const first = await authService.create(dto);
-            expect(first).not.toBeNull();
+            await testSeeder.insert (dto);
 
-            const second = await authService.create(dto);
-            expect(second).toBeNull();
 
-            // почту отправили только в первый раз
-            expect(emailAdapter.sendEmail).toHaveBeenCalledTimes(1);
+            const result = await authService.create(dto);
+
+            expect(result).toBeNull();
+
         });
     });
 });

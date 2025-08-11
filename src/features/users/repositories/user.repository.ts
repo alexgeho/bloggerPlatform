@@ -98,11 +98,27 @@ export const userRepository = {
         return userCollection.findOne(filter);
     },
 
-    async findByLoginOrEmail(loginOrEmail: string) {
+    async findByLoginOrEmail(identifier: string) {
+        return userCollection.findOne({
+            $or: [
+                { 'accountData.login': identifier },
+                { 'accountData.email': identifier }
+            ]
+        });
+    },
 
-        const user = await userCollection.findOne({$or: [ {'accountData.email': loginOrEmail}, {'accountData.login': loginOrEmail}]})
+    async forTestfindByLoginOrEmail(login: string, email: string) {
+        return userCollection.findOne(
+            {
+                $or: [
+                    { "accountData.email": email },
+                    { "accountData.login": login }
+                ]
+            }
+        )
 
-        return user
+
     }
+
 
 };
