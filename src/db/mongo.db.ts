@@ -51,3 +51,14 @@ export async function stopDb () {
     }
     await client.close();
 }
+
+// в src/db/mongo.db.ts
+
+export async function dropDb(): Promise<void> {
+    if (!client) {
+        throw new Error("No active client");
+    }
+    const db = client.db(SETTINGS.DB_NAME);
+    const collections = await db.collections();
+    await Promise.all(collections.map((c) => c.deleteMany({})));
+}

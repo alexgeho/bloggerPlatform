@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2015",
     "module": "commonjs",
-    "rootDir": "./src",
+
     "outDir": "./dist",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -13,5 +13,6 @@
   },
   "include": ["src/**/*"],
   "exclude": [
-    "__tests__", "dist", "node_modules"]
+    "./__tests__/**/*", "dist", "node_modules"],
+
 }

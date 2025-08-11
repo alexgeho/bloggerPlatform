@@ -21,7 +21,6 @@ export const authService = {
 
         if (userExist) return null;
 
-
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(dto.password, passwordSalt);
 
