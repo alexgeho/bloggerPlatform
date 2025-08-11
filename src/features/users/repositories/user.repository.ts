@@ -59,6 +59,12 @@ export const userRepository = {
         return result.matchedCount === 1;
     },
 
+    async findByConfirmationCode(code: string) {
+        return userCollection.findOne({
+            'emailConfirmation.confirmationCode': code
+        });
+    },
+
     async uptateCodeAndDate(user: User): Promise<boolean> {
         const result = await userCollection.updateOne(
             { _id: new ObjectId(user._id) },

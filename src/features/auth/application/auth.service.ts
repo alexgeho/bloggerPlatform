@@ -10,6 +10,7 @@ import {ResultStatus} from "../common/result/resultCode";
 import {jwtService} from "../adapters/jwt.service";
 import {v4 as uuidv4} from "uuid";
 import {UserEntity} from "../domain/user.entity";
+import {Result} from "express-validator";
 
 
 export const authService = {
@@ -43,6 +44,24 @@ export const authService = {
     async update(user: User): Promise<void> {
         await userRepository.updateConfirmation(user)
     },
+
+    async confirmEmail(code: string): Promise<{ status: ResultStatus }> {
+        const user = await userRepository.findByConfirmationCode(code); // <- новый метод
+
+        if (!user) {
+            return { status: ResultStatus.BadRequest };
+        }
+        if (user.emailConfirmation.isConfirmed) {
+            return { status: ResultStatus.BadRequest };
+        }
+        if (new Date(user.emailConfirmation.expirationDate) < new Date()) {
+            return { status: ResultStatus.BadRequest };
+        }
+
+        await userRepository.updateConfirmation(user);
+        return { status: ResultStatus.Success };
+    },
+
 
     async loginUser(loginOrEmail: string, password: string) {
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);

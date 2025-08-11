@@ -11,10 +11,8 @@ export async function emailConfirmationHandler(
     res: Response): Promise <void> {
 
     const code: string = req.body.code;
-    console.log(code, ' code')
 
     let userExist: User | null = await usersQwRepository.findByCode(code);
-    console.log(userExist, ' userExist перед 29 строчкой')
 
 
     if (!userExist) {
@@ -24,7 +22,6 @@ export async function emailConfirmationHandler(
         });
         return;
     }
-console.log(userExist, ' userExist')
     if (userExist.emailConfirmation.isConfirmed) {
          res.status(400).json({
             errorsMessages: [{ message: "Email already confirmed", field: "code" }],
