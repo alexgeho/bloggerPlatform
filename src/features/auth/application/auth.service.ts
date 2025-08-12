@@ -106,6 +106,21 @@ export const authService = {
 
         await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
 
-    }
+    },
+
+    async checkAccessToken(authHeader: string) {
+        const [type, token] = (authHeader ?? '').split(' ');
+
+        if (type !== 'Bearer' || !token) {
+            return { status: ResultStatus.Unauthorized };
+        }
+
+        const payload = await jwtService.verifyToken(token);
+        if (!payload) {
+            return { status: ResultStatus.Unauthorized };
+        }
+
+        return { status: ResultStatus.Success };
+    },
 
 };
