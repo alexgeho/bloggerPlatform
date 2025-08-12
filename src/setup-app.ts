@@ -1,22 +1,25 @@
-import express, {Express, RequestHandler} from "express";
-import {blogsRouter} from "./features/blogs/routers/blogs.router";
-import { setupSwagger } from "./core/swagger/setup-swagger"
-import {AUTH_PATH, BLOGS_PATH, COMMENTS_PATH, POSTS_PATH, TESTING_PATH, USERS_PATH} from "./core/paths/paths";
-import {testingRouter} from "./features/testing/routers/testing.router";
-import {postsRouter} from "./features/posts/routers/posts.router";
-import {usersRouter} from "./features/users/routers/user.router";
-import cors from "cors";
-// import {commentsRouter} from "./features/comments/comments.router";
-import {authRouter} from "./features/auth/routers/auth.router";
-import {commentsRouter} from "./features/comments/routers/comments.router";
+import express, { Express, Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { blogsRouter } from './features/blogs/routers/blogs.router';
+import { postsRouter } from './features/posts/routers/posts.router';
+import { usersRouter } from './features/users/routers/user.router';
+import { commentsRouter } from './features/comments/routers/comments.router';
+import { testingRouter } from './features/testing/routers/testing.router';
+import { authRouter } from './features/auth/routers/auth.router';
+import { setupSwagger } from './core/swagger/setup-swagger';
+import { AUTH_PATH, BLOGS_PATH, COMMENTS_PATH, POSTS_PATH, TESTING_PATH, USERS_PATH } from './core/paths/paths';
+import { ENV } from './core/config/env';
+import type { ErrorRequestHandler } from 'express';
+
 
 export const setupApp = (app: Express) => {
-    app.use(cors());
+    app.use(cors({ origin: ENV.ORIGIN, credentials: true }));
     app.use(express.json());
+    app.use(cookieParser()); // why: чтобы читать/ставить refresh cookie
 
-
-    app.get("/", (req, res) => {
-        res.status(200).send("Hello world Bitau!");
+    app.get('/', (_req, res) => {
+        res.status(200).send('Hello world Bitau!');
     });
 
     app.use(BLOGS_PATH, blogsRouter);
@@ -26,14 +29,17 @@ export const setupApp = (app: Express) => {
     app.use(AUTH_PATH, authRouter);
     app.use(COMMENTS_PATH, commentsRouter);
 
-
-
     setupSwagger(app);
 
-    function errorHandler  (err: any, req: Request, res: Response)  {
-        console.log(arguments, 'err midleware');
-        console.log( 'req.url');
-    }
+    const errorMiddleware: ErrorRequestHandler = (err, _req, res, _next) => {
+        if (process.env.NODE_ENV !== 'production') {
+            // eslint-disable-next-line no-console
+            console.error(err);
+        }
+        res.status(500).send({ message: 'Internal Server Error' });
+    };
+    app.use(errorMiddleware);
 
-    return app;
+
+return app;
 };
