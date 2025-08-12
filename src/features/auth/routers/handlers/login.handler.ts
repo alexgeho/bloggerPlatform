@@ -1,34 +1,25 @@
-import {Request, Response} from 'express';
-import {errorsHandler} from '../../../../core/errors/errors.handler';
-import {authService} from "../../application/auth.service";
-import {RequestWithBody} from "../../common/types/requests";
-import {LoginDto} from "../../types/login.dto";
+import { Request, Response } from 'express';
+import { errorsHandler } from '../../../../core/errors/errors.handler';
+import { authService } from '../../application/auth.service';
+import { refreshCookieOptions } from '../../../../core/http/cookie';
+import { sendResult } from '../../../../core/http/send-result';
 import {ResultStatus} from "../../common/result/resultCode";
-import {resultCodeToHttpException} from "../../common/result/resultCodeToHttpException";
 
-export async function loginHandler(
-    req: Request,
-    res: Response) {
-
+export async function loginHandler(req: Request, res: Response) {
     try {
-
-        const {loginOrEmail, password} = req.body;
-
-        const result = await authService.loginUser(loginOrEmail, password);
-
-        if (result.status !== ResultStatus.Success) {
-            res
-                .status(401)
-                .send(result.extensions);
-            return
+        const { loginOrEmail, password } = req.body ?? {};
+        if (!loginOrEmail || !password) {
+            res.status(400).send({ message: 'loginOrEmail and password are required' });
+            return;
         }
 
-        res.status(200)
-            .send(result.data);
-        return
-
+        const result = await authService.loginUser(loginOrEmail, password);
+        if (result.status === ResultStatus.Success) {
+            const { accessToken, refreshToken /*, user*/ } = (result as any).data;
+            res.cookie('refreshToken', refreshToken, refreshCookieOptions);
+        }
+        sendResult(res, result, 200);
     } catch (e) {
         errorsHandler(e, res);
     }
 }
-
