@@ -10,6 +10,7 @@ import {emailResendHandler} from "./handlers/email-resend.handler";
 import {userInputDtoValidation} from "../validation/user.input-dto.validation-middlewares";
 import {codeInputDtoValidation} from "../validation/registration.confirmation.input-dto.validation-middlewares";
 import {refreshHandler} from "./handlers/refresh.handler";
+import {logoutHandler} from "./handlers/logout.handler";
 
 
 export const authRouter = Router();
@@ -25,10 +26,10 @@ authRouter.post("/refresh-token",
     // inputValidationResultMiddleware,
     refreshHandler);
 
-// authRouter.post("/logout",
-//     //authInputDtoValidation,
-//     //inputValidationResultMiddleware,
-//     logOutHandler);
+authRouter.post("/logout",
+    //authInputDtoValidation,
+    //inputValidationResultMiddleware,
+    logoutHandler);
 
 authRouter.post("/registration-confirmation",
     codeInputDtoValidation,
