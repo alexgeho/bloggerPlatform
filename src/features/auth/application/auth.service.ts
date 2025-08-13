@@ -1,14 +1,14 @@
 import bcrypt from "bcrypt";
-import { userRepository } from "../../users/repositories/user.repository";
-import { ResultStatus } from "../common/result/resultCode";
-import { jwtService } from "../adapters/jwt.service";
+import {userRepository} from "../../users/repositories/user.repository";
+import {ResultStatus} from "../common/result/resultCode";
+import {jwtService} from "../adapters/jwt.service";
 import {User} from "../domain/user";
 import {add} from "date-fns";
 import {emailManager} from "../adapters/email.manager";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import {RegistrationDto} from "../types/registration.dto";
-import {ObjectId} from "mongodb";
-import {randomUUID} from "node:crypto";
+import {UserEntity} from "../domain/user.entity";
+
 
 export const authService = {
 
@@ -21,20 +21,7 @@ export const authService = {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(dto.password, passwordSalt);
 
-        const userNew: User = {
-            _id: new ObjectId(),
-            accountData: {
-                login: dto.login,
-                email: dto.email,
-                passwordHash,
-                passwordSalt,
-                createdAt: new Date(),
-            },
-            emailConfirmation: {
-                confirmationCode: randomUUID(),
-                expirationDate: add(new Date(), { hours: 1, minutes: 30 }),
-                isConfirmed: false
-            }}
+        const userNew: User = new UserEntity (dto.login, dto.email, passwordHash, passwordSalt)
 
         await userRepository.create(userNew)
 

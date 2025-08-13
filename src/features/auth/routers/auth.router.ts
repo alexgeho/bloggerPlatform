@@ -22,13 +22,9 @@ authRouter.post("/login",
     loginHandler);
 
 authRouter.post("/refresh-token",
-   // authInputDtoValidation,
-    // inputValidationResultMiddleware,
     refreshHandler);
 
 authRouter.post("/logout",
-    //authInputDtoValidation,
-    //inputValidationResultMiddleware,
     logoutHandler);
 
 authRouter.post("/registration-confirmation",
@@ -49,5 +45,3 @@ authRouter.get("/me",
     getMeHandler)
 
 
-// authRouter.get("/confirm-email",
-//     emailConfirmationHandler);

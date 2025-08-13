@@ -1,19 +1,17 @@
 import bcrypt from 'bcrypt';
-import {ObjectId} from "mongodb";
+import {WithId} from "mongodb";
 import {userRepository} from '../repositories/user.repository';
-import {WithId} from 'mongodb';
 import {User} from '../../auth/domain/user';
 import {UserInputDto} from "./dtos/user.input-dto";
 import {UserDataOutput} from "../routers/output/user-data.output";
 import {UserQueryInput} from "../routers/input/user-query.input";
-import {response} from "express";
-import {authRepository} from "../../auth/repositories/auth.repository";
 import {Result} from "../../auth/common/result/result.type";
 import {IUserDB} from "../../auth/types/user.db.interface";
 import {ResultStatus} from "../../auth/common/result/resultCode";
 import {bcryptService} from "../../auth/adapters/bcrypt.service";
-import {randomUUID} from "node:crypto";
 import {mapUserToUserDB} from "../routers/mappers/map-to-user-output.util";
+import {UserEntity} from "../../auth/domain/user.entity";
+import {emailManager} from "../../auth/adapters/email.manager";
 
 export const userService = {
 
@@ -46,23 +44,12 @@ export const userService = {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash: any = await this._generateHash(dto.password, passwordSalt)
 
-        const newUser: User = {
-            _id: new ObjectId(),
-            accountData: {
-                login: dto.login,
-                email: dto.email,
-                passwordHash,
-                passwordSalt,
-                createdAt: new Date(),
-            },
-            emailConfirmation: {
-                confirmationCode: randomUUID(),
-                expirationDate: new Date(Date.now() + 60 * 60 * 1000), // пример: через 1 час
-                isConfirmed: false,
-            },
-        };
+        const newUser: User = new UserEntity (dto.login, dto.email, passwordHash, passwordSalt)
 
         const id = await userRepository.create(newUser);
+
+        await emailManager
+            .sendConfirmationEmail(newUser.accountData.email, newUser.emailConfirmation.confirmationCode);
 
         return {id, login: newUser.accountData.login, email: newUser.accountData.email, createdAt: newUser.accountData.createdAt.toISOString()};
     },
