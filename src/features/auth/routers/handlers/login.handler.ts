@@ -6,6 +6,7 @@ import { sendResult } from '../../../../core/http/send-result';
 import {ResultStatus} from "../../common/result/resultCode";
 
 export async function loginHandler(req: Request, res: Response) {
+    console.log('=== TEST loginHandler ===');
     try {
         const { loginOrEmail, password } = req.body ?? {};
         if (!loginOrEmail || !password) {
