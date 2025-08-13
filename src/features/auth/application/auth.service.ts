@@ -40,6 +40,7 @@ export const authService = {
     },
 
     async loginUser(loginOrEmail: string, password: string) {
+
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);
         if (!user) return { status: ResultStatus.Unauthorized, extensions: [{ field: "loginOrEmail", message: "User not found" }] };
 

@@ -6,7 +6,6 @@ import { sendResult } from '../../../../core/http/send-result';
 import {ResultStatus} from "../../common/result/resultCode";
 
 export async function loginHandler(req: Request, res: Response) {
-    console.log('=== TEST loginHandler ===');
     try {
         const { loginOrEmail, password } = req.body ?? {};
         if (!loginOrEmail || !password) {
@@ -15,12 +14,20 @@ export async function loginHandler(req: Request, res: Response) {
         }
 
         const result = await authService.loginUser(loginOrEmail, password);
+
         if (result.status === ResultStatus.Success) {
-            const { accessToken, refreshToken /*, user*/ } = (result as any).data;
+            const { accessToken, refreshToken } = (result as any).data;
+            // why: refreshToken только в httpOnly cookie
             res.cookie('refreshToken', refreshToken, refreshCookieOptions);
+            // why: в body возвращаем только accessToken (соответствует тесту/Swagger)
+            res.status(200).send({ accessToken });
+            return;
         }
+
+        // ошибки мапятся стандартно
         sendResult(res, result, 200);
     } catch (e) {
         errorsHandler(e, res);
     }
 }
+
