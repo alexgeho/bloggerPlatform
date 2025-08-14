@@ -7,7 +7,8 @@ export const getMeHandler = async (
     req: Request,
     res: Response
 ): Promise<void> => {
-    const userId = (req as any).user?.id;
+
+    const userId = req.headers.authorization
 
     if (!userId) {
         res.sendStatus(HttpStatuses.Unauthorized);

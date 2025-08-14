@@ -15,6 +15,10 @@ export async function logoutHandler(
         return
     }
 
+    if (await authService.isTokenBlackListed(refreshToken)) {
+        res.status(401).send({ message: 'Token is blacklisted' });
+        return;
+    }
 
 
     const payload = await jwtService.verifyRefreshToken(refreshToken);
