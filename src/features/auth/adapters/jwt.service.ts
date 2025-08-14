@@ -4,6 +4,8 @@ import { appConfig } from "../common/config/config";
 interface JwtPayload { userId: string; userLogin: string }
 
 export const jwtService = {
+
+
     async createToken(userId: string, userLogin: string): Promise<string> {
         return jwt.sign({ userId, userLogin }, appConfig.AC_SECRET, {
             expiresIn: appConfig.AC_TIME,            // <- число, не `${}s`
@@ -31,3 +33,24 @@ export const jwtService = {
         catch { return null; }
     },
 };
+
+// FILE: src/features/auth/adapters/jwt.service.ts  (ДОБАВИТЬ вниз файла)
+export interface JwtRefreshWithDevice {
+    userId: string;
+    userLogin: string;
+    deviceId: string;
+    iat: number;
+    exp: number;
+}
+
+export async function createRefreshTokenWithDevice(userId: string, userLogin: string, deviceId: string): Promise<string> {
+    return jwt.sign({ userId, userLogin, deviceId }, appConfig.RT_SECRET, { expiresIn: appConfig.RT_TIME });
+}
+
+export async function verifyRefreshTokenWithDevice(token: string): Promise<JwtRefreshWithDevice | null> {
+    try {
+        const p = jwt.verify(token, appConfig.RT_SECRET) as any;
+        if (!p?.deviceId) return null;
+        return { userId: p.userId, userLogin: p.userLogin, deviceId: p.deviceId, iat: p.iat, exp: p.exp };
+    } catch { return null; }
+}
