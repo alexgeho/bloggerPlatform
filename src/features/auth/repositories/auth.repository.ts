@@ -8,7 +8,7 @@ export const authRepository = {
         await blacklistCollection.insertOne({ token: token, createdAt: new Date() });
     },
 
-    async isTokenBlacklisted(token: string): Promise<boolean> {
+    async isTokenBlackListed(token: string): Promise<boolean> {
         const found = await blacklistCollection.findOne({ token });
         return !!found;
     }

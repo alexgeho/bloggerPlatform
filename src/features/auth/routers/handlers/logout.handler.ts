@@ -15,6 +15,8 @@ export async function logoutHandler(
         return
     }
 
+
+
     const payload = await jwtService.verifyRefreshToken(refreshToken);
     if (!payload) {
          res.sendStatus(401);

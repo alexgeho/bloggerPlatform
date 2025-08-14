@@ -87,6 +87,11 @@ export const authService = {
         await authRepository.blacklistToken(token);
     },
 
+    async isTokenBlackListed(token: string): Promise<boolean> {
+        return await authRepository.isTokenBlackListed(token);
+    },
+
+
     async resendEmail(user: User): Promise<void> {
 
         const newCode = uuidv4();
