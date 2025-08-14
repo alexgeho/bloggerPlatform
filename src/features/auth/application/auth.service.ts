@@ -55,7 +55,7 @@ export const authService = {
     },
 
     async refreshByToken(refreshToken: string): Promise<{ status: ResultStatus; data?: any; extensions?: any }> {
-        const isBlacklisted = await authRepository.isTokenBlacklisted(refreshToken);
+        const isBlacklisted = await authRepository.isTokenBlackListed(refreshToken);
         if (isBlacklisted) {
             return {
                 status: ResultStatus.Unauthorized,
