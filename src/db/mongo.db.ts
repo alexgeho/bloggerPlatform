@@ -24,6 +24,7 @@ export let commentCollection: Collection<CommentDb>;
 
 export async function runDB(url: string): Promise<void> {
     client = new MongoClient(url);
+    await client.connect();
     const db: Db = client.db(SETTINGS.DB_NAME);
 
     // initialization of collections
@@ -35,7 +36,7 @@ export async function runDB(url: string): Promise<void> {
 
 
     try {
-        await client.connect();
+
         await db.command({ping:1});
     } catch (e) {
 await client.close();

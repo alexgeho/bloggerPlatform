@@ -12,7 +12,7 @@ export async function logoutHandler(
 
     if (!refreshToken) {
          res.sendStatus(401);
-        return// токена нет
+        return
     }
 
     const payload = await jwtService.verifyRefreshToken(refreshToken);
@@ -21,6 +21,7 @@ export async function logoutHandler(
         return// токен просрочен или сломан
     }
 
+    console.log("LOGOUT", refreshToken)
 
     await authService.blacklistToken(refreshToken);
     res.clearCookie('refreshToken', refreshCookieOptions);

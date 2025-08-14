@@ -4,6 +4,7 @@ export const authRepository = {
 
 
     async blacklistToken(token: string): Promise<void> {
+        console.log("BLACKLIST INSERT:", token);
         await blacklistCollection.insertOne({ token: token, createdAt: new Date() });
     },
 
