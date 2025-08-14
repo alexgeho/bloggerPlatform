@@ -8,6 +8,7 @@ import {emailManager} from "../adapters/email.manager";
 import {v4 as uuidv4} from 'uuid';
 import {RegistrationDto} from "../types/registration.dto";
 import {UserEntity} from "../domain/user.entity";
+import {authRepository} from "../repositories/auth.repository";
 
 
 export const authService = {
@@ -53,14 +54,36 @@ export const authService = {
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
     },
 
-    async refreshByToken(refreshToken: string) {
+    async refreshByToken(refreshToken: string): Promise<{ status: ResultStatus; data?: any; extensions?: any }> {
+        const isBlacklisted = await authRepository.isTokenBlacklisted(refreshToken);
+        if (isBlacklisted) {
+            return {
+                status: ResultStatus.Unauthorized,
+                extensions: [{ field: 'refreshToken', message: 'Token is blacklisted' }]
+            };
+        }
+
         const payload = await jwtService.verifyRefreshToken(refreshToken);
-        if (!payload) return { status: ResultStatus.Unauthorized, extensions: [{ field: "refreshToken", message: "Invalid or expired" }] };
+        if (!payload) {
+            return {
+                status: ResultStatus.Unauthorized,
+                extensions: [{ field: 'refreshToken', message: 'Invalid or expired token' }]
+            };
+        }
 
         const accessToken = await jwtService.createToken(payload.userId, payload.userLogin);
         const newRefreshToken = await jwtService.createRefreshToken(payload.userId, payload.userLogin);
 
-        return { status: ResultStatus.Success, data: { accessToken, refreshToken: newRefreshToken } };
+        await authRepository.blacklistToken(refreshToken); // заносим старый токен в черный список
+
+        return {
+            status: ResultStatus.Success,
+            data: { accessToken, refreshToken: newRefreshToken }
+        };
+    },
+
+    async blacklistToken(token: string): Promise<void> {
+        await authRepository.blacklistToken(token);
     },
 
     async resendEmail(user: User): Promise<void> {

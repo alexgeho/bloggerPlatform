@@ -3,13 +3,13 @@ import {Blog} from "../features/blogs/domain/blog";
 import {PostDb} from "../features/posts/domain/postDb";
 import { SETTINGS } from "../core/settings/settings";
 import {User} from "../features/auth/domain/user";
-import {Auth} from "../features/auth/domain/auth";
 import {CommentDb} from "../features/comments/domain/commentDb";
+import {BlackList} from "../features/auth/domain/blacklist";
 
 const BLOG_COLLECTION_NAME = "blogs";
 const POST_COLLECTION_NAME = "posts";
 const USER_COLLECTION_NAME = "users";
-const AUTH_COLLECTION_NAME = "auth";
+const BLACKLIST_COLLECTION_NAME = "blackList";
 const COMMENT_COLLECTION_NAME = "comments";
 
 export let client: MongoClient;
@@ -17,7 +17,7 @@ export let client: MongoClient;
 export let blogCollection: Collection <Blog>;
 export let postCollection: Collection<OptionalId<PostDb>>;
 export let userCollection: Collection<User>;
-export let authCollection: Collection<Auth>;
+export let blacklistCollection: Collection<BlackList>;
 export let commentCollection: Collection<CommentDb>;
 
 // connecting to db
@@ -30,7 +30,7 @@ export async function runDB(url: string): Promise<void> {
     blogCollection = db.collection <Blog>(BLOG_COLLECTION_NAME);
     postCollection = db.collection<OptionalId<PostDb>>(POST_COLLECTION_NAME);
     userCollection = db.collection<User>(USER_COLLECTION_NAME);
-    authCollection = db.collection<Auth>(AUTH_COLLECTION_NAME);
+    blacklistCollection = db.collection<BlackList>(BLACKLIST_COLLECTION_NAME);
     commentCollection = db.collection<CommentDb>(COMMENT_COLLECTION_NAME);
 
 
