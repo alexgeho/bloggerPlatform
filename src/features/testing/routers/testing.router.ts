@@ -14,15 +14,6 @@ testingRouter.delete('/all-data', async (req: Request, res: Response) => {
     //truncate db
     try{
 
-        console.log({
-            blogCollection,
-            postCollection,
-            userCollection,
-            commentCollection,
-            blacklistCollection
-        });
-
-
         await Promise.all([
 
             blogCollection.deleteMany(),

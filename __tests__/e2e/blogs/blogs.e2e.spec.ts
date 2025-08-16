@@ -39,8 +39,6 @@ describe("testing POST to /blogs", () => {
                 totalCount: 0,
                 items: []
             })
-
-
     })
 
     it("should create blog with correct input data ", async () => {

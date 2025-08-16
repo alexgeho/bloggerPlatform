@@ -1,19 +1,17 @@
 import request from "supertest";
-import {BLOGS_PATH, TESTING_PATH} from "../../../src/core/paths/paths";
+import {AUTH_PATH, BLOGS_PATH, TESTING_PATH} from "../../../src/core/paths/paths";
 import {HttpStatus} from "../../../src/core/types/http-statuses";
 import * as setupAppConfig from "../../../src/setup-app";
 import express from "express";
 import {doSomething} from "../../../src/app";
-import * as appContent from "../../../src/app";
 import {runDB} from "../../../src/db/mongo.db";
 import {SETTINGS} from "../../../src/core/settings/settings";
 import {UserInputDto} from "../../../src/features/users/application/dtos/user.input-dto";
-import {authTestManager} from "../utils/authTestManager";
-
+import {authTestManager} from "./utils/authTestManager";
 
 
 const app = setupAppConfig.setupApp(express());
-console.log(appContent)
+//console.log(appContent)
 
 describe("testing auth, AccessToken, RefreshToken, sessions", () => {
     beforeAll(async () => {
@@ -28,8 +26,7 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
     });
 
 
-
-    it ('should return 200 and empty array', async () => {
+    it('should return 200 and empty array', async () => {
         await request(app)
             .get(BLOGS_PATH)
             .expect(HttpStatus.Ok, {
@@ -41,12 +38,6 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
             })
     })
 
-
-    const user1: UserInputDto = {
-        login: "Alex1",
-        password: "string",
-        email: "Alex1@mail.com"
-    };
 
     const user2: UserInputDto = {
         login: "Alex2",
@@ -60,15 +51,59 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
         email: "Alex3@mail.com"
     };
 
+    const user1: UserInputDto = {
+        login: "Alex1",
+        password: "string",
+        email: "Alex1@mail.com"
+    };
 
-    it("should create users with correct input data ",
-        async () => {
 
-       await authTestManager.createUser(user1);
-        await authTestManager.createUser(user2);
-        await authTestManager.createUser(user3);
+    it("should create users with correct input data ", async () => {
 
-    })
+            await request(app)
+                .post(`${AUTH_PATH}/registration`)
+                .send(user1)
+                .expect(HttpStatus.NoContent);
+
+           //await authTestManager.createUser(user1);
+            // await authTestManager.createUser(user2);
+            // await authTestManager.createUser(user3);
+
+        })
+
+    it("should login user with certain device", async () => {
+        const userAgent = "iPhone Safari";
+
+        const response = await request(app)
+            .post('/auth/login')
+            .set('User-Agent', userAgent)
+            .send({ loginOrEmail: 'Alex1@mail.com', password: 'string' })
+            .expect(HttpStatus.Ok);
+
+        // Проверка, что вернулись access и refresh tokens
+        expect(response.body).toHaveProperty('accessToken');
+        expect(response.headers['set-cookie']).toEqual(
+            expect.arrayContaining([
+                expect.stringContaining('refreshToken='),
+            ])
+        );
+
+        // Можно дополнительно запросить список устройств
+        const devicesResponse = await request(app)
+            .get('/security/devices')
+            .set('Cookie', `refreshToken=${response.body.refreshToken}`)
+            .expect(HttpStatus.Ok);
+
+        // Проверить, что в списке устройств есть устройство с нужным user-agent
+        const hasDevice = devicesResponse.body.some((device: any) =>
+            device.deviceName.includes("iPhone") || device.deviceName.includes("Safari")
+        );
+
+        expect(hasDevice).toBe(true);
+    });
+
+
+
 
     // it(`shouldn't create blog with incorrect input data`, async () => {
     //     const data = {
