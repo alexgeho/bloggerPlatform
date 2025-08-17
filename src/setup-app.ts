@@ -19,7 +19,7 @@ import { deviceSessionsCollection } from './db/mongo.db';
 import { authService } from './features/auth/application/auth.service';
 import {ENV} from "./core/config/env";
 
-export const setupApp = (app: Express) => {
+export const setupApp = (app: Express, devicesService: DevicesService) => {
     // 🆕 корректный req.ip за прокси
     app.set('trust proxy', true);
 
@@ -27,10 +27,10 @@ export const setupApp = (app: Express) => {
     app.use(express.json());
     app.use(cookieParser()); // why: чтобы читать/ставить refresh cookie
 
-    // 🆕 DI устройств (репозиторий + сервис) + передать в authService
-    const deviceRepo = new MongoDeviceSessionsRepository(deviceSessionsCollection);
-    const devicesService = new DevicesService(deviceRepo);
-    authService.setDevices(devicesService); // why: не меняем хендлеры, вшиваем внутрь сервиса
+    // // 🆕 DI устройств (репозиторий + сервис) + передать в authService
+    // const deviceRepo = new MongoDeviceSessionsRepository(deviceSessionsCollection);
+    // const devicesService = new DevicesService(deviceRepo);
+    // authService.setDevices(devicesService); // why: не меняем хендлеры, вшиваем внутрь сервиса
 
     app.get('/', (_req, res) => { res.status(200).send('Hello world Bitau!'); });
 
