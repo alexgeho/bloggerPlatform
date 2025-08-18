@@ -1,11 +1,10 @@
-// src/core/http/cookie.ts
 import type { CookieOptions } from 'express';
-import { ENV } from '../config/env'; // если у тебя есть
+import { ENV } from '../config/env';
 
 export const refreshCookieOptions: CookieOptions = {
     httpOnly: true,
-    secure: true,                // тест требует Secure
-    sameSite: 'strict',          // для автотеста подходит strict
+    secure: ENV.COOKIE_SECURE,                  // <-- теперь зависит от ENV
+    sameSite: ENV.COOKIE_SAMESITE,              // <-- тоже
     path: '/',
-    maxAge: Number(ENV?.RT_TIME ?? process.env.RT_TIME ?? 20) * 1000,
+    maxAge: ENV.RT_TIME * 1000,
 };

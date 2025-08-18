@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import dotenvFlow from 'dotenv-flow';
 import { setupApp } from "./setup-app";
 import { SETTINGS } from "./core/settings/settings";
 import { deviceSessionsCollection, runDB } from "./db/mongo.db";
@@ -7,7 +7,7 @@ import { MongoDeviceSessionsRepository } from "./features/auth/repositories/devi
 import { DevicesService } from "./features/auth/application/devices.service";
 import { authService } from "./features/auth/application/auth.service";
 
-dotenv.config();
+dotenvFlow.config()
 
 const bootstrap = async () => {
     // 1. Connecting to Db

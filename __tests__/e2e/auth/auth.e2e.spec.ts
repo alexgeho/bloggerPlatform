@@ -49,7 +49,10 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
             .expect(HttpStatus.NoContent);
     });
 
-    it("should login user with certain device", async () => {
+
+
+
+    it("should login user with certain device and return RToken, AT", async () => {
 
         const userAgent = "iPhone Safari";
 
@@ -79,9 +82,13 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
         }
 
         console.log("Cookie being sent:", refreshCookie);
+    });
+
+    it("should show devices with access", async () => {
 
         const devicesResponse = await request(app)
             .get("/security/devices")
+            .set("User-Agent", userAgent)
             .set("Cookie", [refreshCookie]) // именно массив
             .expect(HttpStatus.Ok);
 
@@ -92,7 +99,8 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
         );
 
         expect(hasDevice).toBe(true);
-    }); // ← Закрытие блока it
+
+    })
 
 });
 
