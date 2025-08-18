@@ -11,13 +11,13 @@ import { UserEntity } from "../domain/user.entity";
 import { authRepository } from "../repositories/auth.repository";
 
 // 🆕 устройства
-import { devicesService } from "./devicesService";
+import { DevicesService } from "./devicesService";
 import { createRefreshTokenWithDevice, verifyRefreshTokenWithDevice } from "../adapters/jwt.service";
 
 export const authService = {
     // 🆕 DI-слой для устройств
-    _devices: undefined as devicesService | undefined,
-    setDevices(service: devicesService) { this._devices = service; },
+    _devices: undefined as DevicesService | undefined,
+    setDevices(service: DevicesService) { this._devices = service; },
 
     async create(dto: RegistrationDto): Promise<User | null> {
         const userExist = await userRepository.findOne(dto);
@@ -67,7 +67,7 @@ export const authService = {
                 const deviceId = await this._devices.createOnLogin({
                     userId,
                     ip: 'unknown',          // можно прокинуть реальный ip/ua позже, контракт метода не меняется
-                    title: 'Unknown device',
+                    userAgent: 'Unknown device',
                     iat: tmpP.iat,
                     exp: tmpP.exp,
                 });
