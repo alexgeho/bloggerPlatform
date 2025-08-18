@@ -13,6 +13,7 @@ import { authRepository } from "../repositories/auth.repository";
 // 🆕 устройства
 import { DevicesService } from "./devicesService";
 import { createRefreshTokenWithDevice, verifyRefreshTokenWithDevice } from "../adapters/jwt.service";
+import {ENV} from "../../../core/config/env";
 
 export const authService = {
     // 🆕 DI-слой для устройств
@@ -41,8 +42,9 @@ export const authService = {
         await userRepository.updateConfirmation(user);
     },
 
-    // ✅ публичный контракт не менялся
-    async loginUser(loginOrEmail: string, password: string) {
+
+    async loginUser(loginOrEmail: string, password: string, ip: string, userAgent: string) {
+
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);
         if (!user) return { status: ResultStatus.Unauthorized, extensions: [{ field: "loginOrEmail", message: "User not found" }] };
 
@@ -54,34 +56,35 @@ export const authService = {
 
         const accessToken = await jwtService.createToken(userId, userLogin);
 
-        // 🆕 если сервис устройств подключён — выпускаем refresh с deviceId и регистрируем сессию
+     // REFRESH TOKEN
         let refreshToken: string;
+
         if (this._devices) {
-            // why: нужен iat/exp для lastActiveDate — используем временный токен
-            const tmp = await createRefreshTokenWithDevice(userId, userLogin, 'tmp');
-            const tmpP = await verifyRefreshTokenWithDevice(tmp);
-            if (!tmpP) {
-                // fallback на старую логику (редкий случай повреждения)
-                refreshToken = await jwtService.createRefreshToken(userId, userLogin);
-            } else {
-                const deviceId = await this._devices.createOnLogin({
-                    userId,
-                    ip: 'unknown',          // можно прокинуть реальный ip/ua позже, контракт метода не меняется
-                    userAgent: 'Unknown device',
-                    iat: tmpP.iat,
-                    exp: tmpP.exp,
-                });
-                refreshToken = await createRefreshTokenWithDevice(userId, userLogin, deviceId);
-            }
+            // Получаем текущую дату в формате iat/exp (время создания и истечения токена)
+            const iat = Math.floor(Date.now() / 1000); // текущий timestamp в секундах
+            const exp = iat + ENV.JWT_REFRESH_EXP_SEC; // прибавляем TTL токена
+
+
+            // Создаём запись в БД устройства и получаем его id
+            const deviceId = await this._devices.createOnLogin({
+                userId,
+                ip,
+                userAgent,
+                iat,
+                exp,
+            });
+
+            // Генерируем refresh токен с deviceId
+            refreshToken = await createRefreshTokenWithDevice(userId, userLogin, deviceId);
         } else {
-            // legacy режим без устройств
+            // Режим без отслеживания устройств (fallback)
             refreshToken = await jwtService.createRefreshToken(userId, userLogin);
         }
 
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
-    },
+        },
 
-    // ✅ публичный контракт не менялся
+        // ✅ публичный контракт не менялся
     async refreshByToken(refreshToken: string): Promise<{ status: ResultStatus; data?: any; extensions?: any }> {
         const isBlacklisted = await authRepository.isTokenBlackListed(refreshToken);
         if (isBlacklisted) {

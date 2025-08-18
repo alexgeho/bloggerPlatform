@@ -7,18 +7,30 @@ export class DevicesService {
     constructor(private readonly repo: DeviceSessionsRepository) {}
     private isoFromIat(iat: number) { return new Date(iat * 1000).toISOString(); }
 
-    async createOnLogin(p: { userId: string; ip: string; userAgent: string; iat: number; exp: number; }): Promise<string> {
+
+    async createOnLogin(sessionInfo: {
+        userId: string;
+        ip: string;
+        userAgent: string;
+        iat: number;
+        exp: number;
+    }): Promise<string> {
         const deviceId = uuid();
-        const s: DeviceSession = {
+
+        const session: DeviceSession = {
             deviceId,
-            userId: p.userId,
-            ip: p.ip,
-            userAgent: p.userAgent || 'Unknown device',
-            lastActiveDate: this.isoFromIat(p.iat),
-            refreshTokenExp: p.exp,
+            userId: sessionInfo.userId,
+            ip: sessionInfo.ip,
+            userAgent: sessionInfo.userAgent || 'Unknown device',
+            lastActiveDate: this.isoFromIat(sessionInfo.iat),
+            refreshTokenExp: sessionInfo.exp,
         };
-        await this.repo.create(s); return deviceId;
+
+        await this.repo.create(session);
+        return deviceId;
     }
+
+
     async updateOnRefresh(userId: string, deviceId: string, iat: number, exp: number) {
         await this.repo.updateLastActive(userId, deviceId, this.isoFromIat(iat), exp);
     }

@@ -9,6 +9,7 @@ import { setupApp } from "../../../src/setup-app";
 import { UserInputDto } from "../../../src/features/users/application/dtos/user.input-dto";
 import { MongoDeviceSessionsRepository } from "../../../src/features/auth/repositories/device-sessions.repository";
 import { DevicesService } from "../../../src/features/auth/application/devicesService";
+import {authTestManager} from "./utils/authTestManager";
 
 let app: Express;
 
@@ -43,10 +44,11 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
     });
 
     it("should create users with correct input data", async () => {
-        await request(app)
-            .post(`${AUTH_PATH}/registration`)
-            .send(user1)
-            .expect(HttpStatus.NoContent);
+        const {response} = await authTestManager.createUser(app, user1)
+        console.log(response)
+            // .post(`${AUTH_PATH}/registration`)
+            // .send(user1)
+            // .expect(HttpStatus.NoContent);
     });
 
 

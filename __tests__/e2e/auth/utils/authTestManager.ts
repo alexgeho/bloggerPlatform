@@ -7,7 +7,7 @@ import {app} from "../../../../src/app";
 
 export const authTestManager = {
 
-    async createUser(data: UserInputDto) {
+    async createUser(app: any, data: UserInputDto) {
         const response = await request(app)
             .post(`${AUTH_PATH}/registration`)
             .send(data)

@@ -5,7 +5,15 @@ import { refreshCookieOptions } from '../../../../core/http/cookie';
 import { sendResult } from '../../../../core/http/send-result';
 import {ResultStatus} from "../../common/result/resultCode";
 
+
+
+
+
 export async function loginHandler(req: Request, res: Response) {
+
+    const ip = req.ip || 'unknown';
+    const userAgent = req.headers['user-agent'] || 'Unknown device';
+
     try {
         const { loginOrEmail, password } = req.body ?? {};
         if (!loginOrEmail || !password) {
@@ -13,7 +21,8 @@ export async function loginHandler(req: Request, res: Response) {
             return;
         }
 
-        const result = await authService.loginUser(loginOrEmail, password);
+        const result = await authService.loginUser(loginOrEmail, password, ip, userAgent);
+
 
         if (result.status === ResultStatus.Success) {
             const { accessToken, refreshToken } = (result as any).data;
