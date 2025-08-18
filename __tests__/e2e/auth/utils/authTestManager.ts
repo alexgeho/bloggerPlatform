@@ -11,11 +11,43 @@ export const authTestManager = {
         const response = await request(app)
             .post(`${AUTH_PATH}/registration`)
             .send(data)
-            .expect(HttpStatus.Created);
+            .expect(HttpStatus.NoContent);
 
         return { response };
+    },
+
+    async loginUserWithDevice (app: any, data: UserInputDto, userAgent: string) {
+        const response = await request(app)
+            .post(`${AUTH_PATH}/login`)
+            .set("User-Agent", userAgent)
+            .send({
+                loginOrEmail: data.email,
+                password: data.password,
+            })
+            .expect(HttpStatus.Ok);
+
+        expect(response.body).toHaveProperty("accessToken");
+        expect(response.headers["set-cookie"]).toEqual(
+            expect.arrayContaining([expect.stringContaining("refreshToken=")])
+        );
+
+        const setCookieHeader = response.headers["set-cookie"];
+
+        if (!Array.isArray(setCookieHeader)) {
+            throw new Error("Expected 'set-cookie' to be an array");
+        }
+
+        const refreshCookie = setCookieHeader
+            .find((cookie) => cookie.includes("refreshToken="))
+            ?.split(";")[0];
+
+        if (!refreshCookie) {
+            throw new Error("Refresh token cookie not found");
+        }
+
+
+        return { response };
+
     }
-
-
 
 }
