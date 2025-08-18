@@ -8,7 +8,7 @@ import { SETTINGS } from "../../../src/core/settings/settings";
 import { setupApp } from "../../../src/setup-app";
 import { UserInputDto } from "../../../src/features/users/application/dtos/user.input-dto";
 import { MongoDeviceSessionsRepository } from "../../../src/features/auth/repositories/device-sessions.repository";
-import { DevicesService } from "../../../src/features/auth/application/devices.service";
+import { devicesService } from "../../../src/features/auth/application/devicesService";
 
 let app: Express;
 
@@ -23,7 +23,7 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
         await runDB(SETTINGS.MONGO_URL);
 
         const deviceRepo = new MongoDeviceSessionsRepository(deviceSessionsCollection);
-        const devicesService = new DevicesService(deviceRepo);
+        const devicesService = new devicesService(deviceRepo);
 
         app = setupApp(express(), devicesService);
 

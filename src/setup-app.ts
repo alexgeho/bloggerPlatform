@@ -22,12 +22,12 @@ import type { ErrorRequestHandler } from 'express';
 // 🆕 устройства: DI и роутер безопасности
 import {buildSecurityDevicesRouter, securityDevicesRouter} from './features/auth/routers/security-devices.router';
 import { MongoDeviceSessionsRepository } from './features/auth/repositories/device-sessions.repository';
-import { DevicesService } from './features/auth/application/devices.service';
+import { devicesService } from './features/auth/application/devicesService';
 import { deviceSessionsCollection } from './db/mongo.db';
 import { authService } from './features/auth/application/auth.service';
 import {ENV} from "./core/config/env";
 
-export const setupApp = (app: Express, devicesService: DevicesService) => {
+export const setupApp = (app: Express, devicesService: devicesService) => {
     // 🆕 корректный req.ip за прокси
     app.set('trust proxy', true);
 

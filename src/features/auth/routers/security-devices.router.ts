@@ -1,8 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { DevicesService } from '../application/devices.service';
+import { DevicesService } from '../application/devicesService';
 import { refreshTokenGuard } from './guards/refresh-token.guard';
+import {DeviceSession} from "../domain/device-session.entity";
 
-export const securityDevicesRouter: Router = Router();
+//export const securityDevicesRouter: Router = Router();
 
 export const buildSecurityDevicesRouter = (service: DevicesService): Router => {
     const router = Router(); // ✅ создаём локально
@@ -11,10 +12,11 @@ export const buildSecurityDevicesRouter = (service: DevicesService): Router => {
         '/',
         refreshTokenGuard,
         async (req: Request, res: Response) => {
-            const rows = await service.list(req.refresh!.userId);
+            const rows: DeviceSession[] = await service.list(req.refresh!.userId);
+
             res.status(200).json(
-                rows.map(({ deviceId, ip, title, lastActiveDate }) => ({
-                    deviceId, ip, title, lastActiveDate
+                rows.map(({ deviceId, ip, userAgent, lastActiveDate }) => ({
+                    deviceId, ip, userAgent, lastActiveDate
                 }))
             );
         }

@@ -11,13 +11,13 @@ import { UserEntity } from "../domain/user.entity";
 import { authRepository } from "../repositories/auth.repository";
 
 // 🆕 устройства
-import { DevicesService } from "./devices.service";
+import { devicesService } from "./devicesService";
 import { createRefreshTokenWithDevice, verifyRefreshTokenWithDevice } from "../adapters/jwt.service";
 
 export const authService = {
     // 🆕 DI-слой для устройств
-    _devices: undefined as DevicesService | undefined,
-    setDevices(service: DevicesService) { this._devices = service; },
+    _devices: undefined as devicesService | undefined,
+    setDevices(service: devicesService) { this._devices = service; },
 
     async create(dto: RegistrationDto): Promise<User | null> {
         const userExist = await userRepository.findOne(dto);
