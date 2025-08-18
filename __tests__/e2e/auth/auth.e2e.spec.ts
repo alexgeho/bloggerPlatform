@@ -1,5 +1,5 @@
 import request from "supertest";
-import {AUTH_PATH, BLOGS_PATH, TESTING_PATH} from "../../../src/core/paths/paths";
+import {AUTH_PATH, BLOGS_PATH, SECURITY_DEVICES_PATH, TESTING_PATH} from "../../../src/core/paths/paths";
 import {HttpStatus} from "../../../src/core/types/http-statuses";
 import express, {Express} from "express";
 
@@ -48,82 +48,25 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
             });
     });
 
+    let refreshCookieForDevice4: string;
+
     it("should create user and after login user with 4 devices and return RToken, AT", async () => {
+        await authTestManager.createUser(app, user1);
+        await authTestManager.loginUser1WithDevice1(app, user1, userAgent1);
+        await authTestManager.loginUser1WithDevice2(app, user1, userAgent2);
+        await authTestManager.loginUser1WithDevice3(app, user1, userAgent3);
 
-        await authTestManager.createUser(app, user1)
-        await authTestManager.loginUser1WithDevice1(app, user1, userAgent1)
-        await authTestManager.loginUser1WithDevice2(app, user1, userAgent2)
-        await authTestManager.loginUser1WithDevice3(app, user1, userAgent3)
-        await authTestManager.loginUser1WithDevice4(app, user1, userAgent3)
-
+        const result = await authTestManager.loginUser1WithDevice4(app, user1, userAgent4);
+        refreshCookieForDevice4 = result.refreshCookie; // <–– это ты возвращаешь из TestManager
     });
 
-//     it(`should create two more devices to existing user`, async () => {
-//     })
+    it("should show all 4 devices after logins", async () => {
+        await authTestManager.checkDevicesCount(app, 4, userAgent4, refreshCookieForDevice4);
+    });
+
+
 
 });
 
-
-// it(`shouldn't create blog with incorrect input data`, async () => {
-//     const data = {
-//         name: "My Blog",
-//         description: 12345,
-//         websiteUrl: "https://myblog.com"
-//     };
-//
-//     const response = await request(app)
-//         .post(BLOGS_PATH)
-//         .auth("admin", "qwerty")
-//         .send(data)
-//         .expect(HttpStatus.BadRequest);
-//
-// })
-//
-// it("if not _mongoId format it should return 400 for badrequest ", async () => {
-//
-//     await request(app)
-//         .get(`${BLOGS_PATH}/1`)
-//         .auth("admin", "qwerty")
-//         .expect(HttpStatus.BadRequest);
-// })
-//
-// it("if _mongoId should return 404 for not existing entity ", async () => {
-//
-//     await request(app)
-//         .get(`${BLOGS_PATH}/6881f6db017eb592fa948feb`)
-//         .auth("admin", "qwerty")
-//         .expect(HttpStatus.NotFound);
-// })
-//
-// it(`shouldn't update blog with incorrect input data`, async () => {
-//     const data3: BlogInputDto = {
-//         name: "My Bitau",
-//         description: "Best blog ever!",
-//         websiteUrl: "https://myblog.com"
-//     }
-//
-//     const response = await request(app)
-//         .post(BLOGS_PATH)
-//         .auth("admin", "qwerty")
-//         .send(data3)
-//         .expect(HttpStatus.Created);
-//
-//    const newBlogId = response.body.id
-//
-//     const data4 = {
-//         name: "My Err",
-//         description: 123,
-//         websiteUrl: ""
-//     }
-//
-//     await request(app)
-//         .put(`${BLOGS_PATH}/${newBlogId}`)
-//         .auth("admin", "qwerty")
-//         .send(data4)
-//         .expect(HttpStatus.BadRequest);
-//
-//
-//
-// })
 
 

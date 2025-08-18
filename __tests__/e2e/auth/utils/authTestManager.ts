@@ -137,7 +137,24 @@ export const authTestManager = {
         if (!refreshCookie) {
             throw new Error("Refresh token cookie not found");
         }
-        return { response };
+        return { response, refreshCookie };
+
+    },
+
+    async checkDevicesCount(app: any, expectedCount: number, userAgent: string, refreshCookie: string) {
+        const response = await request(app)
+            .get("/security/devices")
+            .set("User-Agent", userAgent)
+            .set("Cookie", [refreshCookie])
+            .expect(HttpStatus.Ok);
+
+        const devices = response.body;
+
+        expect(Array.isArray(devices)).toBe(true);
+        expect(devices.length).toBe(expectedCount);
+
+        return devices;
     }
+
 
 }
