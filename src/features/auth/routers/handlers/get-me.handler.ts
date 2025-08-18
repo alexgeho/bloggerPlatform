@@ -15,7 +15,7 @@ export const getMeHandler = async (
     }
 
     const token = authHeader.split(' ')[1];
-    const payload = await jwtService.verifyToken(token); // <— твой метод
+    const payload = await jwtService.verifyToken(token);
 
     if (!payload) {
         res.sendStatus(HttpStatuses.Unauthorized);
