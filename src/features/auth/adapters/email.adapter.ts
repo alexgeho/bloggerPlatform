@@ -9,8 +9,8 @@ export const emailAdapter = {
             port: 465,
             secure: true,
             auth: {
-                user: process.env.SMTP_USER || 'aleksandrgerhard@gmail.com',
-                pass: process.env.GMAIL_PASS || 'efes-wngd-wytr-dwqp',
+                user: process.env.SMTP_USER || 'alexgehasve@gmail.com',
+                pass: process.env.GMAIL_PASS || 'fict pabq tjzs vqnt',
             },
         });
 
