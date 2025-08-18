@@ -8,11 +8,19 @@ import { commentsRouter } from './features/comments/routers/comments.router';
 import { testingRouter } from './features/testing/routers/testing.router';
 import { authRouter } from './features/auth/routers/auth.router';
 import { setupSwagger } from './core/swagger/setup-swagger';
-import { AUTH_PATH, BLOGS_PATH, COMMENTS_PATH, POSTS_PATH, TESTING_PATH, USERS_PATH } from './core/paths/paths';
+import {
+    AUTH_PATH,
+    BLOGS_PATH,
+    COMMENTS_PATH,
+    POSTS_PATH,
+    SECURITY_DEVICES_PATH,
+    TESTING_PATH,
+    USERS_PATH
+} from './core/paths/paths';
 import type { ErrorRequestHandler } from 'express';
 
 // 🆕 устройства: DI и роутер безопасности
-import { buildSecurityDevicesRouter } from './features/auth/routers/security-devices.router';
+import {buildSecurityDevicesRouter, securityDevicesRouter} from './features/auth/routers/security-devices.router';
 import { MongoDeviceSessionsRepository } from './features/auth/repositories/device-sessions.repository';
 import { DevicesService } from './features/auth/application/devices.service';
 import { deviceSessionsCollection } from './db/mongo.db';
@@ -34,16 +42,14 @@ export const setupApp = (app: Express, devicesService: DevicesService) => {
 
     app.get('/', (_req, res) => { res.status(200).send('Hello world Bitau!'); });
 
-    // существующие роуты — БЕЗ изменений
     app.use(BLOGS_PATH, blogsRouter);
     app.use(TESTING_PATH, testingRouter);
     app.use(POSTS_PATH, postsRouter);
     app.use(USERS_PATH, usersRouter);
     app.use(AUTH_PATH, authRouter);
     app.use(COMMENTS_PATH, commentsRouter);
-
-    // 🆕 новый роутер безопасности устройств (абсолютные пути внутри: /security/devices)
-    app.use(buildSecurityDevicesRouter(devicesService));
+    app.use(SECURITY_DEVICES_PATH,
+        buildSecurityDevicesRouter(devicesService));
 
     setupSwagger(app);
 

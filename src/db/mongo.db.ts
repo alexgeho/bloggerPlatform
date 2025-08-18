@@ -6,7 +6,6 @@ import { SETTINGS } from "../core/settings/settings";
 import { User } from "../features/auth/domain/user";
 import { CommentDb } from "../features/comments/domain/commentDb";
 import { BlackList } from "../features/auth/domain/blacklist";
-// 🆕
 import { DeviceSession } from "../features/auth/domain/device-session.entity";
 
 const BLOG_COLLECTION_NAME = "blogs";
@@ -14,7 +13,6 @@ const POST_COLLECTION_NAME = "posts";
 const USER_COLLECTION_NAME = "users";
 const BLACKLIST_COLLECTION_NAME = "blackList";
 const COMMENT_COLLECTION_NAME = "comments";
-// 🆕
 const DEVICE_SESSIONS_COLLECTION_NAME = "deviceSessions";
 
 export let client: MongoClient;
@@ -24,7 +22,6 @@ export let postCollection: Collection<OptionalId<PostDb>>;
 export let userCollection: Collection<User>;
 export let blacklistCollection: Collection<BlackList>;
 export let commentCollection: Collection<CommentDb>;
-// 🆕
 export let deviceSessionsCollection: Collection<DeviceSession>;
 
 // connecting to db
@@ -39,7 +36,6 @@ export async function runDB(url: string): Promise<void> {
     userCollection = db.collection<User>(USER_COLLECTION_NAME);
     blacklistCollection = db.collection<BlackList>(BLACKLIST_COLLECTION_NAME);
     commentCollection = db.collection<CommentDb>(COMMENT_COLLECTION_NAME);
-    // 🆕
     deviceSessionsCollection = db.collection<DeviceSession>(DEVICE_SESSIONS_COLLECTION_NAME);
 
     // 🆕 индексы для устройств (idempotent)

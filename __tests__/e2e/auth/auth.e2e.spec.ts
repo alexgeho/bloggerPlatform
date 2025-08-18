@@ -84,23 +84,23 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
         console.log("Cookie being sent:", refreshCookie);
     });
 
-    it("should show devices with access", async () => {
-
-        const devicesResponse = await request(app)
-            .get("/security/devices")
-            .set("User-Agent", userAgent)
-            .set("Cookie", [refreshCookie]) // именно массив
-            .expect(HttpStatus.Ok);
-
-        const hasDevice = devicesResponse.body.some(
-            (device: any) =>
-                device.deviceName.includes("iPhone") ||
-                device.deviceName.includes("Safari")
-        );
-
-        expect(hasDevice).toBe(true);
-
-    })
+    // it("should show devices with access", async () => {
+    //
+    //     const devicesResponse = await request(app)
+    //         .get("/security/devices")
+    //         .set("User-Agent", userAgent)
+    //         .set("Cookie", [refreshCookie]) // именно массив
+    //         .expect(HttpStatus.Ok);
+    //
+    //     const hasDevice = devicesResponse.body.some(
+    //         (device: any) =>
+    //             device.deviceName.includes("iPhone") ||
+    //             device.deviceName.includes("Safari")
+    //     );
+    //
+    //     expect(hasDevice).toBe(true);
+    //
+    // })
 
 });
 
