@@ -19,6 +19,11 @@ const user1: UserInputDto = {
     email: "Alex1@mail.com",
 };
 
+const userAgent1 = "iPhone Safari";
+const userAgent2 = "Device2";
+const userAgent3 = "Device3";
+const userAgent4 = "Device4";
+
 describe("testing auth, AccessToken, RefreshToken, sessions", () => {
     beforeAll(async () => {
         await runDB(ENV.MONGO_URL);
@@ -43,19 +48,18 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
             });
     });
 
-    it("should create and after login user with certain device and return session, RToken, AT", async () => {
+    it("should create user and after login user with 4 devices and return RToken, AT", async () => {
 
-        const userAgent = "iPhone Safari";
         await authTestManager.createUser(app, user1)
-        await authTestManager.loginUserWithDevice(app, user1, userAgent)
+        await authTestManager.loginUser1WithDevice1(app, user1, userAgent1)
+        await authTestManager.loginUser1WithDevice2(app, user1, userAgent2)
+        await authTestManager.loginUser1WithDevice3(app, user1, userAgent3)
+        await authTestManager.loginUser1WithDevice4(app, user1, userAgent3)
+
     });
 
-    it(`should create two more devices to existing user`, async () => {
-
-
-
-    })
-
+//     it(`should create two more devices to existing user`, async () => {
+//     })
 
 });
 
