@@ -18,8 +18,9 @@ export const jwtService = {
         catch { return null; }
     },
 
-    async createRefreshToken(userId: string, userLogin: string): Promise<string> {
-        return jwt.sign({ userId, userLogin }, appConfig.RT_SECRET, {
+    async createRefreshToken(userId: string, userLogin: string, deviceId?:string): Promise<string> {
+
+        return jwt.sign({ userId, userLogin, deviceId }, appConfig.RT_SECRET, {
             expiresIn: appConfig.RT_TIME,
         });
     },
@@ -51,7 +52,18 @@ export async function createRefreshTokenWithDevice(userId: string, userLogin: st
 export async function verifyRefreshTokenWithDevice(token: string): Promise<JwtRefreshWithDevice | null> {
     try {
         const p = jwt.verify(token, appConfig.RT_SECRET) as any;
+
+        console.log("P", p);
+
         if (!p?.deviceId) return null;
         return { userId: p.userId, userLogin: p.userLogin, deviceId: p.deviceId, iat: p.iat, exp: p.exp };
-    } catch { return null; }
+    } catch (Error)
+
+    {
+        console.log("Error:", Error);
+        return null;
+    }
+
+
+
 }

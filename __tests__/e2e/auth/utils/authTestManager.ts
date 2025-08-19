@@ -142,10 +142,11 @@ export const authTestManager = {
     },
 
     async checkDevicesCount(app: any, expectedCount: number, userAgent: string, refreshCookie: string) {
+       console.log(refreshCookie)
         const response = await request(app)
             .get("/security/devices")
             .set("User-Agent", userAgent)
-            .set("Cookie", [refreshCookie])
+            .set("Cookie", refreshCookie)
             .expect(HttpStatus.Ok);
 
         const devices = response.body;

@@ -48,7 +48,7 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
             });
     });
 
-    let refreshCookieForDevice4: string;
+    // let refreshCookieForDevice4: string;
 
     it("should create user and after login user with 4 devices and return RToken, AT", async () => {
         await authTestManager.createUser(app, user1);
@@ -57,12 +57,12 @@ describe("testing auth, AccessToken, RefreshToken, sessions", () => {
         await authTestManager.loginUser1WithDevice3(app, user1, userAgent3);
 
         const result = await authTestManager.loginUser1WithDevice4(app, user1, userAgent4);
-        refreshCookieForDevice4 = result.refreshCookie; // <–– это ты возвращаешь из TestManager
+       const refreshCookieForDevice4 = result.refreshCookie;
+
+        await authTestManager.checkDevicesCount(app, 4, userAgent4, refreshCookieForDevice4);
+        // <–– это ты возвращаешь из TestManager
     });
 
-    it("should show all 4 devices after logins", async () => {
-        await authTestManager.checkDevicesCount(app, 4, userAgent4, refreshCookieForDevice4);
-    });
 
 
 

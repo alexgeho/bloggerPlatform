@@ -7,8 +7,8 @@ export const ENV = {
     ORIGIN: process.env.ORIGIN || 'http://localhost:5003',
     COOKIE_SECURE: process.env.COOKIE_SECURE === 'true',
     COOKIE_SAMESITE: (process.env.COOKIE_SAMESITE as 'lax' | 'strict' | 'none') || 'lax',
-    RT_TIME: Number(process.env.RT_TIME) || 2000, // <= это уже и есть TTL refresh токена
-    AC_TIME: Number(process.env.AC_TIME) || 1000, // <= если нужен TTL access токена
+    RT_TIME: Number(process.env.RT_TIME) || 20, // <= это уже и есть TTL refresh токена
+    AC_TIME: Number(process.env.AC_TIME) || 10, // <= если нужен TTL access токена
     JWT_REFRESH_EXP_SEC: Number(process.env.RT_TIME) || 2000, // <-- добавь ЭТО (или используй RT_TIME напрямую)
     MONGO_URL: process.env.MONGO_URL || '',
     DB_NAME: process.env.DB_NAME || 'BloggerPlatform',

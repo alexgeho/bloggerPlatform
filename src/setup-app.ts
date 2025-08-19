@@ -1,13 +1,14 @@
-import express, { Express } from 'express';
+import type {ErrorRequestHandler} from 'express';
+import express, {Express} from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { blogsRouter } from './features/blogs/routers/blogs.router';
-import { postsRouter } from './features/posts/routers/posts.router';
-import { usersRouter } from './features/users/routers/user.router';
-import { commentsRouter } from './features/comments/routers/comments.router';
-import { testingRouter } from './features/testing/routers/testing.router';
-import { authRouter } from './features/auth/routers/auth.router';
-import { setupSwagger } from './core/swagger/setup-swagger';
+import {blogsRouter} from './features/blogs/routers/blogs.router';
+import {postsRouter} from './features/posts/routers/posts.router';
+import {usersRouter} from './features/users/routers/user.router';
+import {commentsRouter} from './features/comments/routers/comments.router';
+import {testingRouter} from './features/testing/routers/testing.router';
+import {authRouter} from './features/auth/routers/auth.router';
+import {setupSwagger} from './core/swagger/setup-swagger';
 import {
     AUTH_PATH,
     BLOGS_PATH,
@@ -17,17 +18,12 @@ import {
     TESTING_PATH,
     USERS_PATH
 } from './core/paths/paths';
-import type { ErrorRequestHandler } from 'express';
 
 // 🆕 устройства: DI и роутер безопасности
-import {buildSecurityDevicesRouter} from './features/auth/routers/security-devices.router';
-import { MongoDeviceSessionsRepository } from './features/auth/repositories/device-sessions.repository';
-import { DevicesService } from './features/auth/application/devicesService';
-import { deviceSessionsCollection } from './db/mongo.db';
-import { authService } from './features/auth/application/auth.service';
+import {devicesRouter} from './features/auth/routers/security-devices.router';
 import {ENV} from "./core/config/env";
 
-export const setupApp = (app: Express, devicesService: DevicesService) => {
+export const setupApp = (app: Express) => {
     // 🆕 корректный req.ip за прокси
     app.set('trust proxy', true);
 
@@ -48,8 +44,7 @@ export const setupApp = (app: Express, devicesService: DevicesService) => {
     app.use(USERS_PATH, usersRouter);
     app.use(AUTH_PATH, authRouter);
     app.use(COMMENTS_PATH, commentsRouter);
-    app.use(SECURITY_DEVICES_PATH,
-        buildSecurityDevicesRouter(devicesService));
+    app.use(SECURITY_DEVICES_PATH, devicesRouter);
 
     setupSwagger(app);
 
