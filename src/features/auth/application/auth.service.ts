@@ -14,9 +14,14 @@ import { authRepository } from "../repositories/auth.repository";
 import { DevicesService } from "./devicesService";
 import { createRefreshTokenWithDevice, verifyRefreshTokenWithDevice } from "../adapters/jwt.service";
 import {ENV} from "../../../core/config/env";
+import {HttpStatus} from "../../../core/types/http-statuses";
+import {RateLimiterService} from "./rateLimiter.service";
 
 export const authService = {
-    // 🆕 DI-слой для устройств
+
+
+
+
     _devices: undefined as DevicesService | undefined,
     setDevices(service: DevicesService) { this._devices = service; },
 
@@ -42,8 +47,19 @@ export const authService = {
         await userRepository.updateConfirmation(user);
     },
 
+    rateLimiter: new RateLimiterService(),
 
     async loginUser(loginOrEmail: string, password: string, ip: string, userAgent: string) {
+
+        if (this.rateLimiter.isBlocked(ip)) {
+// throw new TooManyRequestsException(); // для NestJS
+            return {
+                status: HttpStatus.TooManyRequests,
+                message: 'Too many login attempts. Please try again later.',
+            };}
+
+// 2. Register current attempt
+        this.rateLimiter.addAttempt(ip);
 
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);
         if (!user) return { status: ResultStatus.Unauthorized, extensions: [{ field: "loginOrEmail", message: "User not found" }] };

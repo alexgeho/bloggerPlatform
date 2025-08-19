@@ -6,10 +6,8 @@ import { sendResult } from '../../../../core/http/send-result';
 import {ResultStatus} from "../../common/result/resultCode";
 
 
-
-
-
 export async function loginHandler(req: Request, res: Response) {
+
 
     const ip = req.ip || 'unknown';
     const userAgent = req.headers['user-agent'] || 'Unknown device';
@@ -34,7 +32,7 @@ export async function loginHandler(req: Request, res: Response) {
         }
 
         // ошибки мапятся стандартно
-        sendResult(res, result, 200);
+        sendResult(res, result as any, 200);
     } catch (e) {
         errorsHandler(e, res);
     }
