@@ -16,6 +16,7 @@ export function sendResult<T>(res: Response, result: ServiceResultLoose<T>, succ
             [ResultStatus.Forbidden]: 403,
             [ResultStatus.NotFound]: 404,
             [ResultStatus.InternalError]: 500,
+            [ResultStatus.TooManyRequests]: 429,
         } as const;
         const code = map[result.status] ?? 400;
         return res.status(code).send(result.extensions ?? { message: result.status });

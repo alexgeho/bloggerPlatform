@@ -31,8 +31,8 @@ export async function loginHandler(req: Request, res: Response) {
             return;
         }
 
-        // ошибки мапятся стандартно
-        sendResult(res, result as any, 200);
+
+        sendResult(res, result);
     } catch (e) {
         errorsHandler(e, res);
     }

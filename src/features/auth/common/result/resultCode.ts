@@ -4,7 +4,8 @@ export enum ResultStatus {
     Forbidden = 'Forbidden',
     Unauthorized = 'Unauthorized',
     BadRequest = 'BadRequest',
-InternalError = "InternalError"
+    InternalError = "InternalError",
+TooManyRequests = 'TooManyRequests'
 
 }
 

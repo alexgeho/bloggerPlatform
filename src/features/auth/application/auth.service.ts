@@ -52,11 +52,11 @@ export const authService = {
     async loginUser(loginOrEmail: string, password: string, ip: string, userAgent: string) {
 
         if (this.rateLimiter.isBlocked(ip)) {
-// throw new TooManyRequestsException(); // для NestJS
             return {
-                status: HttpStatus.TooManyRequests,
-                message: 'Too many login attempts. Please try again later.',
-            };}
+                status: ResultStatus.TooManyRequests,
+                extensions: [{ field: 'ip', message: 'Too many login attempts. Try again later.' }],
+            };
+        }
 
 // 2. Register current attempt
         this.rateLimiter.addAttempt(ip);
