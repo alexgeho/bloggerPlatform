@@ -6,7 +6,7 @@ import {DeviceSession} from "../domain/device-session.entity";
 //export const securityDevicesRouter: Router = Router();
 
 export const buildSecurityDevicesRouter = (service: DevicesService): Router => {
-    const router = Router(); // ✅ создаём локально
+    const router = Router();
 
     router.get(
         '/',
