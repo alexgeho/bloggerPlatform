@@ -1,17 +1,12 @@
-import {Router, Request, Response} from 'express';
-import {devicesService} from '../application/devicesService';
-import {deleteTokenGuard} from './guards/refresh-token.guard';
-import {DeviceSession} from "../domain/device-session.entity";
+import {Router} from 'express';
 import {deleteDeviceByIdHandler} from "./handlers/devicesHandlers/delete-deviceById.handler";
 
 //export const securityDevicesRouter: Router = Router();
 
 export const devicesRouter = Router();
 
-
 devicesRouter.delete(
     '/:deviceId',
-    deleteTokenGuard,
     deleteDeviceByIdHandler
 );
 

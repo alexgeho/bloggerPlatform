@@ -1,5 +1,6 @@
 import {Request, Response} from 'express';
 import {verifyRefreshTokenWithDevice} from "../../../adapters/jwt.service";
+import {devicesService} from "../../../application/devicesService";
 
 
 export async function deleteDeviceByIdHandler (
@@ -17,7 +18,7 @@ export async function deleteDeviceByIdHandler (
 
     const {userId, deviceId} = verifyToken;
 
-    await deleteDeviceByIdHandler.deleteByIds(userId, deviceId);
+    await devicesService.deleteDeviceByIds(userId, deviceId);
 
 
 }
