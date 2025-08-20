@@ -1,7 +1,8 @@
 import {Router, Request, Response} from 'express';
 import {devicesService} from '../application/devicesService';
-import {refreshTokenGuard} from './guards/refresh-token.guard';
+import {deleteTokenGuard} from './guards/refresh-token.guard';
 import {DeviceSession} from "../domain/device-session.entity";
+import {deleteDeviceByIdHandler} from "./handlers/devicesHandlers/delete-deviceById.handler";
 
 //export const securityDevicesRouter: Router = Router();
 
@@ -10,14 +11,8 @@ export const devicesRouter = Router();
 
 devicesRouter.delete(
     '/:deviceId',
-    refreshTokenGuard,
-    async (req: Request, res: Response) => {
-
-        await devicesService.deleteById(req.refresh!.userId);
-
-        res.sendStatus(204);
-
-    }
+    deleteTokenGuard,
+    deleteDeviceByIdHandler
 );
 
 

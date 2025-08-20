@@ -50,17 +50,18 @@ export async function createRefreshTokenWithDevice(userId: string, userLogin: st
 }
 
 export async function verifyRefreshTokenWithDevice(token: string): Promise<JwtRefreshWithDevice | null> {
+
     try {
-        const p = jwt.verify(token, appConfig.RT_SECRET) as any;
 
-        console.log("P", p);
+        const openToken = jwt.verify(token, appConfig.RT_SECRET) as any;
 
-        if (!p?.deviceId) return null;
-        return { userId: p.userId, userLogin: p.userLogin, deviceId: p.deviceId, iat: p.iat, exp: p.exp };
-    } catch (Error)
+        if (!openToken?.deviceId) return null;
+        return { userId: openToken.userId, userLogin: openToken.userLogin, deviceId: openToken.deviceId, iat: openToken.iat, exp: openToken.exp };
+    }
+
+    catch (Error)
 
     {
-        console.log("Error:", Error);
         return null;
     }
 
