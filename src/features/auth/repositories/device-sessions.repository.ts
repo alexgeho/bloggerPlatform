@@ -5,14 +5,9 @@ import {ObjectId, WithId} from 'mongodb';
 
 export const deviceSessionsRepository = {
 
-    async deleteDeviceByIds (userId: string, deviceId: string) {
+    async deleteDeviceById (userId: string, deviceId: string) {
 
         await deviceSessionsCollection.deleteOne({userId, deviceId})
-
     }
-
-
-
-
 }
 

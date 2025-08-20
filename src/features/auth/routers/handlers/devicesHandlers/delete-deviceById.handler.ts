@@ -3,23 +3,22 @@ import {verifyRefreshTokenWithDevice} from "../../../adapters/jwt.service";
 import {devicesService} from "../../../application/devicesService";
 
 
-export async function deleteDeviceByIdHandler (
-    req: Request,
-    res: Response,
-) {
-
-    const token = req.cookies?.refreshToken as string | undefined;
-
-    if (!token) { res.sendStatus(401); return; }
+export async function deleteDeviceByIdHandler(req: Request, res: Response) {
+    const token = req.cookies?.refreshToken;
+    if (!token) return res.sendStatus(401);
 
     const verifyToken = await verifyRefreshTokenWithDevice(token);
+    if (!verifyToken) return res.sendStatus(401);
 
-    if (!verifyToken) { res.sendStatus(401); return; }
+    const userId = verifyToken.userId;
+    const deviceId = req.params.deviceId;
 
-    const {userId, deviceId} = verifyToken;
+    // 🔍 Проверка: девайс принадлежит юзеру?
+    const isOwned = await devicesService.isDeviceBelongsToUser(deviceId, userId);
+    if (!isOwned) return res.sendStatus(403); // Чужой девайс
 
-    await devicesService.deleteDeviceByIds(userId, deviceId);
-
-
+    await devicesService.deleteDeviceById(userId, deviceId);
+    return res.sendStatus(204);
 }
+
 

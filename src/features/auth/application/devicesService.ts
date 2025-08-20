@@ -1,14 +1,23 @@
 // src/features/auth/application/devicesService.ts
 
 import { v4 as uuid } from 'uuid';
-import {deviceSessionsRepository, DeviceSessionsRepository} from '../repositories/device-sessions.repository';
+import {deviceSessionsRepository} from '../repositories/device-sessions.repository';
 import { DeviceSession } from '../domain/device-session.entity';
+import {response} from "express";
 
 function isoFromIat(iat: number) {
     return new Date(iat * 1000).toISOString();
 }
 
 export const devicesService = {
+
+    async deleteDeviceById(userId: string,deviceId: string) {
+
+
+       await deviceSessionsRepository.deleteDeviceById (userId,deviceId);
+
+
+    }
 
     // async createOnLogin(sessionInfo: {
     //     userId: string;
@@ -40,9 +49,7 @@ export const devicesService = {
     //     return this.repo.listByUser(userId);
     // },
 
-    async deleteDeviceByIds(userId: string, deviceId: string) {
-        await deviceSessionsRepository.deleteDeviceByIds
-    }
+
 
     // async deleteOthers(userId: string, keepDeviceId: string) {
     //     return this.repo.deleteAllExcept(userId, keepDeviceId);
