@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { usersQwRepository } from '../../../users/repositories/usersQwRepository';
-import { HttpStatuses } from '../../common/types/httpStatuses';
-import { jwtService } from '../../adapters/jwt.service';
+import { usersQwRepository } from '../../../../users/repositories/usersQwRepository';
+import { HttpStatuses } from '../../../common/types/httpStatuses';
+import { jwtService } from '../../../adapters/jwt.service';
 
 export const getMeHandler = async (
     req: Request,

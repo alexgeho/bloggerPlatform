@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
-import {usersQwRepository} from "../../../users/repositories/usersQwRepository";
-import {authService} from "../../application/auth.service"; // если используешь date-fns
+import {usersQwRepository} from "../../../../users/repositories/usersQwRepository";
+import {authService} from "../../../application/auth.service"; // если используешь date-fns
 
 export async function emailResendHandler(
     req: Request,

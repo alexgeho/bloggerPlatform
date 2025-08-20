@@ -1,8 +1,8 @@
 import {Request, Response} from 'express';
-import {usersQwRepository} from "../../../users/repositories/usersQwRepository";
-import {User} from "../../domain/user";
-import {userRepository} from "../../../users/repositories/user.repository";
-import {authService} from "../../application/auth.service";
+import {usersQwRepository} from "../../../../users/repositories/usersQwRepository";
+import {User} from "../../../domain/user";
+import {userRepository} from "../../../../users/repositories/user.repository";
+import {authService} from "../../../application/auth.service";
 
 
 export async function emailConfirmationHandler(

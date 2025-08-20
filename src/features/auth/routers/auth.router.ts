@@ -1,16 +1,16 @@
 import {Router} from "express";
-import {loginHandler} from "./handlers/login.handler";
+import {loginHandler} from "./handlers/authHandlers/login.handler";
 import {authInputDtoValidation} from "../validation/auth.input-dto.validation-middlewares";
 import {accessTokenGuard} from "./guards/access.token.guard";
-import {getMeHandler} from "./handlers/get-me.handler";
-import {registrationHandler} from "./handlers/registration-handler";
-import {emailConfirmationHandler} from "./handlers/registration-confirmation.handler";
+import {getMeHandler} from "./handlers/authHandlers/get-me.handler";
+import {registrationHandler} from "./handlers/authHandlers/registration-handler";
+import {emailConfirmationHandler} from "./handlers/authHandlers/registration-confirmation.handler";
 import {inputValidationResultMiddleware} from "../../../core/middlewares/validation/input-validtion-result.middleware";
-import {emailResendHandler} from "./handlers/email-resend.handler";
+import {emailResendHandler} from "./handlers/authHandlers/email-resend.handler";
 import {userInputDtoValidation} from "../validation/user.input-dto.validation-middlewares";
 import {codeInputDtoValidation} from "../validation/registration.confirmation.input-dto.validation-middlewares";
-import {refreshHandler} from "./handlers/refresh.handler";
-import {logoutHandler} from "./handlers/logout.handler";
+import {refreshHandler} from "./handlers/authHandlers/refresh.handler";
+import {logoutHandler} from "./handlers/authHandlers/logout.handler";
 
 
 export const authRouter = Router();

@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { errorsHandler } from '../../../../core/errors/errors.handler';
-import { authService } from '../../application/auth.service';
-import { refreshCookieOptions } from '../../../../core/http/cookie';
-import { sendResult } from '../../../../core/http/send-result';
-import {ResultStatus} from "../../common/result/resultCode";
+import { errorsHandler } from '../../../../../core/errors/errors.handler';
+import { authService } from '../../../application/auth.service';
+import { refreshCookieOptions } from '../../../../../core/http/cookie';
+import { sendResult } from '../../../../../core/http/send-result';
+import {ResultStatus} from "../../../common/result/resultCode";
 
 
 export async function loginHandler(req: Request, res: Response) {

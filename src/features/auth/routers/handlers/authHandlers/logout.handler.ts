@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { refreshCookieOptions } from '../../../../core/http/cookie';
-import {jwtService} from "../../adapters/jwt.service";
-import {authService} from "../../application/auth.service";
+import { refreshCookieOptions } from '../../../../../core/http/cookie';
+import {jwtService} from "../../../adapters/jwt.service";
+import {authService} from "../../../application/auth.service";
 
 export async function logoutHandler(
     req: Request,

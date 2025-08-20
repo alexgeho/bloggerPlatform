@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
-import {RegistrationDto} from "../../types/registration.dto";
-import {authService} from "../../application/auth.service";
-import {usersQwRepository} from "../../../users/repositories/usersQwRepository";
+import {RegistrationDto} from "../../../types/registration.dto";
+import {authService} from "../../../application/auth.service";
+import {usersQwRepository} from "../../../../users/repositories/usersQwRepository";
 
 export const registrationHandler = async (req: Request, res: Response):Promise<void> => {
 
