@@ -70,9 +70,17 @@ export const authService = {
 
     const payload = await jwtService.verifyRefreshToken(refreshToken)
 
-        if (!payload) {
-            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Invalid or expired token' }] };
+        const session = await devicesService.findSessionByDeviceId (payload.deviceId)
+
+        if (payload?.userAgent === deviceId.userAgent) {
+            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
         }
+
+        if (payload?.deviceId === deviceId.deviceId) {
+            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
+        }
+
+
 
 
 

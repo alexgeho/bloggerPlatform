@@ -34,6 +34,13 @@ export const devicesService = {
 
         const deviceId: string = await deviceSessionsRepository.createOne(session);
         return deviceId;
+    },
+
+    async findSessionByDeviceId(deviceId: string): Promise<DeviceSession | null> {
+
+        const session = deviceSessionsRepository.findUserByDeviceId (deviceId);
+        return session;
+
     }
 
 
