@@ -4,6 +4,7 @@ import { ResultStatus } from '../../../common/result/resultCode';
 import { refreshCookieOptions } from '../../../../../core/http/cookie';
 
 export async function refreshHandler(req: Request, res: Response) {
+
     const token = req.cookies?.refreshToken as string | undefined;
 
     if (!token) {
@@ -17,6 +18,7 @@ export async function refreshHandler(req: Request, res: Response) {
     }
 
     const result = await authService.refreshByToken(token);
+
     if (result.status !== ResultStatus.Success) {
         res.status(401).send(result.extensions ?? { message: 'Unauthorized' });
         return;

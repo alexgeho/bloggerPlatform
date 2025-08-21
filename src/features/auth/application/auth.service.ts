@@ -40,6 +40,7 @@ export const authService = {
     },
 
     async loginUser(loginOrEmail: string, password: string, ip: string, userAgent: string) {
+
         if (this.rateLimiter.isBlocked(ip)) {
             return {
                 status: ResultStatus.TooManyRequests,
@@ -58,40 +59,44 @@ export const authService = {
         const userLogin = user.accountData.login;
         const accessToken = await jwtService.createToken(userId, userLogin);
 
-        const refreshToken = await createRefreshTokenWithDevice(userId, userLogin, userAgent);
+        const deviceId: string = await devicesService.createOnLogin(userId, ip, userAgent);
 
-        await devicesService.createOnLogin(userId, ip, userAgent);
+        const refreshToken = await createRefreshTokenWithDevice(userId, userLogin, userAgent, deviceId);
 
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
     },
 
     async refreshByToken(refreshToken: string) {
-        const isBlacklisted = await authRepository.isTokenBlackListed(refreshToken);
-        if (isBlacklisted) {
-            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Token is blacklisted' }] };
-        }
 
-        const devPayload = await verifyRefreshTokenWithDevice(refreshToken);
-        if (!devPayload) {
-            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Invalid or expired token' }] };
-        }
 
-        const { userId, userLogin, deviceId } = devPayload;
-        const sessions = await devicesService.list(userId);
-        const own = sessions.find(s => s.deviceId === deviceId);
-        if (!own) {
-            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Session not found' }] };
-        }
 
-        const newRefresh = await createRefreshTokenWithDevice(userId, userLogin, deviceId);
-        const np = await verifyRefreshTokenWithDevice(newRefresh);
-        if (!np) return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Unable to refresh token' }] };
 
-        await devicesService.updateOnRefresh(userId, deviceId, np.iat, np.exp);
-        const newAccess = await jwtService.createToken(userId, userLogin);
-        await authRepository.blacklistToken(refreshToken);
-
-        return { status: ResultStatus.Success, data: { accessToken: newAccess, refreshToken: newRefresh } };
+        // const isBlacklisted = await authRepository.isTokenBlackListed(refreshToken);
+        // if (isBlacklisted) {
+        //     return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Token is blacklisted' }] };
+        // }
+        //
+        // const devPayload = await verifyRefreshTokenWithDevice(refreshToken);
+        // if (!devPayload) {
+        //     return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Invalid or expired token' }] };
+        // }
+        //
+        // const { userId, userLogin, deviceId } = devPayload;
+        // const sessions = await devicesService.list(userId);
+        // const own = sessions.find(s => s.deviceId === deviceId);
+        // if (!own) {
+        //     return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Session not found' }] };
+        // }
+        //
+        // const newRefresh = await createRefreshTokenWithDevice(userId, userLogin, deviceId);
+        // const np = await verifyRefreshTokenWithDevice(newRefresh);
+        // if (!np) return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Unable to refresh token' }] };
+        //
+        // await devicesService.updateOnRefresh(userId, deviceId, np.iat, np.exp);
+        // const newAccess = await jwtService.createToken(userId, userLogin);
+        // await authRepository.blacklistToken(refreshToken);
+        //
+        // return { status: ResultStatus.Success, data: { accessToken: newAccess, refreshToken: newRefresh } };
     },
 
     async blacklistToken(token: string): Promise<void> {

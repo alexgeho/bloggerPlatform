@@ -22,10 +22,7 @@ export const devicesService = {
 
     },
 
-    async createOnLogin(
-
-        userId: string, ip: string, userAgent: string) {
-
+    async createOnLogin(userId: string, ip: string, userAgent: string): Promise<string> {
         const lastActiveDate = new Date().toISOString();
 
         const session: DeviceSession = {
@@ -33,17 +30,18 @@ export const devicesService = {
             ip,
             userAgent,
             lastActiveDate
-        }
+        };
 
-        await deviceSessionsRepository.createOne(session);
-
+        const deviceId: string = await deviceSessionsRepository.createOne(session);
+        return deviceId;
     }
 
 
 
 
 
-    // async updateOnRefresh(userId: string, deviceId: string, iat: number, exp: number) {
+
+        // async updateOnRefresh(userId: string, deviceId: string, iat: number, exp: number) {
     //     await this.repo.updateLastActive(userId, deviceId, isoFromIat(iat), exp);
     // },
     //
