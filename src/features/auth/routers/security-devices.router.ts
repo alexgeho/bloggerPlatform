@@ -1,16 +1,9 @@
-import {Router} from 'express';
-import {deleteDeviceByIdHandler} from "./handlers/devicesHandlers/delete-deviceById.handler";
-
-//export const securityDevicesRouter: Router = Router();
+import { Router } from 'express';
+import { deleteDeviceByIdHandler } from './handlers/devicesHandlers/delete-deviceById.handler';
 
 export const devicesRouter = Router();
 
-devicesRouter.delete(
-    '/:deviceId',
-    deleteDeviceByIdHandler
-);
-
-
+devicesRouter.delete('/:Id', deleteDeviceByIdHandler);
 
 
 
