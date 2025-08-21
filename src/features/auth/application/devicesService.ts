@@ -1,5 +1,3 @@
-// src/features/auth/application/devicesService.ts
-
 import { v4 as uuid } from 'uuid';
 import {deviceSessionsRepository} from '../repositories/device-sessions.repository';
 import { DeviceSession } from '../domain/device-session.entity';
@@ -11,10 +9,10 @@ function isoFromIat(iat: number) {
 
 export const devicesService = {
 
-    async isDeviceBelongsToUser (userId: string,deviceId: string) {
-
-
-
+    async isDeviceBelongsToUser(userId: string, deviceId: string): Promise<boolean> {
+        const device = await deviceSessionsRepository.findUserByDeviceId(deviceId);
+        if (!device) return false;
+        return device.userId === userId;
     },
 
     async deleteDeviceById(userId: string,deviceId: string) {
