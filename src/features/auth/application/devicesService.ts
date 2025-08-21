@@ -11,6 +11,12 @@ function isoFromIat(iat: number) {
 
 export const devicesService = {
 
+    async isDeviceBelongsToUser (userId: string,deviceId: string) {
+
+
+
+    },
+
     async deleteDeviceById(userId: string,deviceId: string) {
 
 
