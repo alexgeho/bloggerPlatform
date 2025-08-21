@@ -30,7 +30,7 @@ export const jwtService = {
         catch { return null; }
     },
 
-    async decodeToken(token: string): Promise<JwtPayload | null> {
+    async decodeToken(token): Promise<JwtPayload | null> {
         try { return jwt.decode(token) as JwtPayload; }
         catch { return null; }
     },

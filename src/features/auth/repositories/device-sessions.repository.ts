@@ -17,7 +17,7 @@ export const deviceSessionsRepository = {
 
     async createOne(session: DeviceSession): Promise<string> {
         const result = await deviceSessionsCollection.insertOne(session);
-        return result.insertedId.toString(); // ✅ вернёт deviceId как string
+        return result.insertedId.toString();
     }
 
 

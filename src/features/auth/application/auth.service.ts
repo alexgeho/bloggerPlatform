@@ -68,6 +68,11 @@ export const authService = {
 
     async refreshByToken(refreshToken: string) {
 
+    const payload = await jwtService.verifyRefreshToken(refreshToken)
+
+        if (!payload) {
+            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Invalid or expired token' }] };
+        }
 
 
 

@@ -12,12 +12,8 @@ export async function refreshHandler(req: Request, res: Response) {
         return;
     }
 
-    if (await authService.isTokenBlackListed(token)) {
-        res.status(401).send({ message: 'Token is blacklisted' });
-        return;
-    }
-
     const result = await authService.refreshByToken(token);
+
 
     if (result.status !== ResultStatus.Success) {
         res.status(401).send(result.extensions ?? { message: 'Unauthorized' });
