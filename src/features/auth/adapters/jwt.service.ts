@@ -45,9 +45,9 @@ export interface JwtRefreshWithDevice {
     exp: number;
 }
 
-export async function createRefreshTokenWithDevice(userId: string, userLogin: string, deviceId: string):
+export async function createRefreshTokenWithDevice(userId: string, userLogin: string, userAgent: string):
     Promise<string> {
-    return jwt.sign({ userId, userLogin, deviceId }, appConfig.RT_SECRET, { expiresIn: appConfig.RT_TIME });
+    return jwt.sign({ userId, userLogin, userAgent }, appConfig.RT_SECRET, { expiresIn: appConfig.RT_TIME });
 }
 
 export async function verifyRefreshTokenWithDevice(token: string): Promise<JwtRefreshWithDevice | null> {

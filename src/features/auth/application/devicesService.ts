@@ -23,9 +23,10 @@ export const devicesService = {
     },
 
     async createOnLogin(
-        userId: string, ip: string, userAgent: string, iat: number, exp: number ) {
 
-        const lastActiveDate = new Date(iat * 1000).toISOString();
+        userId: string, ip: string, userAgent: string) {
+
+        const lastActiveDate = new Date().toISOString();
 
         const session: DeviceSession = {
             userId,

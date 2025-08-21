@@ -11,10 +11,6 @@ export async function deleteDeviceByIdHandler(req: Request, res: Response) {
     const verifyToken = await verifyRefreshTokenWithDevice(token);
     if (!verifyToken) return res.sendStatus(401);
 
-    // if (verifyToken.deviceId !== req.params.deviceId) {
-    //     res.status(404);
-    // }
-
     const userId = verifyToken.userId;
     const deviceId = req.params.deviceId;
 

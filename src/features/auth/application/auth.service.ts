@@ -46,7 +46,6 @@ export const authService = {
                 extensions: [{ field: 'ip', message: 'Too many login attempts. Try again later.' }],
             };
         }
-
         this.rateLimiter.addAttempt(ip);
 
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);
@@ -59,11 +58,9 @@ export const authService = {
         const userLogin = user.accountData.login;
         const accessToken = await jwtService.createToken(userId, userLogin);
 
-        const iat = Math.floor(Date.now() / 1000);
-        const exp = iat + ENV.JWT_REFRESH_EXP_SEC;
+        const refreshToken = await createRefreshTokenWithDevice(userId, userLogin, userAgent);
 
-        const deviceId = await devicesService.createOnLogin({ userId, ip, userAgent, iat, exp });
-        const refreshToken = await createRefreshTokenWithDevice(userId, userLogin, deviceId);
+        await devicesService.createOnLogin(userId, ip, userAgent);
 
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
     },
