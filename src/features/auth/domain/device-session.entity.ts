@@ -1,5 +1,5 @@
 export type DeviceSession = {
-    _id?: string;
+    deviceId?: string; // _id.toString()
     userId: string;
     ip: string;
     userAgent: string;

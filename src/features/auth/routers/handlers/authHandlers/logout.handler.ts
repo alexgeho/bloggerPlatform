@@ -1,36 +1,29 @@
 import { Request, Response } from 'express';
 import { refreshCookieOptions } from '../../../../../core/http/cookie';
-import {jwtService} from "../../../adapters/jwt.service";
-import {authService} from "../../../application/auth.service";
+import { jwtService } from "../../../adapters/jwt.service";
+import { authService } from "../../../application/auth.service";
 
 export async function logoutHandler(
     req: Request,
     res: Response
-): Promise<void>
-{
+): Promise<void> {
     const refreshToken = req.cookies?.refreshToken;
 
     if (!refreshToken) {
-         res.sendStatus(401);
-        return
-    }
-
-    if (await authService.isTokenBlackListed(refreshToken)) {
-        res.status(401).send({ message: 'Token is blacklisted' });
+        res.sendStatus(401);
         return;
     }
 
-
     const payload = await jwtService.verifyRefreshToken(refreshToken);
     if (!payload) {
-         res.sendStatus(401);
-        return// токен просрочен или сломан
+        res.sendStatus(401); // Токен просрочен/битый
+        return;
     }
 
-    console.log("LOGOUT", refreshToken)
+    // 🧼 Удаляем сессию устройства
+    await authService.terminateDeviceSession(payload.userId, payload.deviceId);
 
-    await authService.blacklistToken(refreshToken);
+    // 🍪 Удаляем куку с refreshToken
     res.clearCookie('refreshToken', refreshCookieOptions);
-     res.sendStatus(204);
-    return
+    res.sendStatus(204);
 }

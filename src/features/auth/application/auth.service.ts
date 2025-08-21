@@ -70,18 +70,34 @@ export const authService = {
 
     const payload = await jwtService.verifyRefreshToken(refreshToken)
 
+        if (!payload) {
+            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
+        }
+
         const session = await devicesService.findSessionByDeviceId (payload.deviceId)
 
-        if (payload?.userAgent === deviceId.userAgent) {
+        if (!session) {
+            return {
+                status: ResultStatus.Unauthorized,
+                extensions: [{ field: 'refreshToken', message: 'Device session not found' }]
+            };
+        }
+
+        if (payload?.userAgent !== session.userAgent) {
             return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
         }
 
-        if (payload?.deviceId === deviceId.deviceId) {
+        if (payload?.deviceId !== session.deviceId) {
             return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
         }
 
+        const { userId, userLogin, userAgent, deviceId } = payload;
 
 
+        const accessToken = await jwtService.createToken(payload.userId, payload.userLogin);
+        refreshToken = await createRefreshTokenWithDevice(userId, userLogin, userAgent, deviceId);
+
+        return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
 
 
         // const isBlacklisted = await authRepository.isTokenBlackListed(refreshToken);
@@ -112,18 +128,6 @@ export const authService = {
         // return { status: ResultStatus.Success, data: { accessToken: newAccess, refreshToken: newRefresh } };
     },
 
-    async blacklistToken(token: string): Promise<void> {
-        await authRepository.blacklistToken(token);
-        const p = await verifyRefreshTokenWithDevice(token);
-        if (p) {
-            try { await devicesService.deleteCurrent(p.userId, p.deviceId); } catch {}
-        }
-    },
-
-    async isTokenBlackListed(token: string): Promise<boolean> {
-        return await authRepository.isTokenBlackListed(token);
-    },
-
     async resendEmail(user: User): Promise<void> {
         const newCode = uuidv4();
         const newExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
@@ -132,5 +136,11 @@ export const authService = {
 
         await userRepository.uptateCodeAndDate(user);
         await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
-    }
+    },
+
+    async terminateDeviceSession(userId: string, deviceId: string): Promise<void> {
+        await devicesService.deleteDeviceById(userId, deviceId);
+    },
+
+
 };

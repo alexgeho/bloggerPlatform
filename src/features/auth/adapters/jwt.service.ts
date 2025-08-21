@@ -29,7 +29,18 @@ export const jwtService = {
     //     try { return jwt.decode(token) as JwtPayload; }
     //     catch { return null; }
     // },
+
+    async verifyToken(token: string): Promise<JwtPayload | null> {
+        try {
+            return jwt.verify(token, appConfig.AC_SECRET) as JwtPayload;
+        } catch {
+            return null;
+        }
+    }
+
 };
+
+
 
 // FILE: src/features/auth/adapters/jwt.service.ts  (ДОБАВИТЬ вниз файла)
 export interface JwtRefreshWithDevice {

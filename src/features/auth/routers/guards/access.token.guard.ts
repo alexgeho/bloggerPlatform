@@ -31,17 +31,17 @@ export const accessTokenGuard = async (
         return;
     }
 
-    const payload = await jwtService.verifyToken(token);
+    // const payload = await jwtService.verifyToken(token);
+    //
+    // if (!payload) {
+    //     res.sendStatus(401);
+    //     return;
+    // }
 
-    if (!payload) {
-        res.sendStatus(401);
-        return;
-    }
-
-    req.user = {
-        userId: payload.userId,
-        userLogin: payload.userLogin,
-    };
-
-    next();
+    // req.user = {
+    //     userId: payload.userId,
+    //     userLogin: payload.userLogin,
+    // };
+    //
+    // next();
 };
