@@ -1,8 +1,8 @@
 export type DeviceSession = {
-    deviceId: string;
+    _id?: string;
     userId: string;
     ip: string;
     userAgent: string;
-    lastActiveDate: string;
-    refreshTokenExp: number;
+    lastActiveDate: string; // ← вместо iat/exp
 };
+

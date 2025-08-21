@@ -17,33 +17,30 @@ export const devicesService = {
 
     async deleteDeviceById(userId: string,deviceId: string) {
 
-
        await deviceSessionsRepository.deleteDeviceById (userId,deviceId);
 
 
+    },
+
+    async createOnLogin(
+        userId: string, ip: string, userAgent: string, iat: number, exp: number ) {
+
+        const lastActiveDate = new Date(iat * 1000).toISOString();
+
+        const session: DeviceSession = {
+            userId,
+            ip,
+            userAgent,
+            lastActiveDate
+        }
+
+        await deviceSessionsRepository.createOne(session);
+
     }
 
-    // async createOnLogin(sessionInfo: {
-    //     userId: string;
-    //     ip: string;
-    //     userAgent: string;
-    //     iat: number;
-    //     exp: number;
-    // }): Promise<string> {
-    //     const deviceId = uuid();
-    //
-    //     const session: DeviceSession = {
-    //         deviceId,
-    //         userId: sessionInfo.userId,
-    //         ip: sessionInfo.ip,
-    //         userAgent: sessionInfo.userAgent || 'Unknown device',
-    //         lastActiveDate: isoFromIat(sessionInfo.iat),
-    //         refreshTokenExp: sessionInfo.exp,
-    //     };
-    //
-    //     await this.repo.create(session);
-    //     return deviceId;
-    // },
+
+
+
 
     // async updateOnRefresh(userId: string, deviceId: string, iat: number, exp: number) {
     //     await this.repo.updateLastActive(userId, deviceId, isoFromIat(iat), exp);
