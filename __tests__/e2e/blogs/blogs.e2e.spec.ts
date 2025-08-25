@@ -7,17 +7,17 @@ import express from "express";
 import {doSomething} from "../../../src/app";
 import * as appContent from "../../../src/app";
 import {runDB} from "../../../src/db/mongo.db";
-import {SETTINGS} from "../../../src/core/settings/settings";
+import { ENV } from "../../../src/core/config/env";
 
-console.log('123')
-console.log(setupAppConfig, ' setupAppConfig')
+//console.log('123')
+//console.log(setupAppConfig, ' setupAppConfig')
 const app = setupAppConfig.setupApp(express());
-console.log(appContent)
+//console.log(appContent)
 
 describe("testing POST to /blogs", () => {
     beforeAll(() => {
         doSomething()
-        runDB(SETTINGS.MONGO_URL)
+        runDB(ENV.MONGO_URL)
 
     })
     beforeEach(async () => {

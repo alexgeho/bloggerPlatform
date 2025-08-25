@@ -49,6 +49,12 @@ export const devicesService = {
 
         return sessions;
 
+    },
+
+    async deleteAllDevicesExceptCurrent (userId: string, deviceId: string): Promise<void> {
+
+await deviceSessionsRepository.deleteAllDevicesExceptCurrent (userId, deviceId);
+
     }
 
 

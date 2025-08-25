@@ -23,8 +23,16 @@ export const deviceSessionsRepository = {
     async getAllDevices (userId: string) {
         return await deviceSessionsCollection.find({userId}).toArray();
 
+    },
 
+    async deleteAllDevicesExceptCurrent(userId: string, currentDeviceId: string): Promise<void> {
+        await deviceSessionsCollection.deleteMany({
+            userId,
+            deviceId: { $ne: currentDeviceId }
+        });
     }
+
+
 
 }
 
