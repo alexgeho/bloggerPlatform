@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { appConfig } from "../common/config/config";
+import { ENV } from "../../../core/config/env";
 
 interface JwtPayload { userId: string; userLogin: string; userAgent: string; deviceId: string}
 
@@ -8,20 +8,20 @@ export const jwtService = {
 
     async createToken(userId: string, userLogin: string): Promise<string> {
 
-        return jwt.sign({ userId, userLogin }, appConfig.AC_SECRET, {
-            expiresIn: appConfig.AC_TIME,
+        return jwt.sign({ userId, userLogin }, ENV.AC_SECRET, {
+            expiresIn: ENV.AC_TIME,
         });
     },
 
     async createRefreshToken(userId: string, userLogin: string, deviceId?:string): Promise<string> {
 
-        return jwt.sign({ userId, userLogin, deviceId }, appConfig.RT_SECRET, {
-            expiresIn: appConfig.RT_TIME,
+        return jwt.sign({ userId, userLogin, deviceId }, ENV.RT_SECRET, {
+            expiresIn: ENV.RT_TIME,
         });
     },
 
     async verifyRefreshToken(token: string): Promise<JwtPayload | null> {
-        try { return jwt.verify(token, appConfig.RT_SECRET) as JwtPayload; }
+        try { return jwt.verify(token, ENV.RT_SECRET) as JwtPayload; }
         catch { return null; }
     },
 
@@ -32,7 +32,7 @@ export const jwtService = {
 
     async verifyToken(token: string): Promise<JwtPayload | null> {
         try {
-            return jwt.verify(token, appConfig.AC_SECRET) as JwtPayload;
+            return jwt.verify(token, ENV.AC_SECRET) as JwtPayload;
         } catch {
             return null;
         }
@@ -53,14 +53,14 @@ export interface JwtRefreshWithDevice {
 
 export async function createRefreshTokenWithDevice(userId: string, userLogin: string, userAgent: string, deviceId: string):
     Promise<string> {
-    return jwt.sign({ userId, userLogin, userAgent, deviceId }, appConfig.RT_SECRET, { expiresIn: appConfig.RT_TIME });
+    return jwt.sign({ userId, userLogin, userAgent, deviceId }, ENV.RT_SECRET, { expiresIn: ENV.RT_TIME });
 }
 
 export async function verifyRefreshTokenWithDevice(token: string): Promise<JwtRefreshWithDevice | null> {
 
     try {
 
-        const openToken = jwt.verify(token, appConfig.RT_SECRET) as any;
+        const openToken = jwt.verify(token, ENV.RT_SECRET) as any;
 
         if (!openToken?.deviceId) return null;
         return {
