@@ -1,9 +1,17 @@
 import { Router } from 'express';
 import { deleteDeviceByIdHandler } from './handlers/devicesHandlers/delete-deviceById.handler';
+import {getDevicesHandler} from "./handlers/devicesHandlers/get-devices.handler";
+import {accessTokenGuard} from "./guards/access.token.guard";
 
 export const devicesRouter = Router();
 
 devicesRouter.delete('/:Id', deleteDeviceByIdHandler);
+
+devicesRouter.get('/',
+    accessTokenGuard,
+    getDevicesHandler);
+
+
 
 
 

@@ -41,7 +41,17 @@ export const devicesService = {
         const session = deviceSessionsRepository.findUserByDeviceId (deviceId);
         return session;
 
+    },
+
+    async getAllDevices (userId: string): Promise<DeviceSession[]> {
+
+        const sessions = await deviceSessionsRepository.getAllDevices (userId);
+
+        return sessions;
+
     }
+
+
 
 
 
