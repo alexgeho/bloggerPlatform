@@ -3,7 +3,7 @@ import {verifyRefreshTokenWithDevice} from "../../../adapters/jwt.service";
 import {devicesService} from "../../../application/devicesService";
 
 
-export async function deleteDeviceByIdHandler(req: Request, res: Response) {
+export async function deleteDeviceByIdHandler(req: any, res: any) {
 
     const token = req.cookies?.refreshToken;
     if (!token) return res.sendStatus(401);

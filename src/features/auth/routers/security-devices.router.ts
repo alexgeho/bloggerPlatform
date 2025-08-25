@@ -5,7 +5,8 @@ import {accessTokenGuard} from "./guards/access.token.guard";
 
 export const devicesRouter = Router();
 
-devicesRouter.delete('/:Id', deleteDeviceByIdHandler);
+devicesRouter.delete('/:Id',
+    deleteDeviceByIdHandler);
 
 devicesRouter.get('/',
     accessTokenGuard,

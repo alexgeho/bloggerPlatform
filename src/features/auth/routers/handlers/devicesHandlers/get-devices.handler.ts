@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import {devicesService} from "../../../application/devicesService";
 
 
-export async function getDevicesHandler(req: Request, res: Response) {
+export async function getDevicesHandler(req: any, res: any) {
 
     const userId = req.user?.userId;
 
