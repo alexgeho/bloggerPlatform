@@ -9,7 +9,7 @@ export const devicesRouter = Router();
 
 
 devicesRouter.get('/',
-    accessTokenGuard,
+    refreshTokenGuard,
     getDevicesHandler);
 
 devicesRouter.delete('/:Id',
