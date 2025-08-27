@@ -12,7 +12,7 @@ export async function refreshHandler(req: Request, res: Response) {
         return;
     }
 
-    const result = await authService.refreshByToken(token);
+    const result = await authService.refreshTokens(token);
 
 
     if (result.status !== ResultStatus.Success) {
@@ -20,6 +20,8 @@ export async function refreshHandler(req: Request, res: Response) {
         return;
     }
     const { accessToken, refreshToken } = result.data!;
+
     res.cookie('refreshToken', refreshToken, refreshCookieOptions);
+
     res.status(200).send({ accessToken });
 }

@@ -1,29 +1,46 @@
+// jwtService.ts
 import jwt from "jsonwebtoken";
 import { ENV } from "../../../core/config/env";
 
-// Единый интерфейс payload'а для всех токенов
+// Унифицированный payload для всех типов токенов
 export interface JwtPayload {
     userId: string;
     userLogin: string;
     deviceId: string;
     userAgent?: string;
-    iat: number;
-    exp: number;
+    iat: number; // время создания токена (автоматически добавляется jwt)
+    exp: number; // срок действия токена (автоматически добавляется jwt)
 }
 
 export const jwtService = {
-    async createToken(userId: string, userLogin: string): Promise<string> {
-        return jwt.sign({ userId, userLogin }, ENV.AC_SECRET, {
-            expiresIn: ENV.AC_TIME,
-        });
+    /**
+     * Генерирует access и refresh токены сразу.
+     * Access-токен содержит минимум данных, refresh — расширенный payload.
+     */
+    async createAuthTokens(
+        userId: string,
+        userLogin: string,
+        userAgent: string,
+        deviceId: string
+    ): Promise<{ accessToken: string; refreshToken: string }> {
+        const accessToken = jwt.sign(
+            { userId, userLogin },
+            ENV.AC_SECRET,
+            { expiresIn: ENV.AC_TIME }
+        );
+
+        const refreshToken = jwt.sign(
+            { userId, userLogin, userAgent, deviceId },
+            ENV.RT_SECRET,
+            { expiresIn: ENV.RT_TIME }
+        );
+
+        return { accessToken, refreshToken };
     },
 
-    async createRefreshToken(userId: string, userLogin: string, deviceId?: string): Promise<string> {
-        return jwt.sign({ userId, userLogin, deviceId }, ENV.RT_SECRET, {
-            expiresIn: ENV.RT_TIME,
-        });
-    },
-
+    /**
+     * Проверяет access токен. Возвращает payload или null, если невалиден.
+     */
     async verifyToken(token: string): Promise<JwtPayload | null> {
         try {
             return jwt.verify(token, ENV.AC_SECRET) as JwtPayload;
@@ -32,27 +49,10 @@ export const jwtService = {
         }
     },
 
+    /**
+     * Проверяет refresh токен. Дополнительно убеждается, что есть deviceId.
+     */
     async verifyRefreshToken(token: string): Promise<JwtPayload | null> {
-        try {
-            return jwt.verify(token, ENV.RT_SECRET) as JwtPayload;
-        } catch {
-            return null;
-        }
-    },
-
-    // Расширенная версия с userAgent и deviceId — если нужно прямо при логине
-    async createRefreshTokenWithDevice(
-        userId: string,
-        userLogin: string,
-        userAgent: string,
-        deviceId: string
-    ): Promise<string> {
-        return jwt.sign({ userId, userLogin, userAgent, deviceId }, ENV.RT_SECRET, {
-            expiresIn: ENV.RT_TIME,
-        });
-    },
-
-    async verifyRefreshTokenWithDevice(token: string): Promise<JwtPayload | null> {
         try {
             const payload = jwt.verify(token, ENV.RT_SECRET) as JwtPayload;
             if (!payload.deviceId) return null;

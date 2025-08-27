@@ -57,16 +57,15 @@ export const authService = {
 
         const userId = user._id.toString();
         const userLogin = user.accountData.login;
-        const accessToken = await jwtService.createToken(userId, userLogin);
 
         const deviceId: string = await devicesService.createOnLogin(userId, ip, userAgent);
 
-        const refreshToken = await jwtService.createRefreshTokenWithDevice(userId, userLogin, userAgent, deviceId);
+        const { accessToken, refreshToken } = await jwtService.createAuthTokens(userId, userLogin, userAgent, deviceId);
 
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
     },
 
-    async refreshByToken(refreshToken: string) {
+    async refreshTokens(refreshToken: string) {
 
     const payload = await jwtService.verifyRefreshToken(refreshToken)
 
@@ -94,8 +93,9 @@ export const authService = {
         const { userId, userLogin, userAgent, deviceId } = payload;
 
 
-        const accessToken = await jwtService.createToken(payload.userId, payload.userLogin);
-        refreshToken = await jwtService.createRefreshTokenWithDevice(userId, userLogin, userAgent, deviceId);
+        const { accessToken, refreshToken: newRefreshToken } = await jwtService.createAuthTokens(userId, userLogin, userAgent, deviceId);
+        refreshToken = newRefreshToken;
+
 
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
 

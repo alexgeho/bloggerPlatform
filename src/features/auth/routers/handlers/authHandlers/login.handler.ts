@@ -20,6 +20,7 @@ export async function loginHandler(req: Request, res: Response) {
         const result = await authService.loginUser(loginOrEmail, password, ip, userAgent);
 
         if (result.status === ResultStatus.Success) {
+
             const { accessToken, refreshToken } = (result as any).data;
             res.cookie('refreshToken', refreshToken, refreshCookieOptions);
             res.status(200).send({ accessToken });
