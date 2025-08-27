@@ -3,7 +3,7 @@
 import bcrypt from "bcrypt";
 import { userRepository } from "../../users/repositories/user.repository";
 import { ResultStatus } from "../common/result/resultCode";
-import { jwtService, createRefreshTokenWithDevice, verifyRefreshTokenWithDevice } from "../adapters/jwt.service";
+import { jwtService } from "../adapters/jwt.service";
 import { User } from "../domain/user";
 import { add } from "date-fns";
 import { emailManager } from "../adapters/email.manager";
@@ -61,7 +61,7 @@ export const authService = {
 
         const deviceId: string = await devicesService.createOnLogin(userId, ip, userAgent);
 
-        const refreshToken = await createRefreshTokenWithDevice(userId, userLogin, userAgent, deviceId);
+        const refreshToken = await jwtService.createRefreshTokenWithDevice(userId, userLogin, userAgent, deviceId);
 
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
     },
@@ -95,7 +95,7 @@ export const authService = {
 
 
         const accessToken = await jwtService.createToken(payload.userId, payload.userLogin);
-        refreshToken = await createRefreshTokenWithDevice(userId, userLogin, userAgent, deviceId);
+        refreshToken = await jwtService.createRefreshTokenWithDevice(userId, userLogin, userAgent, deviceId);
 
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
 

@@ -3,6 +3,7 @@ export type DeviceSession = {
     userId: string;
     ip: string;
     userAgent: string;
-    lastActiveDate: string; // ← вместо iat/exp
+    lastActiveDate: string;
+    expireAt: Date;
 };
 

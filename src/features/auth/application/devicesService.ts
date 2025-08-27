@@ -24,12 +24,15 @@ export const devicesService = {
 
     async createOnLogin(userId: string, ip: string, userAgent: string): Promise<string> {
         const lastActiveDate = new Date().toISOString();
+        const expireAt: Date = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // +7 дней
+
 
         const session: DeviceSession = {
             userId,
             ip,
             userAgent,
-            lastActiveDate
+            lastActiveDate,
+            expireAt
         };
 
         const deviceId: string = await deviceSessionsRepository.createOne(session);
