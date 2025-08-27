@@ -15,13 +15,16 @@ export const registrationHandler = async (req: Request, res: Response):Promise<v
             if (userExist.accountData.email === dto.email) {
                  res.status(400).json({
                     errorsMessages: [{message: "email is already exist", field: "email"}],
+
                 });
+                return
             }
 
             if (userExist.accountData.login === dto.login) {
                  res.status(400).json({
                     errorsMessages: [{message: "login is already exist", field: "login"}],
                 });
+                return
             }
         }
 

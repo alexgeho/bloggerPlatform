@@ -2,7 +2,7 @@ import request from "supertest";
 import express, { Express } from "express";
 import { runDB } from "../../../src/db/mongo.db";
 import { setupApp } from "../../../src/setup-app";
-import {BLOGS_PATH, TESTING_PATH} from "../../../src/core/paths/paths";
+import {AUTH_PATH, BLOGS_PATH, TESTING_PATH} from "../../../src/core/paths/paths";
 import { ENV } from "../../../src/core/config/env";
 import { authTestManager } from "./utils/authTestManager";
 import {HttpStatus} from "../../../src/core/types/http-statuses";
@@ -50,6 +50,7 @@ it("should return 200 and empty array", async () => {
 
     it("should create user and after login user with 4 devices and return RToken, AT", async () => {
         await authTestManager.createUser(app, user1);
+
         await authTestManager.loginUser1WithDevice1(app, user1, userAgent1);
         await authTestManager.loginUser1WithDevice2(app, user1, userAgent2);
         await authTestManager.loginUser1WithDevice3(app, user1, userAgent3);
@@ -61,8 +62,15 @@ it("should return 200 and empty array", async () => {
         // <–– это ты возвращаешь из TestManager
     });
 
+    it("should create refresh token for one device", async () => {
+
+        const registerRes = await authTestManager.createUser(app, user1);
+        const loginRes = await authTestManager.loginUser1WithDevice1(app, user1, "Device1");
+
+        const refreshCookie = loginRes.refreshCookie; // <- достаёшь Set-Cookie
 
 
+    });
 
 });
 

@@ -37,14 +37,21 @@ export const authTestManager = {
             throw new Error("Expected 'set-cookie' to be an array");
         }
 
-        const refreshCookie = setCookieHeader
-            .find((cookie) => cookie.includes("refreshToken="))
-            ?.split(";")[0];
+        const refreshCookie = setCookieHeader.find((cookie) =>
+            cookie.includes("refreshToken=")
+        )?.split(";")[0];
+
 
         if (!refreshCookie) {
             throw new Error("Refresh token cookie not found");
         }
-        return { response };
+        return {
+            accessToken: response.body.accessToken,
+            refreshCookie,
+            response
+        };
+
+
     },
 
     async loginUser1WithDevice2 (app: any, data: UserInputDto, userAgent: string) {
