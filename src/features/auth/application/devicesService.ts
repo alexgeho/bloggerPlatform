@@ -7,6 +7,9 @@ function isoFromIat(iat: number) {
     return new Date(iat * 1000).toISOString();
 }
 
+export type Sessions = Omit<DeviceSession, "deviceId">;
+
+
 export const devicesService = {
 
     async isDeviceBelongsToUser(userId: string, deviceId: string): Promise<boolean> {
@@ -26,8 +29,11 @@ export const devicesService = {
         const lastActiveDate = new Date().toISOString();
         const expireAt: Date = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // +7 дней
 
+// todo type Omit utils, typeScript utils
 
-        const session: DeviceSession = {
+
+        const session = {
+            deviceId: uuid(),
             userId,
             ip,
             userAgent,
@@ -35,8 +41,8 @@ export const devicesService = {
             expireAt
         };
 
-        const deviceId: string = await deviceSessionsRepository.createOne(session);
-        return deviceId;
+     await deviceSessionsRepository.createOne(session);
+        return session.deviceId;
     },
 
     async findSessionByDeviceId(deviceId: string): Promise<DeviceSession | null> {

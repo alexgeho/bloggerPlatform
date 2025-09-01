@@ -78,7 +78,7 @@ export const authService = {
         if (!session) {
             return {
                 status: ResultStatus.Unauthorized,
-                extensions: [{ field: 'refreshToken', message: 'Device session not found' }]
+                extensions: [{ field: 'refreshToken', message: 'Device session not found1' }]
             };
         }
 

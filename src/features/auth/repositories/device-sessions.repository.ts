@@ -1,6 +1,7 @@
 import {deviceSessionsCollection} from "../../../db/mongo.db"
 import {ObjectId, WithId} from 'mongodb';
 import {DeviceSession} from "../domain/device-session.entity";
+import {Sessions} from "../application/devicesService";
 
 
 
@@ -15,9 +16,8 @@ export const deviceSessionsRepository = {
         await deviceSessionsCollection.deleteOne({userId, deviceId})
     },
 
-    async createOne(session: DeviceSession): Promise<string> {
-        const result = await deviceSessionsCollection.insertOne(session);
-        return result.insertedId.toString();
+    async createOne(session: DeviceSession) {
+        await deviceSessionsCollection.insertOne(session);
     },
 
     async getAllDevices (userId: string) {

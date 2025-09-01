@@ -16,13 +16,14 @@ export const authTestManager = {
         return { response };
     },
 
-    async loginUser1WithDevice1 (app: any, data: UserInputDto, userAgent: string) {
+    async loginUserWithDevice (app: any, email: string, password: string, userAgent: string) {
+
         const response = await request(app)
             .post(`${AUTH_PATH}/login`)
             .set("User-Agent", userAgent)
             .send({
-                loginOrEmail: data.email,
-                password: data.password,
+                loginOrEmail: email,
+                password: password,
             })
             .expect(HttpStatus.Ok);
 
@@ -55,37 +56,6 @@ export const authTestManager = {
     },
 
     async loginUser1WithDevice2 (app: any, data: UserInputDto, userAgent: string) {
-        const response = await request(app)
-            .post(`${AUTH_PATH}/login`)
-            .set("User-Agent", userAgent)
-            .send({
-                loginOrEmail: data.email,
-                password: data.password,
-            })
-            .expect(HttpStatus.Ok);
-
-        expect(response.body).toHaveProperty("accessToken");
-        expect(response.headers["set-cookie"]).toEqual(
-            expect.arrayContaining([expect.stringContaining("refreshToken=")])
-        );
-
-        const setCookieHeader = response.headers["set-cookie"];
-
-        if (!Array.isArray(setCookieHeader)) {
-            throw new Error("Expected 'set-cookie' to be an array");
-        }
-
-        const refreshCookie = setCookieHeader
-            .find((cookie) => cookie.includes("refreshToken="))
-            ?.split(";")[0];
-
-        if (!refreshCookie) {
-            throw new Error("Refresh token cookie not found");
-        }
-        return { response };
-    },
-
-    async loginUser1WithDevice3 (app: any, data: UserInputDto, userAgent: string) {
         const response = await request(app)
             .post(`${AUTH_PATH}/login`)
             .set("User-Agent", userAgent)

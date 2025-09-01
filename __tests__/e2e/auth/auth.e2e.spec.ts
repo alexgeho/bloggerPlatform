@@ -43,17 +43,25 @@ it("should return 200 and empty array", async () => {
         email: "Alex1@mail.com",
     };
 
+    const user2: UserInputDto = {
+        login: "Alex2",
+        password: "string",
+        email: "Alex2@mail.com",
+    };
+
+
     const userAgent1 = "iPhone Safari";
     const userAgent2 = "Device2";
     const userAgent3 = "Device3";
     const userAgent4 = "Device4";
 
     it("should create user and after login user with 4 devices and return RToken, AT", async () => {
+
         await authTestManager.createUser(app, user1);
 
-        await authTestManager.loginUser1WithDevice1(app, user1, userAgent1);
+        await authTestManager.loginUser1WithDevice2(app, user1, userAgent1);
         await authTestManager.loginUser1WithDevice2(app, user1, userAgent2);
-        await authTestManager.loginUser1WithDevice3(app, user1, userAgent3);
+        await authTestManager.loginUser1WithDevice2(app, user1, userAgent3);
 
         const result = await authTestManager.loginUser1WithDevice4(app, user1, userAgent4);
        const refreshCookieForDevice4 = result.refreshCookie;
@@ -62,12 +70,29 @@ it("should return 200 and empty array", async () => {
         // <–– это ты возвращаешь из TestManager
     });
 
-    it("should create refresh token for one device", async () => {
+    it("should refresh refreshToken for one device", async () => {
 
-        const registerRes = await authTestManager.createUser(app, user1);
-        const loginRes = await authTestManager.loginUser1WithDevice1(app, user1, "Device1");
+        await authTestManager.createUser(app, user2);
 
-        const refreshCookie = loginRes.refreshCookie; // <- достаёшь Set-Cookie
+        const loginRespond = await authTestManager.loginUserWithDevice(app, user2.email, user2.password, userAgent1);
+
+        const refreshToken = loginRespond.refreshCookie;
+
+        const response = await request(app)
+            .post(`${AUTH_PATH}/refresh-token`)
+            .set("User-Agent", userAgent1)
+            .set("Cookie", refreshToken)
+            //.expect(HttpStatus.Ok);
+console.log(response)
+
+        expect(response.body).toHaveProperty("accessToken");
+        expect(response.headers["set-cookie"]).toEqual(
+            expect.arrayContaining([expect.stringContaining("refreshToken=")])
+
+
+        );
+
+
 
 
     });

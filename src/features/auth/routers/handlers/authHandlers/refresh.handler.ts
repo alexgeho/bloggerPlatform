@@ -14,11 +14,11 @@ export async function refreshHandler(req: Request, res: Response) {
 
     const result = await authService.refreshTokens(token);
 
-
     if (result.status !== ResultStatus.Success) {
         res.status(401).send(result.extensions ?? { message: 'Unauthorized' });
         return;
     }
+
     const { accessToken, refreshToken } = result.data!;
 
     res.cookie('refreshToken', refreshToken, refreshCookieOptions);
