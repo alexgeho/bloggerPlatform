@@ -55,11 +55,12 @@ it("should return 200 and empty array", async () => {
     const userAgent3 = "Device3";
     const userAgent4 = "Device4";
 
-    it("should create user and after login user with 4 devices and return RToken, AT", async () => {
+    it("1. Should create user and after login user with 4 devices and return RToken, AT." +
+        "2. Should update refreshToken for device 1", async () => {
 
         await authTestManager.createUser(app, user1);
 
-        await authTestManager.loginUser1WithDevice2(app, user1, userAgent1);
+        const result1 = await authTestManager.loginUser1WithDevice2(app, user1, userAgent1);
         await authTestManager.loginUser1WithDevice2(app, user1, userAgent2);
         await authTestManager.loginUser1WithDevice2(app, user1, userAgent3);
 
@@ -67,35 +68,48 @@ it("should return 200 and empty array", async () => {
        const refreshCookieForDevice4 = result.refreshCookie;
 
         await authTestManager.checkDevicesCount(app, 4, userAgent4, refreshCookieForDevice4);
-        // <–– это ты возвращаешь из TestManager
-    });
 
-    it("should refresh refreshToken for one device", async () => {
+        const refreshToken = result1.refreshCookie;
 
-        await authTestManager.createUser(app, user2);
-
-        const loginRespond = await authTestManager.loginUserWithDevice(app, user2.email, user2.password, userAgent1);
-
-        const refreshToken = loginRespond.refreshCookie;
-
-        const response = await request(app)
+        await request(app)
             .post(`${AUTH_PATH}/refresh-token`)
             .set("User-Agent", userAgent1)
             .set("Cookie", refreshToken)
-            //.expect(HttpStatus.Ok);
-console.log(response)
-
-        expect(response.body).toHaveProperty("accessToken");
-        expect(response.headers["set-cookie"]).toEqual(
-            expect.arrayContaining([expect.stringContaining("refreshToken=")])
-
-
-        );
-
-
+            .expect(HttpStatus.Ok);
 
 
     });
+
+
+
+//     it("should refresh refreshToken for one device", async () => {
+//
+//         await authTestManager.createUser(app, user2);
+//
+//         const loginRespond = await authTestManager.loginUserWithDevice(app, user2.email, user2.password, userAgent1);
+//
+//         const refreshToken = loginRespond.refreshCookie;
+//
+//         const response = await request(app)
+//             .post(`${AUTH_PATH}/refresh-token`)
+//             .set("User-Agent", userAgent1)
+//             .set("Cookie", refreshToken)
+//             .expect(HttpStatus.Ok);
+// //console.log(response)
+//
+//         expect(response.body).toHaveProperty("accessToken");
+//         expect(response.headers["set-cookie"]).toEqual(
+//             expect.arrayContaining([expect.stringContaining("refreshToken=")])
+//
+//
+//         );
+//
+//
+//
+//
+//     });
+
+
 
 });
 

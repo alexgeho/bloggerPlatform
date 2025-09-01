@@ -83,7 +83,7 @@ export const authTestManager = {
         if (!refreshCookie) {
             throw new Error("Refresh token cookie not found");
         }
-        return { response };
+        return { response, refreshCookie };
     },
 
     async loginUser1WithDevice4 (app: any, data: UserInputDto, userAgent: string) {
