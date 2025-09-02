@@ -70,8 +70,6 @@ export const authService = {
 
     async refreshTokens(refreshToken: string, reqUserAgent: string) {
 
-
-
     const payload = await jwtService.verifyRefreshToken(refreshToken)
 
         if (!payload) {

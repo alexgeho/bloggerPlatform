@@ -2,6 +2,8 @@ import { v4 as uuid } from 'uuid';
 import {deviceSessionsRepository} from '../repositories/device-sessions.repository';
 import { DeviceSession } from '../domain/device-session.entity';
 import {response} from "express";
+import {jwtService} from "../adapters/jwt.service";
+import {ResultStatus} from "../common/result/resultCode";
 
 function isoFromIat(iat: number) {
     return new Date(iat * 1000).toISOString();
@@ -55,13 +57,28 @@ export const devicesService = {
 
     },
 
-    async getAllDevices (userId: string): Promise<DeviceSession[]> {
+    async getAllDevices(
+        userId: string,
+        userAgent: string,
+        token: string
+    ): Promise<DeviceSession[] | null> {
+        const payload = await jwtService.verifyRefreshToken(token);
+        if (!payload) return null;
 
-        const sessions = await deviceSessionsRepository.getAllDevices (userId);
+        const session = await deviceSessionsRepository.findUserByDeviceId(payload.deviceId);
+        if (!session) return null;
 
-        return sessions;
+        if (
+            payload.userAgent !== userAgent ||
+            session.userAgent !== userAgent ||
+            session.userAgent !== payload.userAgent
+        ) {
+            return null;
+        }
 
-    },
+        return await deviceSessionsRepository.getAllDevices(userId);
+    }
+    ,
 
     async deleteAllDevicesExceptCurrent (userId: string, deviceId: string): Promise<void> {
 
