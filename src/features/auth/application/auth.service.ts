@@ -14,6 +14,7 @@ import { authRepository } from "../repositories/auth.repository";
 import { devicesService} from "./devicesService";
 import { ENV } from "../../../core/config/env";
 import { RateLimiterService } from "./rateLimiter.service";
+import {response} from "express";
 
 export const authService = {
     rateLimiter: new RateLimiterService(),
@@ -49,6 +50,8 @@ export const authService = {
         }
         this.rateLimiter.addAttempt(ip);
 
+
+
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);
         if (!user) return { status: ResultStatus.Unauthorized, extensions: [{ field: "loginOrEmail", message: "User not found" }] };
 
@@ -65,7 +68,9 @@ export const authService = {
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
     },
 
-    async refreshTokens(refreshToken: string) {
+    async refreshTokens(refreshToken: string, reqUserAgent: string) {
+
+
 
     const payload = await jwtService.verifyRefreshToken(refreshToken)
 
@@ -82,7 +87,10 @@ export const authService = {
             };
         }
 
-        if (payload?.userAgent !== session.userAgent) {
+        if (
+            payload?.userAgent !== session.userAgent ||
+            payload.userAgent !== reqUserAgent
+        )  {
             return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
         }
 

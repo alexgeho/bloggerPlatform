@@ -9,8 +9,6 @@ import {ResultStatus} from "../../../common/result/resultCode";
 export async function loginHandler(req: Request, res: Response) {
 
 
-
-
     try {
 
         const ip = req.ip || 'unknown';
