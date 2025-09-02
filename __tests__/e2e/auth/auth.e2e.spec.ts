@@ -1,12 +1,13 @@
 import request from "supertest";
-import express, { Express } from "express";
-import { runDB } from "../../../src/db/mongo.db";
-import { setupApp } from "../../../src/setup-app";
+import express, {Express} from "express";
+import {runDB} from "../../../src/db/mongo.db";
+import {setupApp} from "../../../src/setup-app";
 import {AUTH_PATH, BLOGS_PATH, TESTING_PATH} from "../../../src/core/paths/paths";
-import { ENV } from "../../../src/core/config/env";
-import { authTestManager } from "./utils/authTestManager";
+import {ENV} from "../../../src/core/config/env";
+import {authTestManager} from "./utils/authTestManager";
 import {HttpStatus} from "../../../src/core/types/http-statuses";
 import {UserInputDto} from "../../../src/features/users/application/dtos/user.input-dto";
+import {DeviceSession} from "../../../src/features/auth/domain/device-session.entity";
 
 let app: Express;
 
@@ -24,7 +25,7 @@ describe("auth e2e tests", () => {
     });
 
 
-it("should return 200 and empty array", async () => {
+    it("should return 200 and empty array", async () => {
         await request(app)
             .get(BLOGS_PATH)
             .expect(HttpStatus.Ok, {
@@ -63,23 +64,57 @@ it("should return 200 and empty array", async () => {
         const result1 = await authTestManager.loginUser1WithDevice2(app, user1, userAgent1);
         await authTestManager.loginUser1WithDevice2(app, user1, userAgent2);
         await authTestManager.loginUser1WithDevice2(app, user1, userAgent3);
+        const result4 = await authTestManager.loginUser1WithDevice4(app, user1, userAgent4);
 
-        const result = await authTestManager.loginUser1WithDevice4(app, user1, userAgent4);
-       const refreshCookieForDevice4 = result.refreshCookie;
+        const refreshCookieForDevice4 = result4.refreshCookie;
 
         await authTestManager.checkDevicesCount(app, 4, userAgent4, refreshCookieForDevice4);
 
-        const refreshToken = result1.refreshCookie;
 
-        await request(app)
-            .post(`${AUTH_PATH}/refresh-token`)
-            .set("User-Agent", userAgent1)
-            .set("Cookie", refreshToken)
-            .expect(HttpStatus.Ok);
+        // Checking changes in lastActiveDate, and it must be changed in device1
 
+
+        const refreshCookieForDevice1 = result1.refreshCookie;
+
+        const devicesBeforeCheck: DeviceSession[] = await authTestManager.getAllDevices(app, userAgent1, refreshCookieForDevice1)
+
+        await authTestManager.refreshToken(app, userAgent1, refreshCookieForDevice1)
+
+        const devicesAfterCheck: DeviceSession[] = await authTestManager.getAllDevices(app, userAgent1, refreshCookieForDevice1)
+
+        // 1. Кол-во девайсов не изменилось
+        expect(devicesAfterCheck.length).toBe(devicesBeforeCheck.length)
+
+
+        //
+        // const device = {
+        //
+        //
+        // }
+
+
+        // 2. Получаем устройства по userAgent
+        const beforeDevice1 = devicesBeforeCheck.find(d => d.userAgent === userAgent1);
+        const afterDevice1 = devicesAfterCheck.find(d => d.userAgent === userAgent1);
+
+        expect(beforeDevice1).toBeDefined();
+        expect(afterDevice1).toBeDefined();
+
+        // 3. lastActiveDate у девайса 1 должен обновиться
+        expect(beforeDevice1!.lastActiveDate).not.toBe(afterDevice1!.lastActiveDate);
+
+// 4. Остальные девайсы должны остаться неизменными (deviceId и lastActiveDate)
+        for (const before of devicesBeforeCheck) {
+            const after = devicesAfterCheck.find(d => d.deviceId === before.deviceId);
+
+            expect(after).toBeDefined();
+
+            if (before.deviceId !== beforeDevice1!.deviceId) {
+                expect(after!.lastActiveDate).toBe(before.lastActiveDate);
+            }
+        }
 
     });
-
 
 
 //     it("should refresh refreshToken for one device", async () => {
@@ -108,7 +143,6 @@ it("should return 200 and empty array", async () => {
 //
 //
 //     });
-
 
 
 });

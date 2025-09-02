@@ -119,7 +119,7 @@ export const authTestManager = {
     },
 
     async checkDevicesCount(app: any, expectedCount: number, userAgent: string, refreshCookie: string) {
-       console.log(refreshCookie)
+
         const response = await request(app)
             .get("/security/devices")
             .set("User-Agent", userAgent)
@@ -132,6 +132,31 @@ export const authTestManager = {
         expect(devices.length).toBe(expectedCount);
 
         return devices;
+    },
+
+    async refreshToken(app: any, userAgent: string, refreshCookie: string) {
+
+      const response = await request(app)
+          .post(`${AUTH_PATH}/refresh-token`)
+          .set("User-Agent", userAgent)
+          .set("Cookie", refreshCookie)
+          .expect(HttpStatus.Ok);
+
+      return response;
+
+    },
+
+    async getAllDevices(app: any, userAgent: string, refreshCookie: string) {
+
+        const response = await request(app)
+            .get("/security/devices")
+            .set("User-Agent", userAgent)
+            .set("Cookie", refreshCookie)
+            .expect(HttpStatus.Ok);
+
+        return response.body;
+
+
     }
 
 

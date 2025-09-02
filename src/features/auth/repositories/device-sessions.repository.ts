@@ -1,7 +1,5 @@
 import {deviceSessionsCollection} from "../../../db/mongo.db"
-import {ObjectId, WithId} from 'mongodb';
 import {DeviceSession} from "../domain/device-session.entity";
-import {Sessions} from "../application/devicesService";
 
 
 
@@ -30,6 +28,11 @@ export const deviceSessionsRepository = {
             userId,
             deviceId: { $ne: currentDeviceId }
         });
+    },
+
+    async updateLastActiveDate (deviceId: string, lastActiveDate: string) {
+        await deviceSessionsCollection.updateOne({deviceId}, {$set: {lastActiveDate}});
+
     }
 
 

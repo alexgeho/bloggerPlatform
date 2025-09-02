@@ -96,6 +96,9 @@ export const authService = {
         const { accessToken, refreshToken: newRefreshToken } = await jwtService.createAuthTokens(userId, userLogin, userAgent, deviceId);
         refreshToken = newRefreshToken;
 
+        await devicesService.updateLastActiveDate(deviceId);
+
+
 
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
 
