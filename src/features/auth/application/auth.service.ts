@@ -99,10 +99,10 @@ export const authService = {
         const { userId, userLogin, userAgent, deviceId } = payload;
 
 
-        const { accessToken, refreshToken: newRefreshToken } = await jwtService.createAuthTokens(userId, userLogin, userAgent, deviceId);
+        const { accessToken, refreshToken: newRefreshToken, expireAt } = await jwtService.createAuthTokens(userId, userLogin, userAgent, deviceId);
         refreshToken = newRefreshToken;
 
-        await devicesService.updateLastActiveDate(deviceId);
+        await devicesService.updateLastActiveDate(deviceId, new Date(expireAt!));
 
 
 

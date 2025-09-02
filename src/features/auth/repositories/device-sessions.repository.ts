@@ -30,8 +30,8 @@ export const deviceSessionsRepository = {
         });
     },
 
-    async updateLastActiveDate (deviceId: string, lastActiveDate: string) {
-        await deviceSessionsCollection.updateOne({deviceId}, {$set: {lastActiveDate}});
+    async updateLastActiveDate (deviceId: string, lastActiveDate: string, expireAt: Date) {
+        await deviceSessionsCollection.updateOne({deviceId}, {$set: {lastActiveDate, expireAt}});
 
     }
 

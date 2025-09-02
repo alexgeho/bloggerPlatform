@@ -22,7 +22,7 @@ export const jwtService = {
         userLogin: string,
         userAgent: string,
         deviceId: string
-    ): Promise<{ accessToken: string; refreshToken: string }> {
+    ): Promise<{ accessToken: string; refreshToken: string; expireAt: string | null }> {
         const accessToken = jwt.sign(
             { userId, userLogin },
             ENV.AC_SECRET,
@@ -35,8 +35,12 @@ export const jwtService = {
             { expiresIn: ENV.RT_TIME }
         );
 
-        return { accessToken, refreshToken };
+        const decoded = jwt.decode(refreshToken) as { exp?: number };
+        const expireAt = decoded?.exp ? new Date(decoded.exp * 1000).toISOString() : null;
+
+        return { accessToken, refreshToken, expireAt };
     },
+
 
     /**
      * Проверяет access токен. Возвращает payload или null, если невалиден.

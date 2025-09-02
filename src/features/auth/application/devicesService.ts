@@ -44,10 +44,10 @@ export const devicesService = {
         return session.deviceId;
     },
 
-    async updateLastActiveDate(deviceId: string) {
+    async updateLastActiveDate(deviceId: string, expireAt: Date) {
 
         const lastActiveDate = new Date().toISOString();
-      await deviceSessionsRepository.updateLastActiveDate (deviceId, lastActiveDate);
+      await deviceSessionsRepository.updateLastActiveDate (deviceId, lastActiveDate, expireAt);
 
     },
 
