@@ -4,17 +4,15 @@ import {devicesService} from "../../../application/devicesService";
 
 export async function getDevicesHandler(req: any, res: any) {
 
-    const userId = req.user?.userId;
+    console.log('Request user:', req.user); // проверить, есть ли юзер
+
+
+    const userId = req.user.userId;
   //  if (!userId) return res.sendStatus(401);
 
-    const userAgent = req.headers['user-agent'];
-   // if (!userAgent) return res.sendStatus(401);
-
-    const token = req.cookies['refreshToken'];
-  //  if (!token) return res.sendStatus(401);
 
 
-    const sessions = await devicesService.getAllDevices(userId, userAgent, token);
+    const sessions = await devicesService.getAllDevices(userId);
 
     res.status(200).json(sessions);
 
