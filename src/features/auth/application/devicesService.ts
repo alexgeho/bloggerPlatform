@@ -28,12 +28,17 @@ export const devicesService = {
 
 
 
-    async deleteDeviceById(userId: string,deviceId: string) {
+    async deleteDevice(userId: string, deviceId: string): Promise<'ok' | 'not_found' | 'forbidden'> {
 
-       await deviceSessionsRepository.deleteDeviceById (userId,deviceId);
+        const device = await deviceSessionsRepository.findUserByDeviceId(deviceId);
 
+        if (!device) return 'not_found';
+        if (device.userId !== userId) return 'forbidden';
 
-    },
+        await deviceSessionsRepository.deleteDeviceById(deviceId);
+        return 'ok';
+    }
+,
 
     async createOnLogin(userId: string, ip: string, userAgent: string): Promise<string> {
         const lastActiveDate = new Date().toISOString();
@@ -67,7 +72,7 @@ export const devicesService = {
 
     },
 
-        async getAllDevices(userId: string): Promise<any[]> {
+    async getAllDevices(userId: string): Promise<any[]> {
             const sessions = await deviceSessionsRepository.getAllDevices(userId);
 
             return sessions.map(s => ({
@@ -77,17 +82,7 @@ export const devicesService = {
                 lastActiveDate: s.lastActiveDate,
                 deviceId: s.deviceId,
 
-            }));
-
-
-
-
-
-
-
-    }
-    ,
-
+            }));},
 
     async deleteAllDevicesExceptCurrent (userId: string, deviceId: string): Promise<void> {
 

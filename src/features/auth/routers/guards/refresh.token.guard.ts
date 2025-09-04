@@ -20,6 +20,10 @@ export const refreshTokenGuard = async (
         return;
     }
 
+
+
+
+
     // Делаем доступным токен и userId в req
     req.user = {
         userId: payload.userId,

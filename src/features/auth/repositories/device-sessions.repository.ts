@@ -13,9 +13,9 @@ export const deviceSessionsRepository = {
         return await deviceSessionsCollection.findOne({ userId, deviceId });
     },
 
-    async deleteDeviceById (userId: string, deviceId: string) {
+    async deleteDeviceById (deviceId: string) {
 
-        await deviceSessionsCollection.deleteOne({userId, deviceId})
+        await deviceSessionsCollection.deleteOne({deviceId})
     },
 
     async createOne(session: DeviceSession) {

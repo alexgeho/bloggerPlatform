@@ -148,7 +148,7 @@ export const authService = {
     },
 
     async terminateDeviceSession(userId: string, deviceId: string): Promise<void> {
-        await devicesService.deleteDeviceById(userId, deviceId);
+        await devicesService.deleteDevice(userId, deviceId);
     },
 
 

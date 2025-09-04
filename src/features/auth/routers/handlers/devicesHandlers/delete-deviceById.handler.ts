@@ -3,20 +3,19 @@ import {devicesService} from "../../../application/devicesService";
 
 
 export async function deleteDeviceByIdHandler(req: any, res: any) {
-    const userId = req.user.userId;
-    const reqDeviceId = req.params.id;
-    console.log('reqDeviceId:', reqDeviceId);
-    console.log('userId:', userId);
+    const userId = req.user?.userId;
+    const deviceId = req.params.id; // ⚠️ именно deviceId, как в Swagger
 
-    const dbMatchDeviceId = await devicesService.isDeviceBelongsToUser(userId, reqDeviceId);
+    if (!userId) return res.sendStatus(401);
 
-    if (!dbMatchDeviceId) {
-        return res.sendStatus(403);
-    }
+    const result = await devicesService.deleteDevice(userId, deviceId);
 
-    await devicesService.deleteDeviceById(userId, reqDeviceId);
+    if (result === 'not_found') return res.sendStatus(404);
+    if (result === 'forbidden') return res.sendStatus(403);
+
     return res.sendStatus(204);
 }
+
 
 
 
