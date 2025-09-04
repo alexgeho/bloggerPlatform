@@ -5,8 +5,12 @@ import {DeviceSession} from "../domain/device-session.entity";
 
 export const deviceSessionsRepository = {
 
-    async findUserByDeviceId (deviceId: string) {
-        return await deviceSessionsCollection.findOne({deviceId: deviceId});
+    async findUserByDeviceId(deviceId: string): Promise<DeviceSession | null> {
+        return await deviceSessionsCollection.findOne({ deviceId });
+    },
+
+    async findByUserAndDevice(userId: string, deviceId: string): Promise<DeviceSession | null> {
+        return await deviceSessionsCollection.findOne({ userId, deviceId });
     },
 
     async deleteDeviceById (userId: string, deviceId: string) {

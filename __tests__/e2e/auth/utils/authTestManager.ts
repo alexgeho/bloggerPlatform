@@ -16,46 +16,8 @@ export const authTestManager = {
         return { response };
     },
 
-    async loginUserWithDevice (app: any, email: string, password: string, userAgent: string) {
 
-        const response = await request(app)
-            .post(`${AUTH_PATH}/login`)
-            .set("User-Agent", userAgent)
-            .send({
-                loginOrEmail: email,
-                password: password,
-            })
-            .expect(HttpStatus.Ok);
-
-        expect(response.body).toHaveProperty("accessToken");
-        expect(response.headers["set-cookie"]).toEqual(
-            expect.arrayContaining([expect.stringContaining("refreshToken=")])
-        );
-
-        const setCookieHeader = response.headers["set-cookie"];
-
-        if (!Array.isArray(setCookieHeader)) {
-            throw new Error("Expected 'set-cookie' to be an array");
-        }
-
-        const refreshCookie = setCookieHeader.find((cookie) =>
-            cookie.includes("refreshToken=")
-        )?.split(";")[0];
-
-
-        if (!refreshCookie) {
-            throw new Error("Refresh token cookie not found");
-        }
-        return {
-            accessToken: response.body.accessToken,
-            refreshCookie,
-            response
-        };
-
-
-    },
-
-    async loginUser1WithDevice2 (app: any, data: UserInputDto, userAgent: string) {
+    async loginUserWithDevice (app: any, data: UserInputDto, userAgent: string) {
         const response = await request(app)
             .post(`${AUTH_PATH}/login`)
             .set("User-Agent", userAgent)
@@ -83,7 +45,11 @@ export const authTestManager = {
         if (!refreshCookie) {
             throw new Error("Refresh token cookie not found");
         }
-        return { response, refreshCookie };
+
+        const userId: string = response.body.userId ;
+
+
+        return { response, refreshCookie, userId };
     },
 
     async loginUser1WithDevice4 (app: any, data: UserInputDto, userAgent: string) {
@@ -150,6 +116,21 @@ export const authTestManager = {
 
         const response = await request(app)
             .get("/security/devices")
+            .set("User-Agent", userAgent)
+            .set("Cookie", refreshCookie)
+            .expect(HttpStatus.Ok);
+
+        return response.body;
+
+
+    },
+
+    async deleteDevice(app: any, deviceId: string, userAgent: string, refreshCookie: string) {
+
+
+
+        const response = await request(app)
+            .delete(`/security/devices/${deviceId}`)
             .set("User-Agent", userAgent)
             .set("Cookie", refreshCookie)
             .expect(HttpStatus.Ok);

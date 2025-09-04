@@ -57,14 +57,14 @@ describe("auth e2e tests", () => {
     const userAgent4 = "Device4";
 
     it("1. Should create user and after login user with 4 devices and return RToken, AT." +
-        "2. Should update refreshToken for device 1", async () => {
+        "2. Should update refreshToken for device 1, lastActiveDate must be same", async () => {
 
         await authTestManager.createUser(app, user1);
 
-        const result1 = await authTestManager.loginUser1WithDevice2(app, user1, userAgent1);
-        await authTestManager.loginUser1WithDevice2(app, user1, userAgent2);
-        await authTestManager.loginUser1WithDevice2(app, user1, userAgent3);
-        const result4 = await authTestManager.loginUser1WithDevice4(app, user1, userAgent4);
+        const result1 = await authTestManager.loginUserWithDevice(app, user1, userAgent1);
+        await authTestManager.loginUserWithDevice(app, user1, userAgent2);
+        await authTestManager.loginUserWithDevice(app, user1, userAgent3);
+        const result4 = await authTestManager.loginUserWithDevice(app, user1, userAgent4);
 
         const refreshCookieForDevice4 = result4.refreshCookie;
 
@@ -85,14 +85,6 @@ describe("auth e2e tests", () => {
         // 1. Кол-во девайсов не изменилось
         expect(devicesAfterCheck.length).toBe(devicesBeforeCheck.length)
 
-
-        //
-        // const device = {
-        //
-        //
-        // }
-
-
         // 2. Получаем устройства по userAgent
         const beforeDevice1 = devicesBeforeCheck.find(d => d.userAgent === userAgent1);
         const afterDevice1 = devicesAfterCheck.find(d => d.userAgent === userAgent1);
@@ -103,7 +95,7 @@ describe("auth e2e tests", () => {
         // 3. lastActiveDate у девайса 1 должен обновиться
         expect(beforeDevice1!.lastActiveDate).not.toBe(afterDevice1!.lastActiveDate);
 
-// 4. Остальные девайсы должны остаться неизменными (deviceId и lastActiveDate)
+        // 4. Остальные девайсы должны остаться неизменными (deviceId и lastActiveDate)
         for (const before of devicesBeforeCheck) {
             const after = devicesAfterCheck.find(d => d.deviceId === before.deviceId);
 
@@ -114,8 +106,41 @@ describe("auth e2e tests", () => {
             }
         }
 
+
     });
 
+
+
+    it("check refreshToken and accessToken and delete device session", async () => {
+
+        await authTestManager.createUser(app, user2);
+
+        const result = await authTestManager.loginUserWithDevice(app, user2, userAgent1);
+
+        expect(result.refreshCookie).toBeDefined();
+        expect(result.response.body.accessToken).toBeDefined();
+
+
+       await authTestManager.deleteDevice(app, result.userId, userAgent1, result.refreshCookie);
+
+
+    })
+
+
+
+    // it("Should delete device 2 (userAgent2) using refresh token from device 1, and return the updated list without device 2", async () => {
+    //
+    //     await authTestManager.createUser(app, user1);
+    //
+    //     const result = await authTestManager.loginUserWithDevice(app, user1, userAgent1);
+    //     await authTestManager.loginUserWithDevice(app, user1, userAgent2);
+    //     await authTestManager.loginUserWithDevice(app, user1, userAgent3);
+    //
+    //
+    //     await authTestManager.deleteDevice(app, result.userId, userAgent2, result.refreshCookie);
+    //
+    //
+    // })
 
 //     it("should refresh refreshToken for one device", async () => {
 //
