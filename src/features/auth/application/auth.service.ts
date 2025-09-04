@@ -50,6 +50,8 @@ export const authService = {
         }
         this.rateLimiter.addAttempt(ip);
 
+
+
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);
         if (!user) return { status: ResultStatus.Unauthorized, extensions: [{ field: "loginOrEmail", message: "User not found" }] };
 
@@ -66,43 +68,45 @@ export const authService = {
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
     },
 
-        async refreshTokens(oldRefreshToken: string) {
-            const payload = await jwtService.verifyRefreshToken(oldRefreshToken);
-            if (!payload) {
-                return {
-                    status: ResultStatus.Unauthorized,
-                    extensions: [{ field: 'refreshToken', message: 'Access denied' }],
-                };
-            }
+    async refreshTokens(refreshToken: string) {
 
-            const session = await devicesService.findSessionByDeviceId(payload.deviceId);
-            if (!session) {
-                return {
-                    status: ResultStatus.Unauthorized,
-                    extensions: [{ field: 'refreshToken', message: 'Device session not found' }],
-                };
-            }
+    const payload = await jwtService.verifyRefreshToken(refreshToken)
 
-            if (payload.deviceId !== session.deviceId) {
-                return {
-                    status: ResultStatus.Unauthorized,
-                    extensions: [{ field: 'refreshToken', message: 'Access denied' }],
-                };
-            }
+        if (!payload) {
+            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
+        }
 
-            const { userId, userLogin, deviceId } = payload;
+        const session = await devicesService.findSessionByDeviceId (payload.deviceId)
 
-            // создаём новые токены (без сверки userAgent)
-            const { accessToken, refreshToken: newRefreshToken, expireAt } =
-                await jwtService.createAuthTokens(userId, userLogin, "", deviceId);
-
-            await devicesService.updateLastActiveDate(deviceId, new Date(expireAt!));
-
+        if (!session) {
             return {
-                status: ResultStatus.Success,
-                data: { accessToken, refreshToken: newRefreshToken },
+                status: ResultStatus.Unauthorized,
+                extensions: [{ field: 'refreshToken', message: 'Device session not found1' }]
             };
+        }
 
+        // if (
+        //     payload?.userAgent !== session.userAgent ||
+        //     payload.userAgent !== reqUserAgent
+        // )  {
+        //     return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
+        // }
+
+        if (payload?.deviceId !== session.deviceId) {
+            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
+        }
+
+        const { userId, userLogin, userAgent, deviceId } = payload;
+
+
+        const { accessToken, refreshToken: newRefreshToken, expireAt } = await jwtService.createAuthTokens(userId, userLogin, userAgent ?? '', deviceId);
+        refreshToken = newRefreshToken;
+
+        await devicesService.updateLastActiveDate(deviceId, new Date(expireAt!));
+
+
+
+        return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
 
 
         // const isBlacklisted = await authRepository.isTokenBlackListed(refreshToken);
