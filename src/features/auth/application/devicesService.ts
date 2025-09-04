@@ -67,12 +67,24 @@ export const devicesService = {
 
     },
 
-    async getAllDevices(
-        userId: string
-    ): Promise<DeviceSession[]> {
+        async getAllDevices(userId: string): Promise<any[]> {
+            const sessions = await deviceSessionsRepository.getAllDevices(userId);
+
+            return sessions.map(s => ({
+
+                ip: s.ip,
+                title: s.userAgent,
+                lastActiveDate: s.lastActiveDate,
+                deviceId: s.deviceId,
+
+            }));
 
 
-        return await deviceSessionsRepository.getAllDevices(userId);
+
+
+
+
+
     }
     ,
 
