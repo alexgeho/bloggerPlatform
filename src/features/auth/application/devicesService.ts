@@ -14,14 +14,15 @@ function isoFromIat(iat: number) {
 export const devicesService = {
 
     async isDeviceBelongsToUser(userId: string, deviceId: string): Promise<string | null> {
-        // достаем все устройства этого юзера
-        const devices = await deviceSessionsRepository.findByUserAndDevice(userId, deviceId);
 
-        if (!devices) {
-            return null; // такого девайса у юзера нет
+        const devices = await deviceSessionsRepository.getAllDevices(userId);
+
+        if (!devices || devices.length === 0) {
+            return null;
         }
+        const match = devices.find(d => d.deviceId === deviceId);
 
-        return devices.deviceId; // всё ок, вернули deviceId
+        return match ? match.deviceId : null;
     },
 
 

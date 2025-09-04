@@ -4,17 +4,15 @@ import {devicesService} from "../../../application/devicesService";
 
 export async function deleteDeviceByIdHandler(req: any, res: any) {
     const userId = req.user.userId;
-    const deviceId = req.params.deviceId;
+    const reqDeviceId = req.params.deviceId;
 
-    const ownedDeviceId = await devicesService.isDeviceBelongsToUser(userId, deviceId);
-    if (!ownedDeviceId) {
+    const dbMatchDeviceId = await devicesService.isDeviceBelongsToUser(userId, reqDeviceId);
+
+    if (!dbMatchDeviceId) {
         return res.sendStatus(403);
     }
 
-// иначе продолжаем выполнение
-
-
-    await devicesService.deleteDeviceById(userId, deviceId);
+    await devicesService.deleteDeviceById(userId, reqDeviceId);
     return res.sendStatus(204);
 }
 
