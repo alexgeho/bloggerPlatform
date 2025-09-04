@@ -4,7 +4,9 @@ import {devicesService} from "../../../application/devicesService";
 
 export async function deleteDeviceByIdHandler(req: any, res: any) {
     const userId = req.user.userId;
-    const reqDeviceId = req.params.deviceId;
+    const reqDeviceId = req.params.id;
+    console.log('reqDeviceId:', reqDeviceId);
+    console.log('userId:', userId);
 
     const dbMatchDeviceId = await devicesService.isDeviceBelongsToUser(userId, reqDeviceId);
 

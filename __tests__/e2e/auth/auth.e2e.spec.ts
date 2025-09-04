@@ -121,7 +121,7 @@ describe("auth e2e tests", () => {
         expect(result.response.body.accessToken).toBeDefined();
 
 
-       await authTestManager.deleteDevice(app, result.userId, userAgent1, result.refreshCookie);
+      // await authTestManager.deleteDevice(app, result.userId, userAgent1, result.refreshCookie);
 
 
     })

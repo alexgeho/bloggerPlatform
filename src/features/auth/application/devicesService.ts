@@ -72,9 +72,6 @@ export const devicesService = {
     ): Promise<DeviceSession[]> {
 
 
-
-
-
         return await deviceSessionsRepository.getAllDevices(userId);
     }
     ,

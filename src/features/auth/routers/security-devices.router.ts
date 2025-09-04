@@ -12,7 +12,7 @@ devicesRouter.get('/',
     refreshTokenGuard,
     getDevicesHandler);
 
-devicesRouter.delete('/:Id',
+devicesRouter.delete('/:id',
     refreshTokenGuard,
     deleteDeviceByIdHandler);
 
