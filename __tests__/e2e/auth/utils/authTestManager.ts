@@ -3,6 +3,7 @@ import {HttpStatus} from "../../../../src/core/types/http-statuses";
 import request from 'supertest';
 import {UserInputDto} from "../../../../src/features/users/application/dtos/user.input-dto";
 import {app} from "../../../../src/app";
+import {jwtService} from "../../../../src/features/auth/adapters/jwt.service";
 
 
 export const authTestManager = {
@@ -18,6 +19,7 @@ export const authTestManager = {
 
 
     async loginUserWithDevice (app: any, data: UserInputDto, userAgent: string) {
+
         const response = await request(app)
             .post(`${AUTH_PATH}/login`)
             .set("User-Agent", userAgent)
@@ -28,6 +30,7 @@ export const authTestManager = {
             .expect(HttpStatus.Ok);
 
         expect(response.body).toHaveProperty("accessToken");
+
         expect(response.headers["set-cookie"]).toEqual(
             expect.arrayContaining([expect.stringContaining("refreshToken=")])
         );
@@ -46,43 +49,19 @@ export const authTestManager = {
             throw new Error("Refresh token cookie not found");
         }
 
-        const userId: string = response.body.userId ;
+        const refreshToken = refreshCookie.split("=")[1];
 
+        const payload =await  jwtService.verifyRefreshToken(refreshToken)
 
-        return { response, refreshCookie, userId };
+        console.log('payload', payload);
+
+        const userId = payload!.userId
+
+        const deviceId = payload!.deviceId
+
+        return { response, refreshCookie, userId, deviceId };
     },
 
-    async loginUser1WithDevice4 (app: any, data: UserInputDto, userAgent: string) {
-        const response = await request(app)
-            .post(`${AUTH_PATH}/login`)
-            .set("User-Agent", userAgent)
-            .send({
-                loginOrEmail: data.email,
-                password: data.password,
-            })
-            .expect(HttpStatus.Ok);
-
-        expect(response.body).toHaveProperty("accessToken");
-        expect(response.headers["set-cookie"]).toEqual(
-            expect.arrayContaining([expect.stringContaining("refreshToken=")])
-        );
-
-        const setCookieHeader = response.headers["set-cookie"];
-
-        if (!Array.isArray(setCookieHeader)) {
-            throw new Error("Expected 'set-cookie' to be an array");
-        }
-
-        const refreshCookie = setCookieHeader
-            .find((cookie) => cookie.includes("refreshToken="))
-            ?.split(";")[0];
-
-        if (!refreshCookie) {
-            throw new Error("Refresh token cookie not found");
-        }
-        return { response, refreshCookie };
-
-    },
 
     async checkDevicesCount(app: any, expectedCount: number, userAgent: string, refreshCookie: string) {
 
@@ -127,13 +106,14 @@ export const authTestManager = {
 
     async deleteDevice(app: any, deviceId: string, userAgent: string, refreshCookie: string) {
 
+        console.log("deleteDevice -> deviceId:", deviceId);
 
 
         const response = await request(app)
             .delete(`/security/devices/${deviceId}`)
             .set("User-Agent", userAgent)
             .set("Cookie", refreshCookie)
-            .expect(HttpStatus.Ok);
+            .expect(HttpStatus.NoContent);
 
         return response.body;
 

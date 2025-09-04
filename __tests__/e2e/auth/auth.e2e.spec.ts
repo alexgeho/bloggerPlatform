@@ -111,17 +111,19 @@ describe("auth e2e tests", () => {
 
 
 
-    it("check refreshToken and accessToken and delete device session", async () => {
+    it("check refreshToken and accessToken and delete device session by deviceId", async () => {
 
         await authTestManager.createUser(app, user2);
 
         const result = await authTestManager.loginUserWithDevice(app, user2, userAgent1);
 
+        console.log(result);
+
         expect(result.refreshCookie).toBeDefined();
         expect(result.response.body.accessToken).toBeDefined();
 
 
-      // await authTestManager.deleteDevice(app, result.userId, userAgent1, result.refreshCookie);
+      await authTestManager.deleteDevice(app, result.deviceId, userAgent1, result.refreshCookie);
 
 
     })
