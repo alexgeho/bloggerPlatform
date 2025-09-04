@@ -17,7 +17,7 @@ devicesRouter.delete('/:id',
     deleteDeviceByIdHandler);
 
 
-devicesRouter.delete('/except-current',
+devicesRouter.delete('/',
     refreshTokenGuard,
     deleteAllDevicesExceptCurrentHandler
 );
