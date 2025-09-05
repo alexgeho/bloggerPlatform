@@ -17,6 +17,7 @@ import { RateLimiterService } from "./rateLimiter.service";
 import {response} from "express";
 
 export const authService = {
+
     rateLimiter: new RateLimiterService(),
 
     async create(dto: RegistrationDto): Promise<User | null> {
@@ -49,8 +50,6 @@ export const authService = {
             };
         }
         this.rateLimiter.addAttempt(ip);
-
-
 
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);
         if (!user) return { status: ResultStatus.Unauthorized, extensions: [{ field: "loginOrEmail", message: "User not found" }] };
@@ -137,19 +136,22 @@ export const authService = {
         // return { status: ResultStatus.Success, data: { accessToken: newAccess, refreshToken: newRefresh } };
     },
 
-    async resendEmail(user: User): Promise<void> {
-        const newCode = uuidv4();
-        const newExpirationDate = add(new Date(), { hours: 1, minutes: 30 });
+    async resendEmail(user: User, ip: string): Promise<void> {
+        if (this.rateLimiter.isBlocked(ip)) {
+            throw new Error("Too many requests"); // или res.sendStatus(429)
+        }
+        this.rateLimiter.addAttempt(ip);
+
+        const newCode: string = uuidv4();
+        const newExpirationDate: Date = add(new Date(), { hours: 1, minutes: 30 });
+
         user.emailConfirmation.confirmationCode = newCode;
         user.emailConfirmation.expirationDate = newExpirationDate;
 
         await userRepository.uptateCodeAndDate(user);
         await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
-    },
+    }
 
-    async terminateDeviceSession(userId: string, deviceId: string): Promise<void> {
-        await devicesService.deleteDevice(userId, deviceId);
-    },
 
 
 };

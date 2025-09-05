@@ -3,10 +3,13 @@ import {usersQwRepository} from "../../../../users/repositories/usersQwRepositor
 import {authService} from "../../../application/auth.service"; // если используешь date-fns
 
 export async function emailResendHandler(
-    req: Request,
-    res: Response) {
+    req: any,
+    res: any) {
+
+
 
     const email = req.body.email;
+    const ip: string = req.ip ?? "unknown";
 
     const user = await usersQwRepository.findByEmail(email);
 
@@ -23,11 +26,14 @@ export async function emailResendHandler(
         })
     }
 
-
-    await authService.resendEmail(user)
-
-
-    res.sendStatus(204);
-
+    try {
+        await authService.resendEmail(user, ip);
+        return res.sendStatus(204);
+    } catch (e: any) {
+        if (e.message === "Too many requests") {
+            return res.sendStatus(429);
+        }
+        return res.sendStatus(500);
+    }
 
 }

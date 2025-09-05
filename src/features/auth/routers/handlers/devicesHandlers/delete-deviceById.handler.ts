@@ -3,6 +3,7 @@ import {devicesService} from "../../../application/devicesService";
 
 
 export async function deleteDeviceByIdHandler(req: any, res: any) {
+
     const userId = req.user?.userId;
     const deviceId = req.params.id; // ⚠️ именно deviceId, как в Swagger
 

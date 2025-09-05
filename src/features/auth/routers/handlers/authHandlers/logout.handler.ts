@@ -21,9 +21,9 @@ export async function logoutHandler(
     }
 
     // 🧼 Удаляем сессию устройства
-    await authService.terminateDeviceSession(payload.userId, payload.deviceId);
-
-    // 🍪 Удаляем куку с refreshToken
-    res.clearCookie('refreshToken', refreshCookieOptions);
-    res.sendStatus(204);
+//     await authService.terminateDeviceSession(payload.userId, payload.deviceId);
+//
+//     // 🍪 Удаляем куку с refreshToken
+//     res.clearCookie('refreshToken', refreshCookieOptions);
+//     res.sendStatus(204);
 }

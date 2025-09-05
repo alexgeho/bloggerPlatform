@@ -11,6 +11,7 @@ import {userInputDtoValidation} from "../validation/user.input-dto.validation-mi
 import {codeInputDtoValidation} from "../validation/registration.confirmation.input-dto.validation-middlewares";
 import {refreshHandler} from "./handlers/authHandlers/refresh.handler";
 import {logoutHandler} from "./handlers/authHandlers/logout.handler";
+import {RateLimiterService} from "../application/rateLimiter.service";
 
 
 export const authRouter = Router();
@@ -22,7 +23,6 @@ authRouter.post("/login",
     loginHandler);
 
 authRouter.post("/refresh-token",
-
     refreshHandler);
 
 authRouter.post("/logout",
