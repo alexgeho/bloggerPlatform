@@ -88,7 +88,14 @@ export const devicesService = {
 
 await deviceSessionsRepository.deleteAllDevicesExceptCurrent (userId, deviceId);
 
+    },
+
+
+    async updateOnRefresh(userId: string, deviceId: string, iat: number, exp: number): Promise<void> {
+        await deviceSessionsRepository.updateOnRefresh(userId, deviceId, iat, exp);
     }
+
+
 
 
 
