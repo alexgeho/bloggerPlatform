@@ -8,7 +8,7 @@ export interface JwtPayload {
     userId: string;
     userLogin: string;
     deviceId: string;
-    userAgent?: string;
+    userAgent: string;
     iat: number; // время создания токена (автоматически добавляется jwt)
     exp: number; // срок действия токена (автоматически добавляется jwt)
 }

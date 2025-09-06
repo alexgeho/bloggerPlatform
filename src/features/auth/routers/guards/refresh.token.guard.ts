@@ -6,6 +6,7 @@ export const refreshTokenGuard = async (
     res: Response,
     next: NextFunction
 ): Promise<void> => {
+
     const token = req.cookies?.refreshToken;
 
     if (!token) {

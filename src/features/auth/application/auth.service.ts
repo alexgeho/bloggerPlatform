@@ -15,6 +15,7 @@ import { devicesService} from "./devicesService";
 import { ENV } from "../../../core/config/env";
 import { RateLimiterService } from "./rateLimiter.service";
 import {response} from "express";
+import jwt from "jsonwebtoken";
 
 export const authService = {
 
@@ -70,10 +71,10 @@ export const authService = {
     async refreshTokens(refreshToken: string, reqUserAgent: string) {
 
     const payload = await jwtService.verifyRefreshToken(refreshToken)
-
-        if (!payload) {
-            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
-        }
+        //
+        // if (!payload) {
+        //     return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
+        // }
 
         const session = await devicesService.findSessionByDeviceId (payload.deviceId)
 
@@ -84,25 +85,33 @@ export const authService = {
             };
         }
 
-        if (
-            payload?.userAgent !== session.userAgent ||
-            payload.userAgent !== reqUserAgent
-        )  {
-            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
-        }
+
+        //  Refresh token mandatory
+        // if (
+        //     payload?.userAgent !== session.userAgent ||
+        //     payload.userAgent !== reqUserAgent
+        // )  {
+        //     return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied 1' }] };
+        // }
 
         if (payload?.deviceId !== session.deviceId) {
-            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
+            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied 2' }] };
         }
 
         const { userId, userLogin, userAgent, deviceId } = payload;
 
 
-        const { accessToken, refreshToken: newRefreshToken, expireAt } = await jwtService.createAuthTokens(userId, userLogin, userAgent, deviceId);
-        refreshToken = newRefreshToken;
+        const { accessToken, refreshToken: newRefreshToken } = await jwtService.createAuthTokens(userId, userLogin, userAgent ?? '', deviceId);
 
-        await devicesService.updateLastActiveDate(deviceId, new Date(expireAt!));
+        const newPayload: any = jwt.verify(newRefreshToken, ENV.RT_SECRET);
 
+
+await devicesService.updateOnRefresh(
+    userId,
+    deviceId,
+    newPayload.iat,
+    newPayload.exp
+)
 
 
         return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
