@@ -53,7 +53,6 @@ export const authTestManager = {
 
         const payload =await  jwtService.verifyRefreshToken(refreshToken)
 
-        console.log('payload', payload);
 
         const userId = payload!.userId
 
@@ -105,8 +104,6 @@ export const authTestManager = {
     },
 
     async deleteDevice(app: any, deviceId: string, userAgent: string, refreshCookie: string) {
-
-        console.log("deleteDevice -> deviceId:", deviceId);
 
 
         const response = await request(app)

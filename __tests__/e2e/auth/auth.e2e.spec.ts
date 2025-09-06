@@ -117,7 +117,6 @@ describe("auth e2e tests", () => {
 
         const result = await authTestManager.loginUserWithDevice(app, user2, userAgent1);
 
-        console.log(result);
 
         expect(result.refreshCookie).toBeDefined();
         expect(result.response.body.accessToken).toBeDefined();

@@ -89,6 +89,10 @@ export const authService = {
             return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied 2' }] };
         }
 
+        if (payload?.expireAt !== session.expireAt) {
+            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied 3' }] };
+        }
+
         const { userId, userLogin, userAgent, deviceId } = payload;
 
         const result = await jwtService.createAuthTokens(userId, userLogin, userAgent ?? '', deviceId);
