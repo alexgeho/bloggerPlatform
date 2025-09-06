@@ -2,6 +2,8 @@
 import jwt from "jsonwebtoken";
 import { ENV } from "../../../core/config/env";
 import {deviceSessionsCollection} from "../../../db/mongo.db";
+import { randomUUID } from "crypto";
+
 
 // Унифицированный payload для всех типов токенов
 export interface JwtPayload {
@@ -21,13 +23,14 @@ export const jwtService = {
     async createAuthTokens( userId: string, userLogin: string, userAgent: string, deviceId: string):
         Promise<{ accessToken: string; refreshToken: string; expireAt: string | null }> {
         const accessToken = jwt.sign(
-            { userId, userLogin },
+            { userId, userLogin,  },
             ENV.AC_SECRET,
-            { expiresIn: ENV.AC_TIME }
+            { expiresIn: ENV.AC_TIME },
+
         );
 
         const refreshToken = jwt.sign(
-            { userId, userLogin, userAgent, deviceId },
+            { userId, userLogin, userAgent, deviceId, jti: randomUUID(), },
             ENV.RT_SECRET,
             { expiresIn: ENV.RT_TIME }
         );

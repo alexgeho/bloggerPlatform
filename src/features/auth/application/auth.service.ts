@@ -101,9 +101,12 @@ export const authService = {
         const { userId, userLogin, userAgent, deviceId } = payload;
 
 
-        const { accessToken, refreshToken: newRefreshToken } = await jwtService.createAuthTokens(userId, userLogin, userAgent ?? '', deviceId);
+        const result = await jwtService.createAuthTokens(userId, userLogin, userAgent ?? '', deviceId);
 
-        const newPayload: any = jwt.verify(newRefreshToken, ENV.RT_SECRET);
+        console.log("newRefreshToken", result.refreshToken);
+        console.log("refreshToken", refreshToken);
+
+        const newPayload: any = jwt.verify(result.refreshToken, ENV.RT_SECRET);
 
 
 await devicesService.updateOnRefresh(
@@ -114,7 +117,7 @@ await devicesService.updateOnRefresh(
 )
 
 
-        return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
+        return { status: ResultStatus.Success, data: { accessToken: result.accessToken, refreshToken: result.refreshToken } };
 
 
         // const isBlacklisted = await authRepository.isTokenBlackListed(refreshToken);
