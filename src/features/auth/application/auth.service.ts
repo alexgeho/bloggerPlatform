@@ -85,26 +85,13 @@ export const authService = {
             };
         }
 
-
-        //  Refresh token mandatory
-        // if (
-        //     payload?.userAgent !== session.userAgent ||
-        //     payload.userAgent !== reqUserAgent
-        // )  {
-        //     return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied 1' }] };
-        // }
-
         if (payload?.deviceId !== session.deviceId) {
             return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied 2' }] };
         }
 
         const { userId, userLogin, userAgent, deviceId } = payload;
 
-
         const result = await jwtService.createAuthTokens(userId, userLogin, userAgent ?? '', deviceId);
-
-        console.log("newRefreshToken", result.refreshToken);
-        console.log("refreshToken", refreshToken);
 
         const newPayload: any = jwt.verify(result.refreshToken, ENV.RT_SECRET);
 
