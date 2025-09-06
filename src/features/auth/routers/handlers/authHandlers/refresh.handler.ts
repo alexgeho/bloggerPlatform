@@ -5,16 +5,12 @@ import { refreshCookieOptions } from '../../../../../core/http/cookie';
 
 export async function refreshHandler(req: Request, res: Response) {
 
-    const token = req.cookies?.refreshToken as string | undefined;
+    const token = (req as any).user.refreshToken;
 
-    if (!token) {
-        res.status(401).send({ message: 'No refresh token' });
-        return;
-    }
 
-    const reqUserAgent = req.headers['user-agent'] || 'unknown';
+    //const reqUserAgent = req.headers['user-agent'] || 'unknown';
 
-    const result = await authService.refreshTokens(token, reqUserAgent);
+    const result = await authService.refreshTokens(token);
 
     if (result.status !== ResultStatus.Success) {
         res.status(401).send(result.extensions ?? { message: 'Unauthorized' });

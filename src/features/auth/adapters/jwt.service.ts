@@ -1,6 +1,7 @@
 // jwtService.ts
 import jwt from "jsonwebtoken";
 import { ENV } from "../../../core/config/env";
+import {deviceSessionsCollection} from "../../../db/mongo.db";
 
 // Унифицированный payload для всех типов токенов
 export interface JwtPayload {
@@ -17,12 +18,8 @@ export const jwtService = {
      * Генерирует access и refresh токены сразу.
      * Access-токен содержит минимум данных, refresh — расширенный payload.
      */
-    async createAuthTokens(
-        userId: string,
-        userLogin: string,
-        userAgent: string,
-        deviceId: string
-    ): Promise<{ accessToken: string; refreshToken: string; expireAt: string | null }> {
+    async createAuthTokens( userId: string, userLogin: string, userAgent: string, deviceId: string):
+        Promise<{ accessToken: string; refreshToken: string; expireAt: string | null }> {
         const accessToken = jwt.sign(
             { userId, userLogin },
             ENV.AC_SECRET,
@@ -40,8 +37,6 @@ export const jwtService = {
 
         return { accessToken, refreshToken, expireAt };
     },
-
-
     /**
      * Проверяет access токен. Возвращает payload или null, если невалиден.
      */
@@ -56,13 +51,34 @@ export const jwtService = {
     /**
      * Проверяет refresh токен. Дополнительно убеждается, что есть deviceId.
      */
-    async verifyRefreshToken(token: string): Promise<JwtPayload | null> {
+    async verifyRefreshToken(token: string) {
         try {
-            const payload = jwt.verify(token, ENV.RT_SECRET) as JwtPayload;
+            const payload: any = jwt.verify(token, ENV.RT_SECRET);
             if (!payload.deviceId) return null;
+
+
+            const session = await deviceSessionsCollection.findOne({
+                userId: payload.userId,
+                deviceId: payload.deviceId,
+            });
+
+
+            if (!session) return null;
+
+
+// проверяем, что токен не просрочен в базе
+            if (session.expireAt && new Date(session.expireAt).getTime() < Date.now()) {
+                return null;
+            }
+
+
             return payload;
         } catch {
             return null;
         }
-    }
+    },
+
+
+
+
 };

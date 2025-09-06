@@ -22,13 +22,15 @@ export const refreshTokenGuard = async (
 
 
 
-
-
     // Делаем доступным токен и userId в req
-    req.user = {
+    (req as any).user = {
         userId: payload.userId,
-        userLogin: payload.userLogin,
+        deviceId: payload.deviceId,
+        refreshToken: token,
+        userAgent: req.get('User-Agent') ?? '',
+        ip: req.ip,
     };
+
 
     // (req as any).deviceId = payload.deviceId;
     // (req as any).refreshToken = token;

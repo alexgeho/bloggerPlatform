@@ -37,7 +37,25 @@ export const deviceSessionsRepository = {
     async updateLastActiveDate (deviceId: string, lastActiveDate: string, expireAt: Date) {
         await deviceSessionsCollection.updateOne({deviceId}, {$set: {lastActiveDate, expireAt}});
 
+    },
+
+    async updateOnRefresh(userId: string, deviceId: string, iat: number, exp: number): Promise<void> {
+        await deviceSessionsCollection.updateOne(
+            { userId, deviceId },
+            {
+                $set: {
+                    iat,
+                    exp,
+                    lastActiveDate: new Date().toISOString(),
+                    expireAt: new Date(exp * 1000), // тоже Date
+                },
+            }
+        );
     }
+
+
+
+
 
 
 
