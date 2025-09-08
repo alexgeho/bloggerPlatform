@@ -16,9 +16,9 @@ export async function refreshHandler(req: Request, res: Response) {
         return;
     }
 
-    const { accessToken, refreshToken } = result.data!;
+    const { accessToken, refreshTokenNew } = result.data!;
 
-    res.cookie('refreshToken', refreshToken, refreshCookieOptions);
+    res.cookie('refreshToken', refreshTokenNew, refreshCookieOptions);
 
     res.status(200).send({ accessToken });
 }

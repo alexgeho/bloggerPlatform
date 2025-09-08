@@ -30,6 +30,9 @@ export const refreshTokenGuard = async (
         refreshToken: token,
         userAgent: req.get('User-Agent') ?? '',
         ip: req.ip,
+        lastActiveDate: payload.iat ? new Date(payload.iat * 1000).getTime() : undefined,
+        expireAt: payload.exp ? new Date(payload.exp * 1000).getTime() : undefined,
+
     };
 
 

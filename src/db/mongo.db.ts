@@ -3,7 +3,6 @@ import { Blog } from "../features/blogs/domain/blog";
 import { PostDb } from "../features/posts/domain/postDb";
 import { User } from "../features/auth/domain/user";
 import { CommentDb } from "../features/comments/domain/commentDb";
-import { BlackList } from "../features/auth/domain/blacklist";
 import { DeviceSession } from "../features/auth/domain/device-session.entity";
 import { ENV } from "../core/config/env";
 
@@ -19,7 +18,6 @@ export let client: MongoClient;
 export let blogCollection: Collection<Blog>;
 export let postCollection: Collection<OptionalId<PostDb>>;
 export let userCollection: Collection<User>;
-export let blacklistCollection: Collection<BlackList>;
 export let commentCollection: Collection<CommentDb>;
 export let deviceSessionsCollection: Collection<DeviceSession>;
 
@@ -31,7 +29,6 @@ export async function runDB(url: string): Promise<void> {
     blogCollection = db.collection<Blog>(BLOG_COLLECTION_NAME);
     postCollection = db.collection<OptionalId<PostDb>>(POST_COLLECTION_NAME);
     userCollection = db.collection<User>(USER_COLLECTION_NAME);
-    blacklistCollection = db.collection<BlackList>(BLACKLIST_COLLECTION_NAME);
     commentCollection = db.collection<CommentDb>(COMMENT_COLLECTION_NAME);
     deviceSessionsCollection = db.collection<DeviceSession>(DEVICE_SESSIONS_COLLECTION_NAME);
 

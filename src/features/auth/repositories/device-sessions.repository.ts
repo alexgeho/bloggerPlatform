@@ -15,7 +15,7 @@ export const deviceSessionsRepository = {
 
     async deleteDeviceById(deviceId: string) {
 
-        await deviceSessionsCollection.deleteOne({deviceId})
+        await deviceSessionsCollection.deleteOne({ _id: new ObjectId(deviceId) })
     },
 
     async createOneOnLogin(session: Omit<DeviceSession, "deviceId">): Promise<string> {

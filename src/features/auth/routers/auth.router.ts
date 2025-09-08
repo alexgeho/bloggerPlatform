@@ -29,6 +29,7 @@ authRouter.post("/refresh-token",
     refreshHandler);
 
 authRouter.post("/logout",
+    refreshTokenGuard,
     logoutHandler);
 
 authRouter.post("/registration-confirmation",

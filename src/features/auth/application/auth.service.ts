@@ -8,7 +8,6 @@ import {emailManager} from "../adapters/email.manager";
 import {v4 as uuidv4} from 'uuid';
 import {RegistrationDto} from "../types/registration.dto";
 import {UserEntity} from "../domain/user.entity";
-import {authRepository} from "../repositories/auth.repository";
 import {devicesService} from "./devicesService";
 import {ENV} from "../../../core/config/env";
 import {RateLimiterService} from "./rateLimiter.service";
@@ -106,7 +105,6 @@ export const authService = {
             };
         }
 
-        console.log('DEBUG deviceId mismatch:', payload?.deviceId, session._id);
 
         if (payload?.deviceId !== session._id.toString()) {
 
@@ -116,25 +114,24 @@ export const authService = {
             };
         }
 
-        const {userId, userLogin, userAgent, deviceId} = payload;
+        const {userId, deviceId} = payload;
 
-        const result = await jwtService.createAuthTokens(userId, deviceId);
+        const tokens = await jwtService.createAuthTokens(userId, deviceId);
 
-        const newPayload: any = jwt.verify(result.refreshToken, ENV.RT_SECRET);
+        const accessToken = tokens.accessToken;
+        const refreshTokenNew = tokens.refreshToken;
 
+        const lastActiveDate = tokens.lastActiveDate
+            ? new Date(tokens.lastActiveDate)
+            : new Date();
 
-        await devicesService.updateSessionWithData(
-            userId,
-            deviceId,
-            newPayload.lastActiveDate,
-            newPayload.expireAt
-        )
+        const expireAt = tokens.expireAt
+            ? new Date(tokens.expireAt)
+            : new Date();
 
+        await devicesService.updateSessionWithData(userId, deviceId, lastActiveDate, expireAt);
 
-        return {
-            status: ResultStatus.Success,
-            data: {accessToken: result.accessToken, refreshToken: result.refreshToken}
-        };
+        return {status: ResultStatus.Success, data: {accessToken, refreshTokenNew}};
 
 
         // const isBlacklisted = await authRepository.isTokenBlackListed(refreshToken);
@@ -179,6 +176,32 @@ export const authService = {
 
         await userRepository.uptateCodeAndDate(user);
         await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
+    },
+
+    async terminateSession (userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<void> {
+
+    const session = await devicesService.findSessionByDeviceId(deviceId);
+
+        if (!session || !session.lastActiveDate || !session.expireAt) {
+            console.log('[terminateSession 1] Session or its dates are null:', session);
+            throw new Error('Unauthorized');
+        }
+
+        if (session.lastActiveDate.getTime() !== lastActiveDate) {
+            console.log('[terminateSession 2] lastActiveDate mismatch:', session.lastActiveDate.getTime(), lastActiveDate);
+            throw new Error('Unauthorized');
+        }
+
+        if (session.expireAt.getTime() !== expireAt) {
+            console.log('[terminateSession 3] expireAt mismatch:', session.expireAt.getTime(), expireAt);
+            throw new Error('Unauthorized');
+        }
+
+        await devicesService.deleteDevice(userId, deviceId);
+
+
+
+
     }
 
 

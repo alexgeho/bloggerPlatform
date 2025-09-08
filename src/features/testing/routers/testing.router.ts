@@ -1,7 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { HttpStatus } from '../../../core/types/http-statuses';
 import {
-    blacklistCollection,
     blogCollection,
     commentCollection, deviceSessionsCollection,
     postCollection,
@@ -20,7 +19,6 @@ testingRouter.delete('/all-data', async (req: Request, res: Response) => {
             postCollection.deleteMany(),
             userCollection.deleteMany(),
             commentCollection.deleteMany(),
-            blacklistCollection.deleteMany(),
             deviceSessionsCollection.deleteMany(),
 
         ]);

@@ -28,13 +28,22 @@ export const devicesService = {
 
 
     async deleteDevice(userId: string, deviceId: string): Promise<'ok' | 'not_found' | 'forbidden'> {
+        console.log('[deleteDevice] Called with:', { userId, deviceId });
 
-        const device = await deviceSessionsRepository.findUserByDeviceId(deviceId);
+        const session = await deviceSessionsRepository.findUserByDeviceId(deviceId);
 
-        if (!device) return 'not_found';
-        if (device.userId !== userId) return 'forbidden';
+        if (!session) {
+            console.log('[deleteDevice] session not found');
+            return 'not_found';
+        }
+
+        if (session.userId.toString() !== userId) {
+            console.log('[deleteDevice] forbidden for user:', userId);
+            return 'forbidden';
+        }
 
         await deviceSessionsRepository.deleteDeviceById(deviceId);
+
         return 'ok';
     },
 
@@ -97,7 +106,6 @@ export const devicesService = {
     async updateSessionWithData(userId: string, deviceId: string, lastActiveDate: Date, expireAt: Date): Promise<void> {
         await deviceSessionsRepository.updateSessionWithData(userId, deviceId, lastActiveDate, expireAt);
     }
-
 
 
 
