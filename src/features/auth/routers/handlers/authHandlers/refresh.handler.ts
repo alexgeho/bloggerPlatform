@@ -7,9 +7,9 @@ export async function refreshHandler(req: Request, res: Response) {
 
     const token = (req as any).user.refreshToken;
 
-    const reqUserAgent = (req as any).user.userAgent;
+    //const reqUserAgent = (req as any).user.userAgent;
 
-    const result = await authService.refreshTokens(token, reqUserAgent);
+    const result = await authService.refreshTokens(token);
 
     if (result.status !== ResultStatus.Success) {
         res.status(401).send(result.extensions ?? { message: 'Unauthorized' });

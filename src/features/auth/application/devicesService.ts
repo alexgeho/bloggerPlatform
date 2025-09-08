@@ -5,6 +5,7 @@ import {response} from "express";
 import {jwtService} from "../adapters/jwt.service";
 import {ResultStatus} from "../common/result/resultCode";
 import {UnauthorizedError} from "../../../core/errors/UnauthorizedError";
+import {WithId} from "mongodb";
 
 function isoFromIat(iat: number) {
     return new Date(iat * 1000).toISOString();
@@ -13,17 +14,17 @@ function isoFromIat(iat: number) {
 
 export const devicesService = {
 
-    async isDeviceBelongsToUser(userId: string, deviceId: string): Promise<string | null> {
-
-        const devices = await deviceSessionsRepository.getAllDevices(userId);
-
-        if (!devices || devices.length === 0) {
-            return null;
-        }
-        const match = devices.find(d => d.deviceId === deviceId);
-
-        return match ? match.deviceId : null;
-    },
+    // async isDeviceBelongsToUser(userId: string, deviceId: string): Promise<string | null> {
+    //
+    //     const devices = await deviceSessionsRepository.getAllDevices(userId);
+    //
+    //     if (!devices || devices.length === 0) {
+    //         return null;
+    //     }
+    //     const match = devices.find(d => d.deviceId === deviceId);
+    //
+    //     return match ? match.deviceId : null;
+    // },
 
 
     async deleteDevice(userId: string, deviceId: string): Promise<'ok' | 'not_found' | 'forbidden'> {
@@ -67,7 +68,7 @@ export const devicesService = {
 
     },
 
-    async findSessionByDeviceId(deviceId: string): Promise<DeviceSession | null> {
+    async findSessionByDeviceId(deviceId: string): Promise<WithId<DeviceSession> | null> {
 
         const session = deviceSessionsRepository.findUserByDeviceId(deviceId);
         return session;
@@ -92,7 +93,6 @@ export const devicesService = {
         await deviceSessionsRepository.deleteAllDevicesExceptCurrent(userId, deviceId);
 
     },
-
 
     async updateSessionWithData(userId: string, deviceId: string, lastActiveDate: Date, expireAt: Date): Promise<void> {
         await deviceSessionsRepository.updateSessionWithData(userId, deviceId, lastActiveDate, expireAt);

@@ -1,13 +1,17 @@
 // jwtService.ts
 import jwt from "jsonwebtoken";
+import type {JwtPayload as BuiltInJWTPayload} from 'jsonwebtoken';
 import { ENV } from "../../../core/config/env";
 import {deviceSessionsCollection} from "../../../db/mongo.db";
 import { randomUUID } from "crypto";
 import {ObjectId} from "mongodb";
+import {JwtPayloadUser} from "../routers/guards/access.token.guard";
 
+
+// index -> a shto takoe index -> kakie byvajut -> BigO notation -> Big Theta notation
 
 // Унифицированный payload для всех типов токенов
-export interface JwtPayload {
+export interface JwtPayload extends BuiltInJWTPayload {
     userId: string;
     userLogin: string;
     deviceId: string;
@@ -23,7 +27,8 @@ export const jwtService = {
      */
     async createAuthTokens(
         userId: string,
-        deviceId: string):
+        deviceId: string,
+        ):
         Promise<{
         accessToken: string;
         refreshToken: string;

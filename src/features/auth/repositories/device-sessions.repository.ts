@@ -1,12 +1,12 @@
 import {deviceSessionsCollection} from "../../../db/mongo.db"
 import {DeviceSession} from "../domain/device-session.entity";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 
 
 export const deviceSessionsRepository = {
 
-    async findUserByDeviceId(deviceId: string): Promise<DeviceSession | null> {
-        return await deviceSessionsCollection.findOne({deviceId});
+    async findUserByDeviceId(deviceId: string): Promise<WithId<DeviceSession> | null> {
+        return await deviceSessionsCollection.findOne({ _id: new ObjectId(deviceId) });
     },
 
     async findByUserAndUserAgent(userId: string, userAgent: string): Promise<DeviceSession | null> {
