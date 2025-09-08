@@ -60,9 +60,9 @@ export const deviceSessionsRepository = {
 
     },
 
-    async updateOnRefresh(userId: string, deviceId: string, lastActiveDate: Date, expireAt: Date): Promise<void> {
+    async updateSessionWithData(userId: string, deviceId: string, lastActiveDate: Date, expireAt: Date): Promise<void> {
         await deviceSessionsCollection.updateOne(
-            {userId, deviceId: new ObjectId(deviceId)},
+            {userId, _id: new ObjectId(deviceId)},
             {$set: {lastActiveDate, expireAt}}
         );
     },

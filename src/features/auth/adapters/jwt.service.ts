@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { ENV } from "../../../core/config/env";
 import {deviceSessionsCollection} from "../../../db/mongo.db";
 import { randomUUID } from "crypto";
+import {ObjectId} from "mongodb";
 
 
 // Унифицированный payload для всех типов токенов
@@ -72,7 +73,7 @@ export const jwtService = {
 
             const session = await deviceSessionsCollection.findOne({
                 userId: payload.userId,
-                deviceId: payload.deviceId,
+                _id: new ObjectId(payload.deviceId),
             });
 
 

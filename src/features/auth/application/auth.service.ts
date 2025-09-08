@@ -15,6 +15,10 @@ import { RateLimiterService } from "./rateLimiter.service";
 import {response} from "express";
 import jwt from "jsonwebtoken";
 
+type LoginUserDto = {
+    loginOrEmail: string, password: string, ip: string, userAgent: string
+}
+
 export const authService = {
 
     rateLimiter: new RateLimiterService(),
@@ -40,7 +44,8 @@ export const authService = {
         await userRepository.updateConfirmation(user);
     },
 
-    async loginUser(loginOrEmail: string, password: string, ip: string, userAgent: string) {
+
+    async loginUser({loginOrEmail, password, ip, userAgent}: LoginUserDto) {
 
         // attempt counter/limiter
         if (this.rateLimiter.isBlocked(ip)) {
@@ -60,9 +65,7 @@ export const authService = {
 
         const userId = user._id.toString();
 
-
         const deviceId = await devicesService.createOrUpdateOnLogin(userId, ip, userAgent);
-
 
         const tokens = await jwtService.createAuthTokens(userId, deviceId);
 
@@ -77,7 +80,7 @@ export const authService = {
            ? new Date(tokens.expireAt)
            : new Date();
 
-       await devicesService.updateOnRefresh( userId, deviceId, lastActiveDate, expireAt);
+       await devicesService.updateSessionWithData( userId, deviceId, lastActiveDate, expireAt);
 
        return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
 

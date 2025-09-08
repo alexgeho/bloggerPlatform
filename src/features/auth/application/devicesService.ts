@@ -82,7 +82,7 @@ export const devicesService = {
             ip: s.ip,
             title: s.userAgent,
             lastActiveDate: s.lastActiveDate,
-            deviceId: s.deviceId,
+            deviceId: s._id.toString(),
 
         }));
     },
@@ -94,8 +94,8 @@ export const devicesService = {
     },
 
 
-    async updateOnRefresh(userId: string, deviceId: string, lastActiveDate: Date, expireAt: Date): Promise<void> {
-        await deviceSessionsRepository.updateOnRefresh(userId, deviceId, lastActiveDate, expireAt);
+    async updateSessionWithData(userId: string, deviceId: string, lastActiveDate: Date, expireAt: Date): Promise<void> {
+        await deviceSessionsRepository.updateSessionWithData(userId, deviceId, lastActiveDate, expireAt);
     }
 
 
