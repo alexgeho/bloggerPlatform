@@ -97,12 +97,7 @@ export const authService = {
 
         const payload = await jwtService.verifyRefreshToken(refreshToken)
 
-        console.log('Payload from refresh token:', payload);
-
         const session = await devicesService.findSessionByDeviceId(payload.deviceId)
-
-        console.log('Session from DB:', session);
-
 
         if (!session) {
             return {
@@ -111,7 +106,10 @@ export const authService = {
             };
         }
 
-        if (payload?.deviceId !== session._id) {
+        console.log('DEBUG deviceId mismatch:', payload?.deviceId, session._id);
+
+        if (payload?.deviceId !== session._id.toString()) {
+
             return {
                 status: ResultStatus.Unauthorized,
                 extensions: [{field: 'refreshToken', message: 'Access denied 2'}]
