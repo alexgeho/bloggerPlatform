@@ -15,7 +15,6 @@ export const usersQwRepository = {
             searchEmailTerm
         } = queryDto;
 
-   console.log("queryDto", queryDto, pageNumber, searchEmailTerm, searchLoginTerm)
         const skip = (pageNumber - 1) * pageSize;
         const searchLogin = searchLoginTerm
             ? {login: {$regex: searchLoginTerm, $options: 'i'}}

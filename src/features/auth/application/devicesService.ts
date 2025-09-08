@@ -1,6 +1,6 @@
-import { v4 as uuid } from 'uuid';
+import {v4 as uuid} from 'uuid';
 import {deviceSessionsRepository} from '../repositories/device-sessions.repository';
-import { DeviceSession } from '../domain/device-session.entity';
+import {DeviceSession} from '../domain/device-session.entity';
 import {response} from "express";
 import {jwtService} from "../adapters/jwt.service";
 import {ResultStatus} from "../common/result/resultCode";
@@ -26,8 +26,6 @@ export const devicesService = {
     },
 
 
-
-
     async deleteDevice(userId: string, deviceId: string): Promise<'ok' | 'not_found' | 'forbidden'> {
 
         const device = await deviceSessionsRepository.findUserByDeviceId(deviceId);
@@ -37,62 +35,67 @@ export const devicesService = {
 
         await deviceSessionsRepository.deleteDeviceById(deviceId);
         return 'ok';
-    }
-,
+    },
 
-    async createOnLogin(userId: string, ip: string, userAgent: string): Promise<string> {
-        const lastActiveDate = new Date().toISOString();
-        const expireAt: Date = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // +7 дней
+    async createOrUpdateOnLogin(userId: string, ip: string, userAgent: string): Promise<string> {
 
+        const sessionExist = await deviceSessionsRepository.findByUserAndUserAgent(userId, userAgent);
 
-        const session = {
-            deviceId: uuid(),
+        if (sessionExist) {
+            const deviceIdOfUpdatedSession = await deviceSessionsRepository.updateOnLogin(userId, userAgent, ip);
+            return deviceIdOfUpdatedSession;
+        }
+
+        const session: Omit<DeviceSession, "deviceId"> = {
             userId,
             ip,
             userAgent,
-            lastActiveDate,
-            expireAt
+            lastActiveDate: null,
+            expireAt: null,
         };
 
-     await deviceSessionsRepository.createOne(session);
-        return session.deviceId;
+        const deviceId = await deviceSessionsRepository.createOneOnLogin(session);
+        return deviceId;
+
     },
 
     async updateLastActiveDate(deviceId: string, expireAt: Date) {
 
-        const lastActiveDate = new Date().toISOString();
-      await deviceSessionsRepository.updateLastActiveDate (deviceId, lastActiveDate, expireAt);
+        const lastActiveDate = new Date();
+
+        await deviceSessionsRepository.updateLastActiveDate(deviceId, lastActiveDate, expireAt);
 
     },
 
     async findSessionByDeviceId(deviceId: string): Promise<DeviceSession | null> {
 
-        const session = deviceSessionsRepository.findUserByDeviceId (deviceId);
+        const session = deviceSessionsRepository.findUserByDeviceId(deviceId);
         return session;
 
     },
 
     async getAllDevices(userId: string): Promise<any[]> {
-            const sessions = await deviceSessionsRepository.getAllDevices(userId);
+        const sessions = await deviceSessionsRepository.getAllDevices(userId);
 
-            return sessions.map(s => ({
+        return sessions.map(s => ({
 
-                ip: s.ip,
-                title: s.userAgent,
-                lastActiveDate: s.lastActiveDate,
-                deviceId: s.deviceId,
+            ip: s.ip,
+            title: s.userAgent,
+            lastActiveDate: s.lastActiveDate,
+            deviceId: s.deviceId,
 
-            }));},
+        }));
+    },
 
-    async deleteAllDevicesExceptCurrent (userId: string, deviceId: string): Promise<void> {
+    async deleteAllDevicesExceptCurrent(userId: string, deviceId: string): Promise<void> {
 
-await deviceSessionsRepository.deleteAllDevicesExceptCurrent (userId, deviceId);
+        await deviceSessionsRepository.deleteAllDevicesExceptCurrent(userId, deviceId);
 
     },
 
 
-    async updateOnRefresh(userId: string, deviceId: string, iat: number, exp: number): Promise<void> {
-        await deviceSessionsRepository.updateOnRefresh(userId, deviceId, iat, exp);
+    async updateOnRefresh(userId: string, deviceId: string, lastActiveDate: Date, expireAt: Date): Promise<void> {
+        await deviceSessionsRepository.updateOnRefresh(userId, deviceId, lastActiveDate, expireAt);
     }
 
 
@@ -104,14 +107,13 @@ await deviceSessionsRepository.deleteAllDevicesExceptCurrent (userId, deviceId);
 
 
 
-        // async updateOnRefresh(userId: string, deviceId: string, iat: number, exp: number) {
+    // async updateOnRefresh(userId: string, deviceId: string, iat: number, exp: number) {
     //     await this.repo.updateLastActive(userId, deviceId, isoFromIat(iat), exp);
     // },
     //
     // async list(userId: string) {
     //     return this.repo.listByUser(userId);
     // },
-
 
 
     // async deleteOthers(userId: string, keepDeviceId: string) {

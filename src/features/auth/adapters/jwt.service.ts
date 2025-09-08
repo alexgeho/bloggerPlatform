@@ -20,25 +20,35 @@ export const jwtService = {
      * Генерирует access и refresh токены сразу.
      * Access-токен содержит минимум данных, refresh — расширенный payload.
      */
-    async createAuthTokens( userId: string, userLogin: string, userAgent: string, deviceId: string):
-        Promise<{ accessToken: string; refreshToken: string; expireAt: string | null }> {
+    async createAuthTokens(
+        userId: string,
+        deviceId: string):
+        Promise<{
+        accessToken: string;
+        refreshToken: string;
+        lastActiveDate: Date | null;
+        expireAt: Date | null}> {
+
         const accessToken = jwt.sign(
-            { userId, userLogin,  },
+            { userId, deviceId },
             ENV.AC_SECRET,
             { expiresIn: ENV.AC_TIME },
 
         );
 
         const refreshToken = jwt.sign(
-            { userId, userLogin, userAgent, deviceId, jti: randomUUID(), },
+            { userId, deviceId },
             ENV.RT_SECRET,
             { expiresIn: ENV.RT_TIME }
         );
 
-        const decoded = jwt.decode(refreshToken) as { exp?: number };
-        const expireAt = decoded?.exp ? new Date(decoded.exp * 1000).toISOString() : null;
+        const decoded = jwt.decode(refreshToken) as { iat: number; exp: number };
 
-        return { accessToken, refreshToken, expireAt };
+        const expireAt = new Date(decoded.exp * 1000);
+        const lastActiveDate = new Date(decoded.iat * 1000);
+
+        return { accessToken, refreshToken, expireAt, lastActiveDate };
+
     },
     /**
      * Проверяет access токен. Возвращает payload или null, если невалиден.

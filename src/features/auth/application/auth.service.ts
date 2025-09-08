@@ -1,5 +1,3 @@
-// Новый authService без setDevices и _devices, все работает через import'нутый devicesService напрямую
-
 import bcrypt from "bcrypt";
 import { userRepository } from "../../users/repositories/user.repository";
 import { ResultStatus } from "../common/result/resultCode";
@@ -44,6 +42,7 @@ export const authService = {
 
     async loginUser(loginOrEmail: string, password: string, ip: string, userAgent: string) {
 
+        // attempt counter/limiter
         if (this.rateLimiter.isBlocked(ip)) {
             return {
                 status: ResultStatus.TooManyRequests,
@@ -52,6 +51,7 @@ export const authService = {
         }
         this.rateLimiter.addAttempt(ip);
 
+        // taking user from db
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);
         if (!user) return { status: ResultStatus.Unauthorized, extensions: [{ field: "loginOrEmail", message: "User not found" }] };
 
@@ -59,22 +59,48 @@ export const authService = {
         if (!isValid) return { status: ResultStatus.Unauthorized, extensions: [{ field: "password", message: "Invalid password" }] };
 
         const userId = user._id.toString();
-        const userLogin = user.accountData.login;
 
-        const deviceId: string = await devicesService.createOnLogin(userId, ip, userAgent);
 
-        const { accessToken, refreshToken } = await jwtService.createAuthTokens(userId, userLogin, userAgent, deviceId);
+        const deviceId = await devicesService.createOrUpdateOnLogin(userId, ip, userAgent);
 
-        return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
+
+        const tokens = await jwtService.createAuthTokens(userId, deviceId);
+
+       const accessToken = tokens.accessToken;
+       const refreshToken = tokens.refreshToken;
+
+       const lastActiveDate = tokens.lastActiveDate
+           ? new Date(tokens.lastActiveDate)
+           : new Date();
+
+       const expireAt = tokens.expireAt
+           ? new Date(tokens.expireAt)
+           : new Date();
+
+       await devicesService.updateOnRefresh( userId, deviceId, lastActiveDate, expireAt);
+
+       return { status: ResultStatus.Success, data: { accessToken, refreshToken } };
+
     },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     async refreshTokens(refreshToken: string, reqUserAgent: string) {
 
     const payload = await jwtService.verifyRefreshToken(refreshToken)
-        //
-        // if (!payload) {
-        //     return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied' }] };
-        // }
 
         const session = await devicesService.findSessionByDeviceId (payload.deviceId)
 
@@ -89,9 +115,11 @@ export const authService = {
             return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied 2' }] };
         }
 
-        if (payload?.expireAt !== session.expireAt) {
-            return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied 3' }] };
-        }
+
+        // ?????????????????????
+        // if (payload?.expireAt !== session.expireAt) {
+        //     return { status: ResultStatus.Unauthorized, extensions: [{ field: 'refreshToken', message: 'Access denied 3' }] };
+        // }
 
         const { userId, userLogin, userAgent, deviceId } = payload;
 
@@ -103,8 +131,8 @@ export const authService = {
 await devicesService.updateOnRefresh(
     userId,
     deviceId,
-    newPayload.iat,
-    newPayload.exp
+    newPayload.lastActiveDate,
+    newPayload.expireAt
 )
 
 
