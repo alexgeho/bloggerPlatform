@@ -44,10 +44,15 @@ export const deviceSessionsRepository = {
     },
 
     async deleteAllDevicesExceptCurrent(userId: string, currentDeviceId: string): Promise<void> {
-        await deviceSessionsCollection.deleteMany({
+
+        const result = await deviceSessionsCollection.deleteMany({
+
             userId,
-            deviceId: {$ne: currentDeviceId}
+            _id: {$ne: new ObjectId(currentDeviceId)}
+
         });
+
+        console.log('[deleteAllDevicesExceptCurrent] result:', result);
     },
 
     async updateLastActiveDate(deviceId: string, lastActiveDate: Date, expireAt: Date) {

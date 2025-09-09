@@ -100,7 +100,15 @@ export const devicesService = {
 
     async deleteAllDevicesExceptCurrent(userId: string, deviceId: string): Promise<void> {
 
+      //  const sessions = await deviceSessionsRepository.getAllDevices(userId)
+
+
+
+
+
         await deviceSessionsRepository.deleteAllDevicesExceptCurrent(userId, deviceId);
+
+
 
     },
 

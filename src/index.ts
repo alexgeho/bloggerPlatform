@@ -4,7 +4,8 @@ import { app } from "./app";
 import { ENV } from "./core/config/env";
 
 const bootstrap = async () => {
-    // 1. Connecting to DB
+
+    app.set('trust proxy', true)
     await runDB(ENV.MONGO_URL);
 
     // 2. Конфигурируем приложение

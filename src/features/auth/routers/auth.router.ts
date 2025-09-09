@@ -13,12 +13,14 @@ import {refreshHandler} from "./handlers/authHandlers/refresh.handler";
 import {logoutHandler} from "./handlers/authHandlers/logout.handler";
 import {RateLimiterService} from "../application/rateLimiter.service";
 import {refreshTokenGuard} from "./guards/refresh.token.guard";
+import {rateLimiter} from "../middlewares/rateLimiter";
 
 
 export const authRouter = Router();
 
 
 authRouter.post("/login",
+    rateLimiter,
     authInputDtoValidation,
     inputValidationResultMiddleware,
     loginHandler);
@@ -32,16 +34,19 @@ authRouter.post("/logout",
     logoutHandler);
 
 authRouter.post("/registration-confirmation",
+    rateLimiter,
     codeInputDtoValidation,
     inputValidationResultMiddleware,
     emailConfirmationHandler);
 
 authRouter.post("/registration",
+    rateLimiter,
     userInputDtoValidation,
     inputValidationResultMiddleware,
     registrationHandler);
 
 authRouter.post("/registration-email-resending",
+    rateLimiter,
     emailResendHandler);
 
 authRouter.get("/me",
