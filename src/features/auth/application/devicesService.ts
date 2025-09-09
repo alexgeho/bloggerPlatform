@@ -28,12 +28,13 @@ export const devicesService = {
 
 
     async deleteDevice(userId: string, deviceId: string): Promise<'ok' | 'not_found' | 'forbidden'> {
+
         console.log('[deleteDevice] Called with:', { userId, deviceId });
 
         const session = await deviceSessionsRepository.findUserByDeviceId(deviceId);
 
         if (!session) {
-            console.log('[deleteDevice] session not found');
+            console.log('[deleteDevice] session not found A');
             return 'not_found';
         }
 

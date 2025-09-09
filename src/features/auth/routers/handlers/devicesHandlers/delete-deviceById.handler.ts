@@ -8,6 +8,7 @@ export async function deleteDeviceByIdHandler(req: any, res: any) {
     const deviceId = req.params.id;
 
     if (!userId) return res.sendStatus(401);
+    if (!deviceId) return res.sendStatus(404);
 
     const result = await devicesService.deleteDevice(userId, deviceId);
 
