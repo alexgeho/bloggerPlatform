@@ -19,9 +19,6 @@ export const rateLimiter = (req: Request, res: Response, next: NextFunction)=> {
         req.ip || "::1";
 
     const route = req.url;
-
-    console.log("route check", route);
-
     const key = `${ip}:${route}`;
 
     const currentTime = Date.now();
@@ -31,9 +28,9 @@ export const rateLimiter = (req: Request, res: Response, next: NextFunction)=> {
         const timeSinceFirstRequest = currentTime - record.firstRequestTimestamp;
 
         if (timeSinceFirstRequest < WINDOW_SIZE_IN_MS) {
-            if (record.count > MAX_REQUESTS) {
-                 res.status(429).json({ message: 'Too many requests, try again later.' });
-                return
+            if (record.count >= MAX_REQUESTS) {
+                 res.status(429).json({ message: 'Too many requests, try again later.' })
+                return;
             } else {
                 record.count += 1;
                 requestMap.set(key, record);

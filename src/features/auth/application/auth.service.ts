@@ -21,8 +21,6 @@ type LoginUserDto = {
 
 export const authService = {
 
-    rateLimiter: new RateLimiterService(),
-
     async create(dto: RegistrationDto): Promise<User | null> {
         const userExist = await userRepository.findOne(dto);
         if (userExist) return null;
@@ -47,14 +45,6 @@ export const authService = {
 
     async loginUser({loginOrEmail, password, ip, userAgent}: LoginUserDto) {
 
-        // attempt counter/limiter
-        if (this.rateLimiter.isBlocked(ip)) {
-            return {
-                status: ResultStatus.TooManyRequests,
-                extensions: [{field: 'ip', message: 'Too many login attempts. Try again later.'}],
-            };
-        }
-        this.rateLimiter.addAttempt(ip);
 
         // taking user from db
         const user = await userRepository.findByLoginOrEmail(loginOrEmail);
@@ -177,10 +167,6 @@ export const authService = {
     },
 
     async resendEmail(user: User, ip: string): Promise<void> {
-        if (this.rateLimiter.isBlocked(ip)) {
-            throw new Error("Too many requests"); // или res.sendStatus(429)
-        }
-        this.rateLimiter.addAttempt(ip);
 
         const newCode: string = uuidv4();
         const newExpirationDate: Date = add(new Date(), {hours: 1, minutes: 30});
