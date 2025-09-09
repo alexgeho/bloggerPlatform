@@ -11,9 +11,16 @@ export async function logoutHandler(
 
     const {userId, deviceId, userAgent, lastActiveDate, expireAt} = (req as any).user;
 
-    await authService.terminateSession (userId, deviceId, userAgent, lastActiveDate, expireAt);
+    const result =   await authService.terminateSession (userId, deviceId, userAgent, lastActiveDate, expireAt);
 
-    res.sendStatus(204);
+    if (result) {
+
+        res.sendStatus(204);
+    } else {
+        res.sendStatus(401);
+    }
+
+
 
 
 }

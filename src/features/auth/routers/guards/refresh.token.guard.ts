@@ -23,7 +23,7 @@ export const refreshTokenGuard = async (
 
 
 
-    // Делаем доступным токен и userId в req
+
     (req as any).user = {
         userId: payload.userId,
         deviceId: payload.deviceId,
@@ -36,8 +36,6 @@ export const refreshTokenGuard = async (
     };
 
 
-    // (req as any).deviceId = payload.deviceId;
-    // (req as any).refreshToken = token;
 
     next();
 };

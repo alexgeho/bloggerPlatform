@@ -96,7 +96,13 @@ export const authService = {
 
         const payload = await jwtService.verifyRefreshToken(refreshToken)
 
+        console.log('[authService method refreshTokens] payload from verifyRefreshToken:', payload);
+
+
         const session = await devicesService.findSessionByDeviceId(payload.deviceId)
+
+        console.log('[authService method refreshTokens] session from findSessionByDeviceId:', session);
+
 
         if (!session) {
             return {
@@ -113,6 +119,14 @@ export const authService = {
                 extensions: [{field: 'refreshToken', message: 'Access denied 2'}]
             };
         }
+
+        if (!session.expireAt || new Date(payload.exp * 1000).toISOString() !== session.expireAt.toISOString()) {
+            return {
+                status: ResultStatus.Unauthorized,
+                extensions: [{field: 'refreshToken', message: 'Access denied 3'}]
+            };
+        }
+
 
         const {userId, deviceId} = payload;
 
@@ -178,28 +192,29 @@ export const authService = {
         await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
     },
 
-    async terminateSession (userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<void> {
+    async terminateSession(userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<boolean> {
 
-    const session = await devicesService.findSessionByDeviceId(deviceId);
+        const session = await devicesService.findSessionByDeviceId(deviceId);
 
         if (!session || !session.lastActiveDate || !session.expireAt) {
             console.log('[terminateSession 1] Session or its dates are null:', session);
-            throw new Error('Unauthorized');
+            return false;
         }
 
         if (session.lastActiveDate.getTime() !== lastActiveDate) {
             console.log('[terminateSession 2] lastActiveDate mismatch:', session.lastActiveDate.getTime(), lastActiveDate);
-            throw new Error('Unauthorized');
+            return false;
         }
 
         if (session.expireAt.getTime() !== expireAt) {
             console.log('[terminateSession 3] expireAt mismatch:', session.expireAt.getTime(), expireAt);
-            throw new Error('Unauthorized');
+            return false;
         }
+
 
         await devicesService.deleteDevice(userId, deviceId);
 
-
+        return true;
 
 
     }

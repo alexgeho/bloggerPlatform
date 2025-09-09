@@ -19,7 +19,6 @@ export const authRouter = Router();
 
 
 authRouter.post("/login",
-    // tut
     authInputDtoValidation,
     inputValidationResultMiddleware,
     loginHandler);
