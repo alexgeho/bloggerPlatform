@@ -25,7 +25,6 @@ testingRouter.delete('/all-data', async (req: Request, res: Response) => {
         res.sendStatus(HttpStatus.NoContent);
 
     } catch (e: unknown) {
-        console.log(e);
     }
 
 

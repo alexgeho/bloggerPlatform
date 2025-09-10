@@ -7,7 +7,6 @@ export async function refreshHandler(req: Request, res: Response) {
 
     const token = (req as any).user.refreshToken;
 
-    console.log('[refreshHandler] refreshToken from req.user:', token);
 
     const result = await authService.refreshTokens(token);
 

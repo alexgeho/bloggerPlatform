@@ -4,7 +4,6 @@ import {devicesService} from "../../../application/devicesService";
 
 export async function getDevicesHandler(req: any, res: any) {
 
-    console.log('Request user:', req.user); // проверить, есть ли юзер
 
 
     const userId = req.user.userId;

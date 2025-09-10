@@ -52,7 +52,6 @@ export const deviceSessionsRepository = {
 
         });
 
-        console.log('[deleteAllDevicesExceptCurrent] result:', result);
     },
 
     async updateLastActiveDate(deviceId: string, lastActiveDate: Date, expireAt: Date) {

@@ -40,13 +40,9 @@ export async function getBlogPostsHandler(req:Request, res:Response ) {
 
         return res.status(200).json(result);
     } catch (e) {
-        console.log(e, ' error')
 
-        console.log(e, ' here')
-        console.log(e instanceof  Error, ' is error')
         // Если блог не найден — 404, иначе просто пробрасываем ошибку дальше (или можно логировать)
         if (e instanceof RepositoryNotFoundError) {
-            console.log('handled')
             res.status(e.status).send({ message: 'Blog not found' });
             return;
         } else {

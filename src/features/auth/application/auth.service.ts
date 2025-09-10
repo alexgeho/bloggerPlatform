@@ -86,12 +86,7 @@ export const authService = {
 
         const payload = await jwtService.verifyRefreshToken(refreshToken)
 
-        console.log('[authService method refreshTokens] payload from verifyRefreshToken:', payload);
-
-
         const session = await devicesService.findSessionByDeviceId(payload.deviceId)
-
-        console.log('[authService method refreshTokens] session from findSessionByDeviceId:', session);
 
 
         if (!session) {
@@ -183,17 +178,14 @@ export const authService = {
         const session = await devicesService.findSessionByDeviceId(deviceId);
 
         if (!session || !session.lastActiveDate || !session.expireAt) {
-            console.log('[terminateSession 1] Session or its dates are null:', session);
             return false;
         }
 
         if (session.lastActiveDate.getTime() !== lastActiveDate) {
-            console.log('[terminateSession 2] lastActiveDate mismatch:', session.lastActiveDate.getTime(), lastActiveDate);
             return false;
         }
 
         if (session.expireAt.getTime() !== expireAt) {
-            console.log('[terminateSession 3] expireAt mismatch:', session.expireAt.getTime(), expireAt);
             return false;
         }
 

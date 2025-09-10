@@ -23,7 +23,6 @@ export async function getPostListHandler(req: Request, res: Response) {
 
         res.send(postsListOutput);
     } catch (e: unknown) {
-        console.log(e);
         errorsHandler(e, res);
     }
 }

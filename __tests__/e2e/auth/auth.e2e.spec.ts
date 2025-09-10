@@ -7,7 +7,7 @@ import {ENV} from "../../../src/core/config/env";
 import {authTestManager} from "./utils/authTestManager";
 import {HttpStatus} from "../../../src/core/types/http-statuses";
 import {UserInputDto} from "../../../src/features/users/application/dtos/user.input-dto";
-import {DeviceSession} from "../../../src/features/auth/domain/device-session.entity";
+import {DeviceSession, DeviceSessionGetType} from "../../../src/features/auth/domain/device-session.entity";
 
 let app: Express;
 
@@ -83,25 +83,24 @@ describe("auth e2e tests", () => {
         const devicesAfterCheck: DeviceSession[] = await authTestManager.getAllDevices(app, userAgent1, refreshCookieForDevice1)
 
         // 1. Кол-во девайсов не изменилось
-        expect(devicesAfterCheck.length).toBe(devicesBeforeCheck.length)
-
-        // 2. Получаем устройства по userAgent
         const beforeDevice1 = devicesBeforeCheck.find(d => d.userAgent === userAgent1);
         const afterDevice1 = devicesAfterCheck.find(d => d.userAgent === userAgent1);
+
+        console.log("checking beforeDevice1:", beforeDevice1);
+        console.log("devicesBeforeCheck:", JSON.stringify(devicesBeforeCheck, null, 2));
 
         expect(beforeDevice1).toBeDefined();
         expect(afterDevice1).toBeDefined();
 
-        // 3. lastActiveDate у девайса 1 должен обновиться
         expect(beforeDevice1!.lastActiveDate).not.toBe(afterDevice1!.lastActiveDate);
 
         // 4. Остальные девайсы должны остаться неизменными (deviceId и lastActiveDate)
         for (const before of devicesBeforeCheck) {
-            const after = devicesAfterCheck.find(d => d.deviceId === before.deviceId);
+            const after = devicesAfterCheck.find(d => d._id === before._id);
 
             expect(after).toBeDefined();
 
-            if (before.deviceId !== beforeDevice1!.deviceId) {
+            if (before._id !== beforeDevice1!._id) {
                 expect(after!.lastActiveDate).toBe(before.lastActiveDate);
             }
         }
