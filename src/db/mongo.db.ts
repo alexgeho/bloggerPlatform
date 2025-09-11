@@ -5,13 +5,14 @@ import { User } from "../features/auth/domain/user";
 import { CommentDb } from "../features/comments/domain/commentDb";
 import { DeviceSession } from "../features/auth/domain/device-session.entity";
 import { ENV } from "../core/config/env";
+import {RateLimitEntity} from "../features/auth/domain/rate-limit.entity";
 
 const BLOG_COLLECTION_NAME = "blogs";
 const POST_COLLECTION_NAME = "posts";
 const USER_COLLECTION_NAME = "users";
-const BLACKLIST_COLLECTION_NAME = "blackList";
 const COMMENT_COLLECTION_NAME = "comments";
 const DEVICE_SESSIONS_COLLECTION_NAME = "deviceSessions";
+const RATE_LIMITS_COLLECTION_NAME = "rateLimits";
 
 export let client: MongoClient;
 
@@ -20,6 +21,7 @@ export let postCollection: Collection<OptionalId<PostDb>>;
 export let userCollection: Collection<User>;
 export let commentCollection: Collection<CommentDb>;
 export let deviceSessionsCollection: Collection<DeviceSession>;
+export let rateLimitCollection: Collection<RateLimitEntity>;
 
 export async function runDB(url: string): Promise<void> {
     client = new MongoClient(url);
@@ -31,6 +33,8 @@ export async function runDB(url: string): Promise<void> {
     userCollection = db.collection<User>(USER_COLLECTION_NAME);
     commentCollection = db.collection<CommentDb>(COMMENT_COLLECTION_NAME);
     deviceSessionsCollection = db.collection<DeviceSession>(DEVICE_SESSIONS_COLLECTION_NAME);
+    rateLimitCollection = db.collection<RateLimitEntity>(RATE_LIMITS_COLLECTION_NAME);
+
 
     try {
         await db.command({ ping: 1 });

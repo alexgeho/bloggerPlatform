@@ -1,46 +1,58 @@
+// src/middlewares/rateLimiter.ts
 import { NextFunction, Request, Response } from "express";
 
-const WINDOW_SIZE_IN_MS = 10 * 1000; // 10 seconds
-const MAX_REQUESTS = 5;
+const WINDOW_MS = 10_000; // 10 seconds
+const MAX_REQUESTS = 5;   // 6th within window => 429
 
-type RateLimitRecord = {
-    count: number;
-    firstRequestTimestamp: number;
-};
+type Counter = { count: number; first: number };
+const buckets = new Map<string, Counter>();
 
-const requestMap = new Map<string, RateLimitRecord>();
+function normalizeIp(ip: string | undefined | null): string {
+    if (!ip) return "local";
+    if (ip === "::1") return "127.0.0.1";        // localhost IPv6
+    if (ip.startsWith("::ffff:")) return ip.slice(7); // IPv4-mapped IPv6
+    return ip;
+}
 
-export const rateLimiter = (req: any, res: any, next: NextFunction) => {
-    const ip =
-        req.headers['x-forwarded-for']?.toString().split(',')[0].trim() ||
-        req.socket.remoteAddress ||
-        req.ip || "::1";
+function extractClientIp(req: Request): string {
+    const xf = req.headers["x-forwarded-for"];
+    let forwarded = "";
+    if (Array.isArray(xf) && xf.length) forwarded = xf[0];
+    else if (typeof xf === "string") forwarded = xf;
+    const fromHeader = forwarded ? forwarded.split(",")[0].trim() : "";
+    const raw = fromHeader || req.ip || req.socket.remoteAddress || "::1";
+    return normalizeIp(raw.toString());
+}
 
-    const route = req.url;
-    const key = `${ip}:${route}`;
+function makeKey(req: Request): string {
+    // стабильный путь без query и с учётом базового mount'а
+    const stablePath = `${req.baseUrl || ""}${req.path || ""}`
+        || (((req as any).originalUrl || req.url).split("?")[0]);
+    return `${extractClientIp(req)}:${req.method}:${stablePath}`;
+}
 
-    const currentTime = Date.now();
-    const record = requestMap.get(key);
+export function rateLimiter(req: any, res: any, next: NextFunction) {
+    const key = makeKey(req);
+    const now = Date.now();
 
-    if (record) {
-        const timeSinceFirstRequest = currentTime - record.firstRequestTimestamp;
-
-        if (timeSinceFirstRequest < WINDOW_SIZE_IN_MS) {
-            if (record.count >= MAX_REQUESTS) {
-                console.log(`[RateLimiter] Blocked ${key}`);
-                return res.status(429).json({ message: 'Too many requests, try again later.' });
-            }
-
-            record.count += 1;
-            requestMap.set(key, record);
-        } else {
-            // Reset window
-            requestMap.set(key, { count: 1, firstRequestTimestamp: currentTime });
-        }
-    } else {
-        // First request
-        requestMap.set(key, { count: 1, firstRequestTimestamp: currentTime });
+    const rec = buckets.get(key);
+    if (!rec) {
+        buckets.set(key, { count: 1, first: now });
+        return next();
     }
 
-    next();
-};
+    const elapsed = now - rec.first;
+    if (elapsed < WINDOW_MS) {
+        if (rec.count >= MAX_REQUESTS) return res.sendStatus(429);
+        rec.count += 1;
+        buckets.set(key, rec);
+        return next();
+    }
+
+    buckets.set(key, { count: 1, first: now });
+    return next();
+}
+
+export function resetRateLimiter() {
+    buckets.clear();
+}
