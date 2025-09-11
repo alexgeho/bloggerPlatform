@@ -27,7 +27,7 @@ export async function emailResendHandler(
     }
 
     try {
-        await authService.resendEmail(user, ip);
+        authService.resendEmail(user, ip);
         return res.sendStatus(204);
     } catch (e: any) {
         if (e.message === "Too many requests") {

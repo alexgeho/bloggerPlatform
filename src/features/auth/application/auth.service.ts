@@ -30,7 +30,7 @@ export const authService = {
 
         const userNew: User = new UserEntity(dto.login, dto.email, passwordHash, passwordSalt);
         await userRepository.create(userNew);
-        await emailManager.sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
+        emailManager.sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
         return userNew;
     },
 

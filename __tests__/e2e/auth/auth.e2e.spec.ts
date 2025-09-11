@@ -76,15 +76,15 @@ describe("auth e2e tests", () => {
 
         const refreshCookieForDevice1 = result1.refreshCookie;
 
-        const devicesBeforeCheck: DeviceSession[] = await authTestManager.getAllDevices(app, userAgent1, refreshCookieForDevice1)
+        const devicesBeforeCheck:DeviceSessionGetType []  = await authTestManager.getAllDevices(app, userAgent1, refreshCookieForDevice1)
 
         await authTestManager.refreshToken(app, userAgent1, refreshCookieForDevice1)
 
-        const devicesAfterCheck: DeviceSession[] = await authTestManager.getAllDevices(app, userAgent1, refreshCookieForDevice1)
+        const devicesAfterCheck:DeviceSessionGetType [] = await authTestManager.getAllDevices(app, userAgent1, refreshCookieForDevice1)
 
         // 1. Кол-во девайсов не изменилось
-        const beforeDevice1 = devicesBeforeCheck.find(d => d.userAgent === userAgent1);
-        const afterDevice1 = devicesAfterCheck.find(d => d.userAgent === userAgent1);
+        const beforeDevice1 = devicesBeforeCheck.find(d => d.title === userAgent1);
+        const afterDevice1 = devicesAfterCheck.find(d => d.title === userAgent1);
 
         console.log("checking beforeDevice1:", beforeDevice1);
         console.log("devicesBeforeCheck:", JSON.stringify(devicesBeforeCheck, null, 2));
@@ -96,11 +96,11 @@ describe("auth e2e tests", () => {
 
         // 4. Остальные девайсы должны остаться неизменными (deviceId и lastActiveDate)
         for (const before of devicesBeforeCheck) {
-            const after = devicesAfterCheck.find(d => d._id === before._id);
+            const after = devicesAfterCheck.find(d => d.deviceId === before.deviceId);
 
             expect(after).toBeDefined();
 
-            if (before._id !== beforeDevice1!._id) {
+            if (before.deviceId !== beforeDevice1!.deviceId) {
                 expect(after!.lastActiveDate).toBe(before.lastActiveDate);
             }
         }
