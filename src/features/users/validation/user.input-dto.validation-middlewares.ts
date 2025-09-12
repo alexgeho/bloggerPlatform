@@ -18,12 +18,12 @@ const passwordValidation = body('password')
 
 const emailValidation = body('email')
     .isString()
-    .withMessage('websiteUrl should be string')
+    .withMessage('email should be string')
     .trim()
     .isLength({ min: 5, max: 100 })
-    .withMessage('Length of websiteUrl is not correct')
-    .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
-    .withMessage('email format is not valid')
+    .withMessage('Length of email is not correct')
+    // .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+    // .withMessage('email format is not valid')
 
 
 

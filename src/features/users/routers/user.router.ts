@@ -19,8 +19,8 @@ usersRouter
 
     .post("/",
         superAdminGuardMiddleware,
-       UserInputDtoValidation,
-       inputValidationResultMiddleware,
+        UserInputDtoValidation,
+        inputValidationResultMiddleware,
         postUserHandler.execute.bind(postUserHandler))
 
     .delete('/:id',
