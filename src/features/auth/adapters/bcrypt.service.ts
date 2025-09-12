@@ -12,3 +12,4 @@ export class BcryptService  {
     }
 }
 
+export const bcryptService = new BcryptService();

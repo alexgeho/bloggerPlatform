@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { errorsHandler } from '../../../../../core/errors/errors.handler';
-import {authService, AuthService} from '../../../application/auth.service';
+import {AuthService} from '../../../application/auth.service';
 import { refreshCookieOptions } from '../../../../../core/http/cookie';
 import { sendResult } from '../../../../../core/http/send-result';
 import {ResultStatus} from "../../../common/result/resultCode";
@@ -8,13 +8,16 @@ import {ResultStatus} from "../../../common/result/resultCode";
 
 export class LoginHandler {
 
+    constructor(private authService: AuthService) {
+    }
+
 async execute (req: Request, res: Response): Promise<void> {
     try {
         const ip = req.ip || 'unknown';
         const userAgent = req.headers['user-agent'] || 'Unknown device';
         const { loginOrEmail, password } = req.body
 
-        const result = await authService.loginUser({
+        const result = await this.authService.loginUser({
             loginOrEmail,
             password,
             ip,

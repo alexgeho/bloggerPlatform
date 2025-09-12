@@ -1,5 +1,5 @@
-import {Router} from "express";
-import {loginHandler} from "./handlers/authHandlers/login.handler";
+import {Request, Response, Router} from "express";
+import {LoginHandler} from "./handlers/authHandlers/login.handler";
 import {authInputDtoValidation} from "../validation/auth.input-dto.validation-middlewares";
 import {accessTokenGuard} from "./guards/access.token.guard";
 import {getMeHandler} from "./handlers/authHandlers/get-me.handler";
@@ -15,7 +15,15 @@ import {RateLimiterService} from "../application/rateLimiter.service";
 import {refreshTokenGuard} from "./guards/refresh.token.guard";
 import {rateLimiter} from "../middlewares/rateLimiter";
 import {requestLimitMiddleware} from "../middlewares/rateLimeterUpd";
+import {AuthService} from "../application/auth.service";
+import {userRepository, UserRepository} from "../../users/repositories/user.repository";
+import { bcryptService } from "../adapters/bcrypt.service";
 
+
+
+const authService = new AuthService(userRepository, bcryptService);
+
+const loginHandler = new LoginHandler(authService);
 
 export const authRouter = Router();
 
@@ -24,7 +32,8 @@ authRouter.post("/login",
     requestLimitMiddleware,
     authInputDtoValidation,
     inputValidationResultMiddleware,
-    loginHandler);
+    loginHandler.execute.bind(loginHandler)
+);
 
 authRouter.post("/refresh-token",
     refreshTokenGuard,

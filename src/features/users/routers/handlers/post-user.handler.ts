@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../../../core/types/http-statuses';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
-import {userService} from "../../application/user.service";
+import {UserService} from "../../application/user.service";
 
 export async function postUserHandler(req: Request, res: Response) {
 

@@ -3,6 +3,7 @@ import {userCollection} from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {RepositoryNotFoundError} from '../../../core/errors/repository-not-found.error';
 import {UserQueryInput} from '../routers/input/user-query.input';
+import {BcryptService} from "../../auth/adapters/bcrypt.service";
 
 export class UserRepository {
 
@@ -128,3 +129,4 @@ export class UserRepository {
 
 };
 
+export const userRepository = new UserRepository();
