@@ -2,11 +2,11 @@ import {Request, Response} from 'express';
 import {usersQwRepository} from "../../../../users/repositories/usersQwRepository";
 import {AuthService} from "../../../application/auth.service"; // если используешь date-fns
 
-export async function emailResendHandler(
-    req: any,
-    res: any) {
+export class EmailResendHandler  {
 
+    constructor(private authService: AuthService) {}
 
+async execute (req: Request, res: Response): Promise<void> {
 
     const email = req.body.email;
     const ip: string = req.ip ?? "unknown";
@@ -27,13 +27,20 @@ export async function emailResendHandler(
     }
 
     try {
-        AuthService.resendEmail(user, ip);
-        return res.sendStatus(204);
+        this.authService.resendEmail(user, ip);
+         res.sendStatus(204);
+        return
     } catch (e: any) {
         if (e.message === "Too many requests") {
-            return res.sendStatus(429);
+             res.sendStatus(429);
+            return
         }
-        return res.sendStatus(500);
+         res.sendStatus(500);
+        return
     }
+
+}
+
+
 
 }

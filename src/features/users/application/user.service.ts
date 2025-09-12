@@ -8,10 +8,10 @@ import {UserQueryInput} from "../routers/input/user-query.input";
 import {Result} from "../../auth/common/result/result.type";
 import {IUserDB} from "../../auth/types/user.db.interface";
 import {ResultStatus} from "../../auth/common/result/resultCode";
-import {bcryptService, BcryptService} from "../../auth/adapters/bcrypt.service";
 import {mapUserToUserDB} from "../routers/mappers/map-to-user-output.util";
 import {UserEntity} from "../../auth/domain/user.entity";
 import {emailManager} from "../../auth/adapters/email.manager";
+import {bcryptService} from "../../../composition-root";
 
 
 export class UserService {
@@ -28,7 +28,6 @@ export class UserService {
     async create(dto: UserInputDto): Promise<UserDataOutput | {
         errorsMessages: { field: string, message: string }[]
     }> {
-
         const existingUser = await this.usersRepository.findOne({login: dto.login, email: dto.email});
 
         if (existingUser) {
