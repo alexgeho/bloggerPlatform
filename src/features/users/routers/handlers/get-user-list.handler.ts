@@ -5,24 +5,32 @@ import { UserQueryInput } from '../input/user-query.input';
 import { setDefaultSortAndPaginationIfNotExist } from '../../../../core/helpers/set-default-sort-and-pagination';
 import {PaginationAndSorting} from "../../../../core/types/pagination-and-sorting";
 import {UserSortField} from "../input/user-sort-field";
-import {usersQwRepository} from "../../repositories/usersQwRepository";
+import {UsersQwRepository} from "../../repositories/usersQwRepository";
 
-export async function getUserListHandler(req: Request, res: Response) {
-    try {
-        const queryInput = setDefaultSortAndPaginationIfNotExist( req.query as Partial<PaginationAndSorting<UserSortField>>
+export class GetUserListHandler {
+
+    constructor(private usersQwRepository: UsersQwRepository) {}
+
+    async execute (req: Request, res: Response) {
+
+        try {
+            const queryInput = setDefaultSortAndPaginationIfNotExist( req.query as Partial<PaginationAndSorting<UserSortField>>
                 & { searchNameTerm?: string }
-        ) as UserQueryInput;
+            ) as UserQueryInput;
 
-        const { items, totalCount } = await usersQwRepository.findMany(queryInput);
+            const { items, totalCount } = await this.usersQwRepository.findMany(queryInput);
 
-        const usersListOutput = mapToUserListPaginatedOutput(items, {
-            pageNumber: queryInput.pageNumber,
-            pageSize: queryInput.pageSize,
-            totalCount,
-        });
+            const usersListOutput = mapToUserListPaginatedOutput(items, {
+                pageNumber: queryInput.pageNumber,
+                pageSize: queryInput.pageSize,
+                totalCount,
+            });
 
-        res.send(usersListOutput);
-    } catch (e: unknown) {
-        errorsHandler(e, res);
+            res.send(usersListOutput);
+        } catch (e: unknown) {
+            errorsHandler(e, res);
+        }
+
     }
+
 }

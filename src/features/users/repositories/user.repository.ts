@@ -3,7 +3,6 @@ import {userCollection} from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {RepositoryNotFoundError} from '../../../core/errors/repository-not-found.error';
 import {UserQueryInput} from '../routers/input/user-query.input';
-import {BcryptService} from "../../auth/adapters/bcrypt.service";
 
 export class UserRepository {
 
@@ -125,6 +124,15 @@ export class UserRepository {
 
 
     }
+
+    async findByEmail(email: string): Promise<User | null> {
+        return await userCollection.findOne({ "accountData.email": email });
+    }
+
+    async findByCode(code: string): Promise<User | null> {
+        return await userCollection.findOne({ "emailConfirmation.confirmationCode": code });
+    }
+
 
 
 };

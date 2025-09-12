@@ -1,10 +1,10 @@
 import {Request, Response} from 'express';
 import {RegistrationDto} from "../../../types/registration.dto";
-import {usersQwRepository} from "../../../../users/repositories/usersQwRepository";
+import {AuthService} from "../../../application/auth.service";
 
 export class RegistrationHandler {
 
-    constructor(private authService: any) {
+    constructor(private authService: AuthService, private usersRepository: any) {
     }
 
     async execute(req: Request, res: Response): Promise<void> {
@@ -13,7 +13,7 @@ export class RegistrationHandler {
 
             const dto: RegistrationDto = req.body;
 
-            const userExist = await usersQwRepository.findByLoginOrEmail(dto.login, dto.email);
+            const userExist = await this.usersRepository.findByLoginOrEmail(dto.login, dto.email);
 
             if (userExist) {
                 if (userExist.accountData.email === dto.email) {

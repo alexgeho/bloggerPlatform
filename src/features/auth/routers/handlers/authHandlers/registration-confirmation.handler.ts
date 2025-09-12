@@ -1,17 +1,17 @@
 import {Request, Response} from 'express';
-import {usersQwRepository} from "../../../../users/repositories/usersQwRepository";
 import {User} from "../../../domain/user";
 import {AuthService} from "../../../application/auth.service";
+import {UserRepository} from "../../../../users/repositories/user.repository";
 
 export class EmailConfirmationHandler {
 
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService, private usersRepository: UserRepository) {}
 
     async execute (req: Request, res: Response): Promise<void> {
 
         const code: string = req.body.code;
 
-        let userExist: User | null = await usersQwRepository.findByCode(code);
+        let userExist: User | null = await this.usersRepository.findByCode(code);
 
         if (!userExist) {
             res.status(400).json({

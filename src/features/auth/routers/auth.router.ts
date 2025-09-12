@@ -1,7 +1,6 @@
 import {Router} from "express";
 import {authInputDtoValidation} from "../validation/auth.input-dto.validation-middlewares";
 import {accessTokenGuard} from "./guards/access.token.guard";
-import {getMeHandler} from "./handlers/authHandlers/get-me.handler";
 import {inputValidationResultMiddleware} from "../../../core/middlewares/validation/input-validtion-result.middleware";
 import {userInputDtoValidation} from "../validation/user.input-dto.validation-middlewares";
 import {codeInputDtoValidation} from "../validation/registration.confirmation.input-dto.validation-middlewares";
@@ -11,14 +10,12 @@ import {refreshTokenGuard} from "./guards/refresh.token.guard";
 import {requestLimitMiddleware} from "../middlewares/rateLimeterUpd";
 import {
     emailConfirmationHandler,
-    emailResendHandler,
+    emailResendHandler, getMeHandler,
     loginHandler,
     registrationHandler
 } from "../../../composition-root"; // 👈 импортируем готовый экземпляр
 
-
 export const authRouter = Router();
-
 
 authRouter.post("/login",
     requestLimitMiddleware,
@@ -53,6 +50,6 @@ authRouter.post("/registration-email-resending",
 
 authRouter.get("/me",
     accessTokenGuard,
-    getMeHandler)
+    getMeHandler.execute.bind(getMeHandler))
 
 

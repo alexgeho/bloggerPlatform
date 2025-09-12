@@ -3,7 +3,7 @@ import {userCollection} from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {UserQueryInput} from '../routers/input/user-query.input';
 
-export const usersQwRepository = {
+export class UsersQwRepository {
 
     async findMany( queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
         const {
@@ -36,7 +36,7 @@ export const usersQwRepository = {
 
         const totalCount = await userCollection.countDocuments({$or: [searchLogin, searchEmail]});
         return { items, totalCount };
-    },
+    }
 
     async findOne({ login, email }: { login?: string, email?: string }): Promise<WithId<User> | null> {
         const filter: any = {};
@@ -50,50 +50,15 @@ export const usersQwRepository = {
             return null;
         }
         return userCollection.findOne(filter);
-    },
-
-    async findByLoginOrEmail(login: string, email: string) {
-        const user = await userCollection.findOne({
-            $or: [
-                { "accountData.email": email },
-                { "accountData.login": login }
-            ]
-        });
-
-        return user;
-    },
+    }
 
     async findById(id: string): Promise<User | null> {
         const user = await userCollection.findOne({ _id: new ObjectId(id) });
         return user
-    },
-
-    async findByEmail(email: string): Promise<User | null> {
-        return await userCollection.findOne({ "accountData.email": email });
-    },
+    }
 
 
 
-    async findByCode(code: string): Promise<User | null> {
-        return await userCollection.findOne({ "emailConfirmation.confirmationCode": code });
-
-    },
 
 
-
-    //? this._getInView(user) : null;
-
-    // _getInView(user: WithId<User>): UserDataOutput {
-    //     return {
-    //         id: user._id.toString(),
-    //         login: user.login,
-    //         email: user.email,
-    //         createdAt: user.createdAt.toISOString(),
-    //     };
-    // },
-
-    _checkObjectId(id: string): boolean {
-        return ObjectId.isValid(id);
-    },
-
-};
+}
