@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import {usersQwRepository} from "../../../../users/repositories/usersQwRepository";
-import {authService} from "../../../application/auth.service"; // если используешь date-fns
+import {AuthService} from "../../../application/auth.service"; // если используешь date-fns
 
 export async function emailResendHandler(
     req: any,
@@ -27,7 +27,7 @@ export async function emailResendHandler(
     }
 
     try {
-        authService.resendEmail(user, ip);
+        AuthService.resendEmail(user, ip);
         return res.sendStatus(204);
     } catch (e: any) {
         if (e.message === "Too many requests") {

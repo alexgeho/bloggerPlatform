@@ -14,14 +14,13 @@ import {RateLimiterService} from "./rateLimiter.service";
 import {response} from "express";
 import jwt from "jsonwebtoken";
 import {DeviceSession} from "../domain/device-session.entity";
+import {LoginUserDto} from "../domain/login-DTO";
 
-type LoginUserDto = {
-    loginOrEmail: string, password: string, ip: string, userAgent: string
-}
 
-export const authService = {
 
-    async create(dto: RegistrationDto): Promise<User | null> {
+export class AuthService {
+
+    static async create(dto: RegistrationDto): Promise<User | null> {
         const userExist = await userRepository.findOne(dto);
         if (userExist) return null;
 
@@ -32,18 +31,17 @@ export const authService = {
         await userRepository.create(userNew);
         emailManager.sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
         return userNew;
-    },
+    }
 
-    async _generateHash(password: string, salt: string) {
+    static async _generateHash(password: string, salt: string) {
         return await bcrypt.hash(password, salt);
-    },
+    }
 
-    async update(user: User): Promise<void> {
+    static async update(user: User): Promise<void> {
         await userRepository.updateConfirmation(user);
-    },
+    }
 
-
-    async loginUser({loginOrEmail, password, ip, userAgent}: LoginUserDto) {
+    static async loginUser({loginOrEmail, password, ip, userAgent}: LoginUserDto) {
 
 
         // taking user from db
@@ -80,9 +78,9 @@ export const authService = {
 
         return {status: ResultStatus.Success, data: {accessToken, refreshToken}};
 
-    },
+    }
 
-    async refreshTokens(refreshToken: string) {
+    static async refreshTokens(refreshToken: string) {
 
         const payload = await jwtService.verifyRefreshToken(refreshToken)
 
@@ -159,9 +157,9 @@ export const authService = {
         // await authRepository.blacklistToken(refreshToken);
         //
         // return { status: ResultStatus.Success, data: { accessToken: newAccess, refreshToken: newRefresh } };
-    },
+    }
 
-    async resendEmail(user: User, ip: string): Promise<void> {
+    static async resendEmail(user: User, ip: string): Promise<void> {
 
         const newCode: string = uuidv4();
         const newExpirationDate: Date = add(new Date(), {hours: 1, minutes: 30});
@@ -171,9 +169,9 @@ export const authService = {
 
         await userRepository.uptateCodeAndDate(user);
         await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
-    },
+    }
 
-    async terminateSession(userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<boolean> {
+    static async terminateSession(userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<boolean> {
 
         const session = await devicesService.findSessionByDeviceId(deviceId);
 

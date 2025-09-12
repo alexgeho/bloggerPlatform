@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import {WithId} from "mongodb";
-import {userRepository} from '../repositories/user.repository';
+import {UserRepository} from '../repositories/user.repository';
 import {User} from '../../auth/domain/user';
 import {UserInputDto} from "./dtos/user.input-dto";
 import {UserDataOutput} from "../routers/output/user-data.output";
@@ -8,15 +8,16 @@ import {UserQueryInput} from "../routers/input/user-query.input";
 import {Result} from "../../auth/common/result/result.type";
 import {IUserDB} from "../../auth/types/user.db.interface";
 import {ResultStatus} from "../../auth/common/result/resultCode";
-import {bcryptService} from "../../auth/adapters/bcrypt.service";
+import {BcryptService} from "../../auth/adapters/bcrypt.service";
 import {mapUserToUserDB} from "../routers/mappers/map-to-user-output.util";
 import {UserEntity} from "../../auth/domain/user.entity";
 import {emailManager} from "../../auth/adapters/email.manager";
 
+
 export const userService = {
 
     async findMany(queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
-        return userRepository.findMany(queryDto);
+        return UserRepository.findMany(queryDto);
     },
 
 
@@ -25,7 +26,7 @@ export const userService = {
         errorsMessages: { field: string, message: string }[]
     }> {
 
-        const existingUser = await userRepository.findOne({login: dto.login, email: dto.email});
+        const existingUser = await UserRepository.findOne({login: dto.login, email: dto.email});
 
         if (existingUser) {
             // Проверяем, что именно совпало
@@ -46,7 +47,7 @@ export const userService = {
 
         const newUser: User = new UserEntity (dto.login, dto.email, passwordHash, passwordSalt)
 
-        const id = await userRepository.create(newUser);
+        const id = await UserRepository.create(newUser);
 
         await emailManager
             .sendConfirmationEmail(newUser.accountData.email, newUser.emailConfirmation.confirmationCode);
@@ -62,7 +63,7 @@ export const userService = {
 
     async delete(id: string): Promise<void> {
 
-        await userRepository.delete(id);
+        await UserRepository.delete(id);
         return;
     },
 
@@ -70,7 +71,7 @@ export const userService = {
         loginOrEmail: string,
         password: string,
     ): Promise<Result<WithId<IUserDB> | null>> {
-        const user = await userRepository.findByLoginOrEmail(loginOrEmail);
+        const user = await UserRepository.findByLoginOrEmail(loginOrEmail);
         if (!user)
             return {
                 status: ResultStatus.NotFound,
@@ -79,7 +80,7 @@ export const userService = {
                 extensions: [{ field: 'loginOrEmail', message: 'Not Found' }],
             };
 
-        const isPassCorrect = await bcryptService.checkPassword(password, user.accountData.passwordHash);
+        const isPassCorrect = await BcryptService.checkPassword(password, user.accountData.passwordHash);
         if (!isPassCorrect)
             return {
                 status: ResultStatus.BadRequest,

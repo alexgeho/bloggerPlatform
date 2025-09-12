@@ -4,9 +4,9 @@ import {ObjectId, WithId} from 'mongodb';
 import {RepositoryNotFoundError} from '../../../core/errors/repository-not-found.error';
 import {UserQueryInput} from '../routers/input/user-query.input';
 
-export const userRepository = {
+export class UserRepository {
 
-    async findMany( queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
+    static async findMany( queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
 
         const {
             pageNumber,
@@ -40,13 +40,13 @@ export const userRepository = {
         const totalCount = await userCollection.countDocuments({$or: [searchLogin, searchEmail]});
 
         return { items, totalCount };
-    },
+    }
 
-    async create(newUser: User): Promise<string> {
+    static async create(newUser: User): Promise<string> {
         const insertResult = await userCollection.insertOne(newUser);
-        return insertResult.insertedId.toString();},
+        return insertResult.insertedId.toString();}
 
-    async updateConfirmation(user: User): Promise<boolean> {
+    static async updateConfirmation(user: User): Promise<boolean> {
         const result = await userCollection.updateOne(
             { _id: new ObjectId(user._id) },
             {
@@ -56,15 +56,15 @@ export const userRepository = {
             }
         );
         return result.matchedCount === 1;
-    },
+    }
 
-    async findByConfirmationCode(code: string) {
+    static async findByConfirmationCode(code: string) {
         return userCollection.findOne({
             'emailConfirmation.confirmationCode': code
         });
-    },
+    }
 
-    async uptateCodeAndDate(user: User): Promise<boolean> {
+    static async uptateCodeAndDate(user: User): Promise<boolean> {
         const result = await userCollection.updateOne(
             { _id: new ObjectId(user._id) },
             {
@@ -76,9 +76,9 @@ export const userRepository = {
         );
 
         return result.modifiedCount === 1;
-    },
+    }
 
-    async delete(id: string): Promise<void> {
+    static async delete(id: string): Promise<void> {
         const deleteResult = await userCollection.deleteOne({
             _id: new ObjectId(id),
         });
@@ -87,9 +87,9 @@ export const userRepository = {
             throw new RepositoryNotFoundError('User not exist');
         }
         return;
-    },
+    }
 
-    async findOne({ login, email }: { login?: string, email?: string }): Promise<WithId<User> | null> {
+    static async findOne({ login, email }: { login?: string, email?: string }): Promise<WithId<User> | null> {
         const filter: any = {};
         if (login && email) {
             filter.$or = [{ login }, { email }];
@@ -101,18 +101,18 @@ export const userRepository = {
             return null;
         }
         return userCollection.findOne(filter);
-    },
+    }
 
-    async findByLoginOrEmail(identifier: string) {
+    static async findByLoginOrEmail(identifier: string) {
         return userCollection.findOne({
             $or: [
                 { 'accountData.login': identifier },
                 { 'accountData.email': identifier }
             ]
         });
-    },
+    }
 
-    async forTestfindByLoginOrEmail(login: string, email: string) {
+    static async forTestfindByLoginOrEmail(login: string, email: string) {
         return userCollection.findOne(
             {
                 $or: [
