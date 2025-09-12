@@ -6,6 +6,9 @@ import {EmailResendHandler} from "./features/auth/routers/handlers/authHandlers/
 import {PostUserHandler} from "./features/users/routers/handlers/post-user.handler";
 import {UserService} from "./features/users/application/user.service";
 import {DeleteUserHandler} from "./features/users/routers/handlers/delete-user.handler";
+import {
+    EmailConfirmationHandler
+} from "./features/auth/routers/handlers/authHandlers/registration-confirmation.handler";
 
 
 
@@ -17,3 +20,4 @@ export const emailResendHandler = new EmailResendHandler(authService);
 export const userService = new UserService(userRepository);
 export const postUserHandler = new PostUserHandler(userService);
 export const deleteUserHandler = new DeleteUserHandler(userService);
+export const emailConfirmationHandler = new EmailConfirmationHandler(authService);

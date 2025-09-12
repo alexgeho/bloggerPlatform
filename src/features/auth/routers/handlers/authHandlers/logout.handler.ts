@@ -2,6 +2,7 @@ import {Request, Response} from 'express';
 import {refreshCookieOptions} from '../../../../../core/http/cookie';
 import {jwtService} from "../../../adapters/jwt.service";
 import {AuthService} from "../../../application/auth.service";
+import {authService} from "../../../../../composition-root";
 
 export async function logoutHandler(
     req: Request,

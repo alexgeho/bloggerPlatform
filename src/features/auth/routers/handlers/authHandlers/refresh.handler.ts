@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { authService } from '../../../application/auth.service';
 import { ResultStatus } from '../../../common/result/resultCode';
 import { refreshCookieOptions } from '../../../../../core/http/cookie';
+import {authService} from "../../../../../composition-root";
 
 export async function refreshHandler(req: Request, res: Response) {
 

@@ -1,49 +1,56 @@
 import {Request, Response} from 'express';
 import {RegistrationDto} from "../../../types/registration.dto";
-import {authService} from "../../../application/auth.service";
 import {usersQwRepository} from "../../../../users/repositories/usersQwRepository";
 
-export const registrationHandler = async (req: Request, res: Response):Promise<void> => {
+export class RegistrationHandler {
 
-    try {
+    constructor(private authService: any) {
+    }
 
-        const dto: RegistrationDto = req.body;
+    async execute(req: Request, res: Response): Promise<void> {
 
-        const userExist = await usersQwRepository.findByLoginOrEmail(dto.login, dto.email);
+        try {
 
-        if (userExist) {
-            if (userExist.accountData.email === dto.email) {
-                 res.status(400).json({
-                    errorsMessages: [{message: "email is already exist", field: "email"}],
+            const dto: RegistrationDto = req.body;
 
-                });
-                return
+            const userExist = await usersQwRepository.findByLoginOrEmail(dto.login, dto.email);
+
+            if (userExist) {
+                if (userExist.accountData.email === dto.email) {
+                    res.status(400).json({
+                        errorsMessages: [{message: "email is already exist", field: "email"}],
+
+                    });
+                    return
+                }
+
+                if (userExist.accountData.login === dto.login) {
+                    res.status(400).json({
+                        errorsMessages: [{message: "login is already exist", field: "login"}],
+                    });
+                    return
+                }
             }
 
-            if (userExist.accountData.login === dto.login) {
-                 res.status(400).json({
-                    errorsMessages: [{message: "login is already exist", field: "login"}],
-                });
-                return
-            }
+            await this.authService.create(dto)
+
+            res.sendStatus(204);
+
+        } catch (error) {
+            res.status(400).json({
+                errorsMessages: [
+                    {
+                        message: "User with this email or login already exists",
+                        field: "email",
+                    },
+                ],
+            });
+
+
         }
-
-
-        await authService.create(dto)
-
-        res.sendStatus(204);
-
-    } catch (error) {
-         res.status(400).json({
-            errorsMessages: [
-                {
-                    message: "User with this email or login already exists",
-                    field: "email", // или "login" — в зависимости от того, что совпало
-                },
-            ],
-        });
 
 
     }
 
-};
+
+}
