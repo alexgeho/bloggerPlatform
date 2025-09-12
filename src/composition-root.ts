@@ -9,6 +9,7 @@ import {DeleteUserHandler} from "./features/users/routers/handlers/delete-user.h
 import {
     EmailConfirmationHandler
 } from "./features/auth/routers/handlers/authHandlers/registration-confirmation.handler";
+import {RegistrationHandler} from "./features/auth/routers/handlers/authHandlers/registration-handler";
 
 
 
@@ -21,3 +22,4 @@ export const userService = new UserService(userRepository);
 export const postUserHandler = new PostUserHandler(userService);
 export const deleteUserHandler = new DeleteUserHandler(userService);
 export const emailConfirmationHandler = new EmailConfirmationHandler(authService);
+export const registrationHandler = new RegistrationHandler(authService);
