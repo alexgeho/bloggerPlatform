@@ -6,7 +6,7 @@ import {UserQueryInput} from '../routers/input/user-query.input';
 
 export class UserRepository {
 
-    static async findMany( queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
+     async findMany( queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
 
         const {
             pageNumber,
@@ -42,11 +42,11 @@ export class UserRepository {
         return { items, totalCount };
     }
 
-    static async create(newUser: User): Promise<string> {
+     async create(newUser: User): Promise<string> {
         const insertResult = await userCollection.insertOne(newUser);
         return insertResult.insertedId.toString();}
 
-    static async updateConfirmation(user: User): Promise<boolean> {
+     async updateConfirmation(user: User): Promise<boolean> {
         const result = await userCollection.updateOne(
             { _id: new ObjectId(user._id) },
             {
@@ -58,13 +58,13 @@ export class UserRepository {
         return result.matchedCount === 1;
     }
 
-    static async findByConfirmationCode(code: string) {
+     async findByConfirmationCode(code: string) {
         return userCollection.findOne({
             'emailConfirmation.confirmationCode': code
         });
     }
 
-    static async uptateCodeAndDate(user: User): Promise<boolean> {
+     async uptateCodeAndDate(user: User): Promise<boolean> {
         const result = await userCollection.updateOne(
             { _id: new ObjectId(user._id) },
             {
@@ -78,7 +78,7 @@ export class UserRepository {
         return result.modifiedCount === 1;
     }
 
-    static async delete(id: string): Promise<void> {
+     async delete(id: string): Promise<void> {
         const deleteResult = await userCollection.deleteOne({
             _id: new ObjectId(id),
         });
@@ -89,7 +89,7 @@ export class UserRepository {
         return;
     }
 
-    static async findOne({ login, email }: { login?: string, email?: string }): Promise<WithId<User> | null> {
+     async findOne({ login, email }: { login?: string, email?: string }): Promise<WithId<User> | null> {
         const filter: any = {};
         if (login && email) {
             filter.$or = [{ login }, { email }];
@@ -103,7 +103,7 @@ export class UserRepository {
         return userCollection.findOne(filter);
     }
 
-    static async findByLoginOrEmail(identifier: string) {
+     async findByLoginOrEmail(identifier: string) {
         return userCollection.findOne({
             $or: [
                 { 'accountData.login': identifier },
@@ -112,7 +112,7 @@ export class UserRepository {
         });
     }
 
-    static async forTestfindByLoginOrEmail(login: string, email: string) {
+     async forTestfindByLoginOrEmail(login: string, email: string) {
         return userCollection.findOne(
             {
                 $or: [
@@ -127,3 +127,4 @@ export class UserRepository {
 
 
 };
+

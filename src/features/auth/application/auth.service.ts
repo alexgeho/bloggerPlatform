@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import {userRepository} from "../../users/repositories/user.repository";
+import {UserRepository} from "../../users/repositories/user.repository";
 import {ResultStatus} from "../common/result/resultCode";
 import {jwtService} from "../adapters/jwt.service";
 import {User} from "../domain/user";
@@ -9,43 +9,40 @@ import {v4 as uuidv4} from 'uuid';
 import {RegistrationDto} from "../types/registration.dto";
 import {UserEntity} from "../domain/user.entity";
 import {devicesService} from "./devicesService";
-import {ENV} from "../../../core/config/env";
-import {RateLimiterService} from "./rateLimiter.service";
-import {response} from "express";
-import jwt from "jsonwebtoken";
-import {DeviceSession} from "../domain/device-session.entity";
 import {LoginUserDto} from "../domain/login-DTO";
-
+import {BcryptService} from "../adapters/bcrypt.service";
 
 
 export class AuthService {
 
-    static async create(dto: RegistrationDto): Promise<User | null> {
-        const userExist = await userRepository.findOne(dto);
+    constructor(private userRepository: UserRepository, private bcrypt: BcryptService  ) {}
+
+     async create(dto: RegistrationDto): Promise<User | null> {
+        const userExist = await this.userRepository.findOne(dto);
         if (userExist) return null;
 
         const passwordSalt = await bcrypt.genSalt(10);
         const passwordHash = await this._generateHash(dto.password, passwordSalt);
 
         const userNew: User = new UserEntity(dto.login, dto.email, passwordHash, passwordSalt);
-        await userRepository.create(userNew);
+        await this.userRepository.create(userNew);
         emailManager.sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
         return userNew;
     }
 
-    static async _generateHash(password: string, salt: string) {
+     async _generateHash(password: string, salt: string) {
         return await bcrypt.hash(password, salt);
     }
 
-    static async update(user: User): Promise<void> {
-        await userRepository.updateConfirmation(user);
+     async update(user: User): Promise<void> {
+        await this.userRepository.updateConfirmation(user);
     }
 
-    static async loginUser({loginOrEmail, password, ip, userAgent}: LoginUserDto) {
+     async loginUser({loginOrEmail, password, ip, userAgent}: LoginUserDto) {
 
 
         // taking user from db
-        const user = await userRepository.findByLoginOrEmail(loginOrEmail);
+        const user = await this.userRepository.findByLoginOrEmail(loginOrEmail);
         if (!user) return {
             status: ResultStatus.Unauthorized,
             extensions: [{field: "loginOrEmail", message: "User not found"}]
@@ -80,7 +77,7 @@ export class AuthService {
 
     }
 
-    static async refreshTokens(refreshToken: string) {
+     async refreshTokens(refreshToken: string) {
 
         const payload = await jwtService.verifyRefreshToken(refreshToken)
 
@@ -159,7 +156,7 @@ export class AuthService {
         // return { status: ResultStatus.Success, data: { accessToken: newAccess, refreshToken: newRefresh } };
     }
 
-    static async resendEmail(user: User, ip: string): Promise<void> {
+     async resendEmail(user: User, ip: string): Promise<void> {
 
         const newCode: string = uuidv4();
         const newExpirationDate: Date = add(new Date(), {hours: 1, minutes: 30});
@@ -167,11 +164,11 @@ export class AuthService {
         user.emailConfirmation.confirmationCode = newCode;
         user.emailConfirmation.expirationDate = newExpirationDate;
 
-        await userRepository.uptateCodeAndDate(user);
+        await this.userRepository.uptateCodeAndDate(user);
         await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
     }
 
-    static async terminateSession(userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<boolean> {
+     async terminateSession(userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<boolean> {
 
         const session = await devicesService.findSessionByDeviceId(deviceId);
 
@@ -194,6 +191,5 @@ export class AuthService {
 
 
     }
-
 
 };

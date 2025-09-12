@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { errorsHandler } from '../../../../../core/errors/errors.handler';
-import { AuthService } from '../../../application/auth.service';
+import {authService, AuthService} from '../../../application/auth.service';
 import { refreshCookieOptions } from '../../../../../core/http/cookie';
 import { sendResult } from '../../../../../core/http/send-result';
 import {ResultStatus} from "../../../common/result/resultCode";
@@ -14,7 +14,7 @@ async execute (req: Request, res: Response): Promise<void> {
         const userAgent = req.headers['user-agent'] || 'Unknown device';
         const { loginOrEmail, password } = req.body
 
-        const result = await AuthService.loginUser({
+        const result = await authService.loginUser({
             loginOrEmail,
             password,
             ip,
