@@ -14,6 +14,7 @@ import {GetUserListHandler} from "./features/users/routers/handlers/get-user-lis
 import {UsersQwRepository} from "./features/users/repositories/usersQwRepository";
 import {GetMeHandler} from "./features/auth/routers/handlers/authHandlers/get-me.handler";
 import {PasswordRecoveryHandler} from "./features/auth/routers/handlers/authHandlers/password-recovery.handler";
+import {NewPasswordHandler} from "./features/auth/routers/handlers/authHandlers/new-password.handler";
 
 
 
@@ -31,3 +32,4 @@ export const usersQwRepository = new UsersQwRepository();
 export const getUserListHandler = new GetUserListHandler(usersQwRepository)
 export const getMeHandler = new GetMeHandler(usersQwRepository);
 export const passwordRecoveryHandler = new PasswordRecoveryHandler(authService);
+export const newPasswordHandler = new NewPasswordHandler(authService);

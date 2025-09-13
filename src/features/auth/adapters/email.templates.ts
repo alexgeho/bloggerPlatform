@@ -9,11 +9,13 @@ export const templates = {
 `;
     },
 
-    recovery: (code: string): string => {
+    recovery: (recoveryCode: string): string => {
         return `
-        <h1>Confirm password recovery</h1>
-        <p>To confirm password recovery please follow the link below:</p>
-        <a href='https://alexgeho.github.io/bloggerPlatform-front/password-recovery?code=${code}'>confirm password recovery</a>
+<h1>Password recovery</h1>
+       <p>To finish password recovery please follow the link below:
+          <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode}'>recovery password</a>
+      </p>
+
         `;
 
     }

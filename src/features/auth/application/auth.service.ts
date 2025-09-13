@@ -15,19 +15,38 @@ import {BcryptService} from "../adapters/bcrypt.service";
 
 export class AuthService {
 
-    constructor(private userRepository: UserRepository, private bcrypt: BcryptService  ) {}
+    constructor(private userRepository: UserRepository, private bcrypt: BcryptService) {}
 
-    async passRecoveryEmail(email:string): Promise<void> {
-        
+    async newPassword (newPassword: string, recoveryCode: string) {
+
+       const user = await this.userRepository.findByCode(recoveryCode)
+
+        if (!user || user.emailConfirmation.expirationDate < new Date()) {
+            return {
+                status: ResultStatus.Unauthorized,
+                extensions: [{field: "recoveryCode", message: "Invalid recovery code"}]
+            };
+        }
+
+        const passwordSalt = await bcrypt.genSalt(10);
+        const passwordHash = await this._generateHash(newPassword, passwordSalt);
+
+        await this.userRepository.updateUserWithNewPassword (user, passwordHash);
+
+
+    }
+
+    async passRecoveryEmail(email: string): Promise<void> {
+
         const isUserExist = await this.userRepository.findByEmail(email);
         if (!isUserExist) return;
-        
-        const code: string = uuidv4();
+
+        const recoveryCode: string = uuidv4();
         const expirationDate: Date = add(new Date(), {hours: 1, minutes: 30});
 
-        await emailManager.sendRecoveryCode(email, code);
+        await emailManager.sendRecoveryCode(email, recoveryCode);
 
-        await this.userRepository.updatePasswordRecovery(email, code, expirationDate);
+        await this.userRepository.updatePasswordRecovery(email, recoveryCode, expirationDate);
     }
 
     async create(dto: RegistrationDto): Promise<User | null> {
@@ -43,15 +62,15 @@ export class AuthService {
         return userNew;
     }
 
-     async _generateHash(password: string, salt: string) {
+    async _generateHash(password: string, salt: string) {
         return await bcrypt.hash(password, salt);
     }
 
-     async update(user: User): Promise<void> {
+    async update(user: User): Promise<void> {
         await this.userRepository.updateConfirmation(user);
     }
 
-     async loginUser({loginOrEmail, password, ip, userAgent}: LoginUserDto) {
+    async loginUser({loginOrEmail, password, ip, userAgent}: LoginUserDto) {
 
 
         // taking user from db
@@ -90,7 +109,7 @@ export class AuthService {
 
     }
 
-     async refreshTokens(refreshToken: string) {
+    async refreshTokens(refreshToken: string) {
 
         const payload = await jwtService.verifyRefreshToken(refreshToken)
 
@@ -169,7 +188,7 @@ export class AuthService {
         // return { status: ResultStatus.Success, data: { accessToken: newAccess, refreshToken: newRefresh } };
     }
 
-     async resendEmail(user: User, ip: string): Promise<void> {
+    async resendEmail(user: User, ip: string): Promise<void> {
 
         const newCode: string = uuidv4();
         const newExpirationDate: Date = add(new Date(), {hours: 1, minutes: 30});
@@ -181,7 +200,7 @@ export class AuthService {
         await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
     }
 
-     async terminateSession(userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<boolean> {
+    async terminateSession(userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<boolean> {
 
         const session = await devicesService.findSessionByDeviceId(deviceId);
 

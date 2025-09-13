@@ -11,15 +11,24 @@ import {requestLimitMiddleware} from "../middlewares/rateLimeterUpd";
 import {
     emailConfirmationHandler,
     emailResendHandler, getMeHandler,
-    loginHandler, passwordRecoveryHandler,
+    loginHandler, newPasswordHandler, passwordRecoveryHandler,
     registrationHandler
-} from "../../../composition-root"; // 👈 импортируем готовый экземпляр
+} from "../../../composition-root";
+import {emailValidationMiddlewares} from "../validation/email.validation.middlewares";
+import {newPassValidationMiddlewares} from "../validation/new-pass.validation.middlewares"; // 👈 импортируем готовый экземпляр
 
 export const authRouter = Router();
 
+authRouter.post("/new-password",
+    requestLimitMiddleware,
+    newPassValidationMiddlewares,
+    inputValidationResultMiddleware,
+    newPasswordHandler.execute.bind(newPasswordHandler)
+)
+
 authRouter.post("/password-recovery",
     requestLimitMiddleware,
-    authInputDtoValidation,
+    emailValidationMiddlewares,
     inputValidationResultMiddleware,
     passwordRecoveryHandler.execute.bind(passwordRecoveryHandler))
 
