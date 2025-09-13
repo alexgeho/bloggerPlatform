@@ -6,6 +6,8 @@ import {UserQueryInput} from '../routers/input/user-query.input';
 
 export class UserRepository {
 
+    async updatePasswordRecovery (email: string, code: string, expirationDate: Date): Promise<boolean> {}
+
      async findMany( queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
 
         const {

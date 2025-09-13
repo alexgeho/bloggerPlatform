@@ -17,6 +17,9 @@ import {
 
 export const authRouter = Router();
 
+authRouter.post("/password-recovery",
+    recoveryHandler)
+
 authRouter.post("/login",
     requestLimitMiddleware,
     authInputDtoValidation,

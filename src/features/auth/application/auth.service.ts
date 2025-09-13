@@ -17,7 +17,20 @@ export class AuthService {
 
     constructor(private userRepository: UserRepository, private bcrypt: BcryptService  ) {}
 
-     async create(dto: RegistrationDto): Promise<User | null> {
+    async passRecoveryEmail(email:string): Promise<void> {
+        
+        const isUserExist = await this.userRepository.findByEmail(email);
+        if (!isUserExist) return;
+        
+        const code: string = uuidv4();
+        const expirationDate: Date = add(new Date(), {hours: 1, minutes: 30});
+
+        await emailManager.sendRecoveryCode(email, code);
+
+        await this.userRepository.updatePasswordRecovery(email, code, expirationDate);
+    }
+
+    async create(dto: RegistrationDto): Promise<User | null> {
         const userExist = await this.userRepository.findOne(dto);
         if (userExist) return null;
 
