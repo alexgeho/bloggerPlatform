@@ -18,6 +18,9 @@ import {
 export const authRouter = Router();
 
 authRouter.post("/password-recovery",
+    requestLimitMiddleware,
+    authInputDtoValidation,
+    inputValidationResultMiddleware,
     passwordRecoveryHandler.execute.bind(passwordRecoveryHandler))
 
 authRouter.post("/login",
