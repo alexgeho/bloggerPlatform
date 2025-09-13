@@ -6,13 +6,14 @@ import {UserQueryInput} from '../routers/input/user-query.input';
 
 export class UserRepository {
 
-    async updateUserWithNewPassword (user: User, passwordHash:string): Promise<void> {
+    async updateUserWithNewPassword (user: User, passwordHash:string, passwordSalt: string): Promise<void> {
 
         await userCollection.updateOne(
             {_id: new ObjectId(user._id)},
             {
                 $set: {
                     'accountData.passwordHash': passwordHash,
+                    'accountData.passwordSalt': passwordSalt,
                     'emailConfirmation.isConfirmed': true
                 }
             }
