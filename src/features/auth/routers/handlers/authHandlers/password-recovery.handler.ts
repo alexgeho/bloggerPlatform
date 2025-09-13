@@ -5,11 +5,20 @@ export class PasswordRecoveryHandler {
 
     constructor(private readonly authService: AuthService) {}
 
-    async execute (req: Request, res: Response) {
+    async execute (req: any, res: any) {
 
-        const email = req.body;
+        try {
+            const {email} = req.body;
 
-        async this.authService.passRecoveryEmail (email);
+            await this.authService.passRecoveryEmail (email);
+
+            res.sendStatus(204);
+
+        } catch (e: any) {
+
+            res.status(400).send({error: "Something went wrong"});
+        }
+
 
     }
 

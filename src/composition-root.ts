@@ -13,6 +13,7 @@ import {RegistrationHandler} from "./features/auth/routers/handlers/authHandlers
 import {GetUserListHandler} from "./features/users/routers/handlers/get-user-list.handler";
 import {UsersQwRepository} from "./features/users/repositories/usersQwRepository";
 import {GetMeHandler} from "./features/auth/routers/handlers/authHandlers/get-me.handler";
+import {PasswordRecoveryHandler} from "./features/auth/routers/handlers/authHandlers/password-recovery.handler";
 
 
 
@@ -29,3 +30,4 @@ export const registrationHandler = new RegistrationHandler(authService, userRepo
 export const usersQwRepository = new UsersQwRepository();
 export const getUserListHandler = new GetUserListHandler(usersQwRepository)
 export const getMeHandler = new GetMeHandler(usersQwRepository);
+export const passwordRecoveryHandler = new PasswordRecoveryHandler(authService);

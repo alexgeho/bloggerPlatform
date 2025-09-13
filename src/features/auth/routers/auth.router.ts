@@ -11,14 +11,14 @@ import {requestLimitMiddleware} from "../middlewares/rateLimeterUpd";
 import {
     emailConfirmationHandler,
     emailResendHandler, getMeHandler,
-    loginHandler,
+    loginHandler, passwordRecoveryHandler,
     registrationHandler
 } from "../../../composition-root"; // 👈 импортируем готовый экземпляр
 
 export const authRouter = Router();
 
 authRouter.post("/password-recovery",
-    recoveryHandler)
+    passwordRecoveryHandler.execute.bind(passwordRecoveryHandler))
 
 authRouter.post("/login",
     requestLimitMiddleware,
