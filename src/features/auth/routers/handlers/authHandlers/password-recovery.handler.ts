@@ -3,7 +3,7 @@ import {AuthService} from "../../../application/auth.service";
 
 export class PasswordRecoveryHandler {
 
-    constructor(private authService: AuthService) {}
+    constructor(protected authService: AuthService) {}
 
     async execute (req: any, res: any) {
 

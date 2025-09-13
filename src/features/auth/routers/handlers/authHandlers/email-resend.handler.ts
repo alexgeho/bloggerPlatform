@@ -4,7 +4,7 @@ import {UserRepository} from "../../../../users/repositories/user.repository"; /
 
 export class EmailResendHandler  {
 
-    constructor(private authService: AuthService, private usersRepository: UserRepository) {}
+    constructor(protected authService: AuthService, protected usersRepository: UserRepository) {}
 
 async execute (req: Request, res: Response): Promise<void> {
 

@@ -8,7 +8,7 @@ import {ResultStatus} from "../../../common/result/resultCode";
 
 export class LoginHandler {
 
-    constructor(private authService: AuthService) {}
+    constructor(protected authService: AuthService) {}
 
 async execute (req: Request, res: Response): Promise<void> {
     try {

@@ -15,7 +15,7 @@ import {BcryptService} from "../adapters/bcrypt.service";
 
 export class AuthService {
 
-    constructor(private userRepository: UserRepository, private bcrypt: BcryptService) {}
+    constructor(protected userRepository: UserRepository, protected bcrypt: BcryptService) {}
 
     async newPassword (newPassword: string, recoveryCode: string) {
 

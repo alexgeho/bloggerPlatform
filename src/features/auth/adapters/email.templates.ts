@@ -12,6 +12,7 @@ export const templates = {
     recovery: (recoveryCode: string): string => {
         return `
 <h1>Password recovery</h1>
+<p>Your recovery code: <b>${recoveryCode}</b></p>
        <p>To finish password recovery please follow the link below:
           <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode}'>recovery password</a>
       </p>
