@@ -36,10 +36,16 @@ export class AuthService {
 
     }
 
-    async passRecoveryEmail(email: string): Promise<void> {
+    async passRecoveryEmail(email: string): Promise<{ success: boolean; error?: string }> {
 
         const isUserExist = await this.userRepository.findByEmail(email);
-        if (!isUserExist) return;
+
+        console.log("findByEmail: ", isUserExist);
+
+        if (!isUserExist) {
+            return { success: false, error: "User with this email not found" };
+        }
+
 
         const recoveryCode: string = uuidv4();
         const expirationDate: Date = add(new Date(), {hours: 1, minutes: 30});
@@ -47,6 +53,8 @@ export class AuthService {
         await emailManager.sendRecoveryCode(email, recoveryCode);
 
         await this.userRepository.updatePasswordRecovery(email, recoveryCode, expirationDate);
+
+        return { success: true }
     }
 
     async create(dto: RegistrationDto): Promise<User | null> {

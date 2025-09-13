@@ -23,13 +23,13 @@ export class UserRepository {
 
         const result = await userCollection.updateOne(
             {
-                'accountData.email': email,
-                'emailConfirmation.confirmationCode': recoveryCode,
-                'emailConfirmation.expirationDate': expirationDate
+                'accountData.email': email
             },
             {
                 $set: {
-                    'emailConfirmation.isConfirmed': false
+                    'emailConfirmation.isConfirmed': false,
+                    'emailConfirmation.confirmationCode': recoveryCode,
+                    'emailConfirmation.expirationDate': expirationDate
                 }
             }
         )

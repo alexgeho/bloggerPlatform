@@ -11,7 +11,7 @@ export const emailManager = {
 
     async sendRecoveryCode (email: string, code: string): Promise<void> {
          const html = templates.recovery(code);
-         const subject = 'Confirm password recovery';
+         const subject = 'Password recovery';
          await emailAdapter.sendEmail(email, subject, html);
     }
 

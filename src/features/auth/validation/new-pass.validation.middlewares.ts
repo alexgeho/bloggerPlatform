@@ -1,7 +1,7 @@
 import {body} from 'express-validator';
 
-export const newPassValidationMiddlewares = body('email')
+export const newPassValidationMiddlewares = body('newPassword')
     .isString()
     .withMessage('password should be string')
     .isLength({ min: 6, max: 20 })
-    .withMessage('Length of description is not correct')
+    .withMessage('Length of password should be between 6 and 20 characters');
