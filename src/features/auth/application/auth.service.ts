@@ -41,10 +41,10 @@ export class AuthService {
         const isUserExist = await this.userRepository.findByEmail(email);
 
         console.log("findByEmail: ", isUserExist);
-
-        if (!isUserExist) {
-            return { success: false, error: "User with this email not found" };
-        }
+        //
+        // if (!isUserExist) {
+        //     return { success: false, error: "User with this email not found" };
+        // }
 
 
         const recoveryCode: string = uuidv4();
