@@ -28,9 +28,8 @@ export class UserRepository {
             },
             {
                 $set: {
-                    'emailConfirmation.isConfirmed': false,
-                    'emailConfirmation.confirmationCode': recoveryCode,
-                    'emailConfirmation.expirationDate': expirationDate
+                    'emailRecovery.recoveryCode': recoveryCode,
+                    'emailRecovery.expirationDate': expirationDate
                 }
             }
         )

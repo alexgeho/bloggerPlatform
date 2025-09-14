@@ -1,6 +1,8 @@
 import {body} from 'express-validator';
 
 export const newPassValidationMiddlewares = body('newPassword')
+    .exists()
+    .withMessage('password is required')
     .notEmpty()
     .withMessage('newPassword should not be empty')
     .isString()

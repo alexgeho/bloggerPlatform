@@ -19,6 +19,13 @@ export class UserEntity {
         isConfirmed: boolean;
     };
 
+    emailRecovery: {
+        recoveryCode: string | null;
+        expirationDate: Date | null;
+    };
+
+
+
     constructor(login: string, email: string, passwordHash: string, passwordSalt: string) {
     this._id = new ObjectId();
     this.accountData = {
@@ -34,6 +41,11 @@ export class UserEntity {
         expirationDate: add(new Date(), { hours: 1, minutes: 30 }),
         isConfirmed: false
     };
+
+        this.emailRecovery = {
+            recoveryCode: null,
+            expirationDate: null,
+        };
 
     }
 

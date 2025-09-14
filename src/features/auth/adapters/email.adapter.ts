@@ -3,6 +3,8 @@ import nodemailer from 'nodemailer';
 type MailResult = boolean;
 
 export const emailAdapter = {
+
+
     async sendEmail(to: string, subject: string, html: string): Promise<MailResult> {
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
