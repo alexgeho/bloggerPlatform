@@ -15,11 +15,13 @@ import {BcryptService} from "../adapters/bcrypt.service";
 
 export class AuthService {
 
-    constructor(private userRepository: UserRepository, private bcrypt: BcryptService, private emailManager: EmailManager) {}
+    constructor(protected userRepository: UserRepository, protected bcrypt: BcryptService, protected emailManager: EmailManager) {}
 
-    async newPassword (newPassword: string, recoveryCode: string) {
+    async newPassword (newPassword: string, confirmationCode: string) {
 
-       const user = await this.userRepository.findByCode(recoveryCode)
+       const user = await this.userRepository.findByCode(confirmationCode)
+
+        console.log("findByCode: ", user);
 
         if (!user || user.emailConfirmation.expirationDate < new Date()) {
             return {
@@ -66,7 +68,9 @@ export class AuthService {
 
         const userNew: User = new UserEntity(dto.login, dto.email, passwordHash, passwordSalt);
         await this.userRepository.create(userNew);
-        this.emailManager.sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
+
+        // todo take away "await"
+        await this.emailManager.sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
         return userNew;
     }
 
@@ -232,4 +236,4 @@ export class AuthService {
 
     }
 
-}
+};

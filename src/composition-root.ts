@@ -15,15 +15,17 @@ import {UsersQwRepository} from "./features/users/repositories/usersQwRepository
 import {GetMeHandler} from "./features/auth/routers/handlers/authHandlers/get-me.handler";
 import {PasswordRecoveryHandler} from "./features/auth/routers/handlers/authHandlers/password-recovery.handler";
 import {NewPasswordHandler} from "./features/auth/routers/handlers/authHandlers/new-password.handler";
+import {EmailManager} from "./features/auth/adapters/email.manager";
 
 
 
 export const userRepository = new UserRepository();
 export const bcryptService = new BcryptService();
-export const authService = new AuthService(userRepository, bcryptService);
+export const emailManager = new EmailManager();
+export const authService = new AuthService(userRepository, bcryptService, emailManager);
 export const loginHandler = new LoginHandler(authService);
 export const emailResendHandler = new EmailResendHandler(authService, userRepository);
-export const userService = new UserService(userRepository);
+export const userService = new UserService(userRepository, emailManager);
 export const postUserHandler = new PostUserHandler(userService);
 export const deleteUserHandler = new DeleteUserHandler(userService);
 export const emailConfirmationHandler = new EmailConfirmationHandler(authService, userRepository);

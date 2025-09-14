@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import {WithId} from "mongodb";
-import { UserRepository} from '../repositories/user.repository';
+import {UserRepository} from '../repositories/user.repository';
 import {User} from '../../auth/domain/user';
 import {UserInputDto} from "./dtos/user.input-dto";
 import {UserDataOutput} from "../routers/output/user-data.output";
@@ -10,20 +10,17 @@ import {IUserDB} from "../../auth/types/user.db.interface";
 import {ResultStatus} from "../../auth/common/result/resultCode";
 import {mapUserToUserDB} from "../routers/mappers/map-to-user-output.util";
 import {UserEntity} from "../../auth/domain/user.entity";
-import {emailManager} from "../../auth/adapters/email.manager";
 import {bcryptService} from "../../../composition-root";
+import {EmailManager} from "../../auth/adapters/email.manager";
 
 
 export class UserService {
 
-        constructor(private usersRepository: UserRepository) {
-    }
+    constructor(private usersRepository: UserRepository, private emailManager: EmailManager) {}
 
     async findMany(queryDto: UserQueryInput): Promise<{ items: WithId<User>[]; totalCount: number }> {
         return this.usersRepository.findMany(queryDto);
     }
-
-
 
     async create(dto: UserInputDto): Promise<UserDataOutput | {
         errorsMessages: { field: string, message: string }[]
@@ -47,14 +44,19 @@ export class UserService {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash: any = await this._generateHash(dto.password, passwordSalt)
 
-        const newUser: User = new UserEntity (dto.login, dto.email, passwordHash, passwordSalt)
+        const newUser: User = new UserEntity(dto.login, dto.email, passwordHash, passwordSalt)
 
         const id = await this.usersRepository.create(newUser);
 
-        await emailManager
+        await this.emailManager
             .sendConfirmationEmail(newUser.accountData.email, newUser.emailConfirmation.confirmationCode);
 
-        return {id, login: newUser.accountData.login, email: newUser.accountData.email, createdAt: newUser.accountData.createdAt.toISOString()};
+        return {
+            id,
+            login: newUser.accountData.login,
+            email: newUser.accountData.email,
+            createdAt: newUser.accountData.createdAt.toISOString()
+        };
     }
 
     async _generateHash(password: string, salt: string) {
@@ -79,7 +81,7 @@ export class UserService {
                 status: ResultStatus.NotFound,
                 data: null,
                 errorMessage: 'Not Found',
-                extensions: [{ field: 'loginOrEmail', message: 'Not Found' }],
+                extensions: [{field: 'loginOrEmail', message: 'Not Found'}],
             };
 
         const isPassCorrect = await bcryptService.checkPassword(password, user.accountData.passwordHash);
@@ -88,7 +90,7 @@ export class UserService {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'Bad Request',
-                extensions: [{ field: 'password', message: 'Wrong password' }],
+                extensions: [{field: 'password', message: 'Wrong password'}],
             };
 
         return {

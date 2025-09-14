@@ -8,11 +8,11 @@ export class NewPasswordHandler {
     async execute (req: any, res: any) {
 
         try {
-            const newPassword = req.body
-            const recoveryCode = req.body;
+            const { newPassword, confirmationCode } = req.body;
 
 
-            await this.authService.newPassword (newPassword, recoveryCode);
+
+            await this.authService.newPassword (newPassword, confirmationCode);
 
             res.sendStatus(204);
 
