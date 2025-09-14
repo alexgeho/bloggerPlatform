@@ -54,13 +54,7 @@ export const devicesService = {
             return deviceIdOfUpdatedSession;
         }
 
-        const session: Omit<DeviceSession, "deviceId"> = {
-            userId,
-            ip,
-            userAgent,
-            lastActiveDate: null,
-            expireAt: null,
-        };
+        const session: Omit<DeviceSession, "deviceId"> = new DeviceSession(userId, ip, userAgent )
 
         const deviceId = await deviceSessionsRepository.createOneOnLogin(session);
         return deviceId;

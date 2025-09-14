@@ -9,7 +9,7 @@ import {Result} from "../../auth/common/result/result.type";
 import {IUserDB} from "../../auth/types/user.db.interface";
 import {ResultStatus} from "../../auth/common/result/resultCode";
 import {mapUserToUserDB} from "../routers/mappers/map-to-user-output.util";
-import {UserEntity} from "../../auth/domain/user.entity";
+import {UserClassEntity} from "../../auth/domain/user-class.entity";
 import {bcryptService} from "../../../composition-root";
 import {EmailManager} from "../../auth/adapters/email.manager";
 
@@ -44,7 +44,7 @@ export class UserService {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash: any = await this._generateHash(dto.password, passwordSalt)
 
-        const newUser: User = new UserEntity(dto.login, dto.email, passwordHash, passwordSalt)
+        const newUser: User = new UserClassEntity(dto.login, dto.email, passwordHash, passwordSalt)
 
         const id = await this.usersRepository.create(newUser);
 

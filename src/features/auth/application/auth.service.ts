@@ -7,7 +7,7 @@ import {add} from "date-fns";
 import {EmailManager} from "../adapters/email.manager";
 import {v4 as uuidv4} from 'uuid';
 import {RegistrationDto} from "../types/registration.dto";
-import {UserEntity} from "../domain/user.entity";
+import {UserClassEntity} from "../domain/user-class.entity";
 import {devicesService} from "./devicesService";
 import {LoginUserDto} from "../domain/login-DTO";
 import {BcryptService} from "../adapters/bcrypt.service";
@@ -20,8 +20,6 @@ export class AuthService {
     async newPassword (newPassword: string, confirmationCode: string) {
 
        const user = await this.userRepository.findByCode(confirmationCode)
-
-        console.log("findByCode: ", user);
 
         if (!user || user.emailConfirmation.expirationDate < new Date()) {
             return {
@@ -64,7 +62,7 @@ export class AuthService {
         const passwordSalt = await bcrypt.genSalt(10);
         const passwordHash = await this._generateHash(dto.password, passwordSalt);
 
-        const userNew: User = new UserEntity(dto.login, dto.email, passwordHash, passwordSalt);
+        const userNew: User = new UserClassEntity(dto.login, dto.email, passwordHash, passwordSalt);
         await this.userRepository.create(userNew);
 
         // todo take away "await"
