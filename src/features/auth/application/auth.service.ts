@@ -4,7 +4,7 @@ import {ResultStatus} from "../common/result/resultCode";
 import {jwtService} from "../adapters/jwt.service";
 import {User} from "../domain/user";
 import {add} from "date-fns";
-import {emailManager} from "../adapters/email.manager";
+import {EmailManager} from "../adapters/email.manager";
 import {v4 as uuidv4} from 'uuid';
 import {RegistrationDto} from "../types/registration.dto";
 import {UserEntity} from "../domain/user.entity";
@@ -15,7 +15,7 @@ import {BcryptService} from "../adapters/bcrypt.service";
 
 export class AuthService {
 
-    constructor(protected userRepository: UserRepository, protected bcrypt: BcryptService) {}
+    constructor(private userRepository: UserRepository, private bcrypt: BcryptService, private emailManager: EmailManager) {}
 
     async newPassword (newPassword: string, recoveryCode: string) {
 
@@ -50,9 +50,9 @@ export class AuthService {
         const recoveryCode: string = uuidv4();
         const expirationDate: Date = add(new Date(), {hours: 1, minutes: 30});
 
-        await emailManager.sendRecoveryCode(email, recoveryCode);
-
         await this.userRepository.updatePasswordRecovery(email, recoveryCode, expirationDate);
+        await this.emailManager.sendRecoveryCode(email, recoveryCode);
+
 
         return { success: true }
     }
@@ -66,7 +66,7 @@ export class AuthService {
 
         const userNew: User = new UserEntity(dto.login, dto.email, passwordHash, passwordSalt);
         await this.userRepository.create(userNew);
-        emailManager.sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
+        this.emailManager.sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
         return userNew;
     }
 
@@ -205,7 +205,7 @@ export class AuthService {
         user.emailConfirmation.expirationDate = newExpirationDate;
 
         await this.userRepository.uptateCodeAndDate(user);
-        await emailManager.sendConfirmationEmail(user.accountData.email, newCode);
+        await this.emailManager.sendConfirmationEmail(user.accountData.email, newCode);
     }
 
     async terminateSession(userId: string, deviceId: string, userAgent: string, lastActiveDate: Number, expireAt: Number): Promise<boolean> {
@@ -232,4 +232,4 @@ export class AuthService {
 
     }
 
-};
+}
