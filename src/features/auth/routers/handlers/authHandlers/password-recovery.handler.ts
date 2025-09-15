@@ -10,7 +10,7 @@ export class PasswordRecoveryHandler {
         try {
             const {email} = req.body;
 
-            await this.authService.passRecoveryEmail (email);
+            await this.authService.passRecoveryEmail(email);
 
             res.sendStatus(204);
 

@@ -10,6 +10,7 @@ export const templates = {
     },
 
     recovery: (recoveryCode: string): string => {
+
         return `
     <h1>Password recovery</h1>
     <p>To finish password recovery please follow the link below:

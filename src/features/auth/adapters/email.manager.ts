@@ -10,8 +10,11 @@ export class EmailManager {
     }
 
     async sendRecoveryCode(email: string, code: string): Promise<void> {
+        const text = `https://somesite.com/password-recovery?recoveryCode=${code}'`;
         const html = templates.recovery(code);
         const subject = 'Password recovery';
+        console.log(text, ' text');
+        console.log(code, ' code')
         await emailAdapter.sendEmail(email, subject, html);
     }
 

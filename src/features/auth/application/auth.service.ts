@@ -17,9 +17,9 @@ export class AuthService {
 
     constructor(protected userRepository: UserRepository, protected bcrypt: BcryptService, protected emailManager: EmailManager) {}
 
-    async newPassword (newPassword: string, confirmationCode: string) {
+    async newPassword (newPassword: string, recoveryCode: string) {
 
-       const user = await this.userRepository.findByCode(confirmationCode)
+       const user = await this.userRepository.findByCode(recoveryCode)
 
         if (!user || user.emailConfirmation.expirationDate < new Date()) {
             return {

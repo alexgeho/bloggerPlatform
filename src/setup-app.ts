@@ -1,4 +1,4 @@
-import type {ErrorRequestHandler} from 'express';
+import type {ErrorRequestHandler, NextFunction} from 'express';
 import express, {Express} from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -23,6 +23,18 @@ import {
 import {devicesRouter} from './features/auth/routers/security-devices.router';
 import {ENV} from "./core/config/env";
 
+
+const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    console.log('-------------------')
+    console.log(req.url, 'url')
+    console.log(req.body, 'body');
+    // console.log((req.cookies) as unknown as { cookies: any}, ' cookies')
+
+    return next();
+
+}
+
+
 export const setupApp = (app: Express) => {
     // 🆕 корректный req.ip за прокси
     app.set('trust proxy', true);
@@ -31,6 +43,8 @@ export const setupApp = (app: Express) => {
     app.use(express.json());
     app.use(cookieParser()); // why: чтобы читать/ставить refresh cookie
 
+    // @ts-ignore
+    app.use(loggerMiddleware)
     // // 🆕 DI устройств (репозиторий + сервис) + передать в authService
     // const deviceRepo = new MongoDeviceSessionsRepository(deviceSessionsCollection);
     // const devicesService = new DevicesService(deviceRepo);

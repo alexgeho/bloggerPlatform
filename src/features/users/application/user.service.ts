@@ -48,8 +48,8 @@ export class UserService {
 
         const id = await this.usersRepository.create(newUser);
 
-        await this.emailManager
-            .sendConfirmationEmail(newUser.accountData.email, newUser.emailConfirmation.confirmationCode);
+        //await this.emailManager
+          //  .sendConfirmationEmail(newUser.accountData.email, newUser.emailConfirmation.confirmationCode);
 
         return {
             id,
