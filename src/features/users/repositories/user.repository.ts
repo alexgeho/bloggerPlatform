@@ -163,6 +163,10 @@ export class UserRepository {
         return await userCollection.findOne({"emailConfirmation.confirmationCode": code});
     }
 
+    async findByRecoveryCode(code: string): Promise<User | null> {
+        return await userCollection.findOne({"emailRecovery.recoveryCode": code});
+    }
+
 
 };
 

@@ -19,7 +19,7 @@ export class AuthService {
 
     async newPassword (newPassword: string, recoveryCode: string) {
 
-       const user = await this.userRepository.findByCode(recoveryCode)
+       const user = await this.userRepository.findByRecoveryCode(recoveryCode)
 
         if (!user || user.emailConfirmation.expirationDate < new Date()) {
             return {
