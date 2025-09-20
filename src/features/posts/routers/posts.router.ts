@@ -28,7 +28,7 @@ postsRouter
         getPostListHandler)
 
     .post("/",
-        superAdminGuardMiddleware,
+        // superAdminGuardMiddleware,
         postInputDtoValidation,
         inputValidationResultMiddleware,
         postPostHandler)

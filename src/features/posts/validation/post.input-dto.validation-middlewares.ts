@@ -17,7 +17,7 @@ const shortDescriptionValidation = body('shortDescription')
     .isString()
     .withMessage('description should be string')
     .trim()
-    .isLength({ min: 3, max: 50 })
+    .isLength({ min: 3, max: 300 })
     .withMessage('Length of description is not correct');
 
 

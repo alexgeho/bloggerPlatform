@@ -17,16 +17,28 @@ export class AuthService {
 
     constructor(protected userRepository: UserRepository, protected bcrypt: BcryptService, protected emailManager: EmailManager) {}
 
-    async newPassword (newPassword: string, recoveryCode: string) {
+        async newPassword (newPassword: string, recoveryCode: string) {
 
-       const user = await this.userRepository.findByRecoveryCode(recoveryCode)
+        console.log("RecoveryCode:",recoveryCode);
 
-        if (!user || user.emailConfirmation.expirationDate < new Date()) {
-            return {
-                status: ResultStatus.Unauthorized,
-                extensions: [{field: "recoveryCode", message: "Invalid recovery code"}]
-            };
+       const user: User | null = await this.userRepository.findByRecoveryCode(recoveryCode)
+
+            console.log("User:",user);
+
+        if (!user || user.emailConfirmation.expirationDate < new Date() ||
+            user.emailRecovery.recoveryCode !== recoveryCode) {
+
+           throw new Error("Invalid recovery code");
+
+            // return {
+            //     status: ResultStatus.BadRequest, // 400
+            //     errorsMessages: [
+            //         { message: "Invalid recovery code", field: "recoveryCode" }
+            //     ]
+            // };
         }
+
+
 
         const passwordSalt = await bcrypt.genSalt(10);
         const passwordHash = await this._generateHash(newPassword, passwordSalt);

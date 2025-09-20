@@ -13,6 +13,12 @@ export type User = {
         confirmationCode: string;
         expirationDate: Date;
         isConfirmed: boolean;
+    },
+
+    emailRecovery: {
+        recoveryCode: string | null;
+        expirationDate: Date | null;
     };
+
 
 }
