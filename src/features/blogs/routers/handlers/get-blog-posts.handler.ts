@@ -12,7 +12,7 @@ export async function getBlogPostsHandler(req:Request, res:Response ) {
 
         // Параметры пагинации/сортировки
         const pageNumber = +(req.query.pageNumber || 1);
-        const pageSize = +(req.query.pageSize || 10);
+        const pageSize = +(req.query.pageSize || 15);
         const sortBy = typeof req.query.sortBy === "string" ? req.query.sortBy : "createdAt";
         const sortDirection = req.query.sortDirection === "asc" ? "asc" : "desc";
 

@@ -4,7 +4,7 @@ import { PaginationAndSorting } from '../../types/pagination-and-sorting'; // Т
 
 // Дефолтные значения для всех параметров пагинации и сортировки
 const DEFAULT_PAGE_NUMBER = 1;
-const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 20;
 const DEFAULT_SORT_DIRECTION = SortDirection.Desc;
 const DEFAULT_SORT_BY = 'createdAt';
 

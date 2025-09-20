@@ -4,7 +4,7 @@ const nameValidation = body('name')
     .isString()
     .withMessage('name should be string')
     .trim()
-    .isLength({ min: 2, max: 15 })
+    .isLength({ min: 2, max: 150 })
     .withMessage('Length of name is not correct');
 
 const websiteUrlValidation = body('websiteUrl')
