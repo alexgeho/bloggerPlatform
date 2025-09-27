@@ -5,6 +5,7 @@ import {add} from 'date-fns';
 
 export class UserClassEntity {
     _id: ObjectId;
+
     accountData: {
         login: string;
         email: string;
