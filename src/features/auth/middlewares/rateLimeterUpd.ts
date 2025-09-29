@@ -1,19 +1,18 @@
 import {Response, Request, NextFunction} from 'express'
-import {rateLimitCollection} from "../../../db/mongo.db";
-
+import {RateLimitModel} from "../domain/rate-limit.mangoose";
 
 export const requestLimitMiddleware = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    await rateLimitCollection.insertOne({
+    await RateLimitModel.insertOne({
         ip: req.ip as string,
         url: req.originalUrl,
         date: Date.now(),
     });
 
-    let count = await rateLimitCollection.countDocuments({
+    let count = await RateLimitModel.countDocuments({
         ip: req.ip,
         url: req.originalUrl,
         date: { $gte: Date.now() - 10 * 1000 },

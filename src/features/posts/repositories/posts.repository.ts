@@ -1,10 +1,10 @@
 import { Omit } from 'utility-types'; // если нужен import, либо сам объяви тип
 import { PostDb } from '../domain/postDb';
-import { postCollection } from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {PostInputDto} from '../application/dtos/post.input-dto';
 import {PostQueryInput} from "../routers/input/post-query.input";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
+import {PostModel} from "../domain/post.mangoose";
 
 export const postsRepository = {
 
@@ -25,26 +25,26 @@ export const postsRepository = {
             filter.title = {$regex: searchTitleTerm, $options: 'i'};
         }
 
-        const items = await postCollection
+        const items = await PostModel
             .find(filter)
             .sort({[sortBy]: sortDirection})
             .skip(skip)
             .limit(pageSize)
-            .toArray();
 
-        const totalCount = await postCollection.countDocuments(filter);
+
+        const totalCount = await PostModel.countDocuments(filter);
 
         return {items, totalCount};
     },
 
     async create(newPost: Omit<PostDb, '_id'>): Promise<string>  {
-        const insertResult = await postCollection.insertOne(newPost);
-        return insertResult.insertedId.toString();
+        const insertResult = await PostModel.insertOne(newPost);
+        return insertResult._id.toString();
     },
 
 
     async findByIdOrFail(id: string): Promise<PostDb | null> {
-        return await postCollection.findOne({ _id: new ObjectId(id) });
+        return PostModel.findOne({ _id: new ObjectId(id) });
     },
 
 
@@ -59,15 +59,15 @@ export const postsRepository = {
         const sort = { [sortBy]: sortDirection === 'asc' ? 1 : -1 }; // для MongoDB
 
         // 1. Подсчёт общего количества постов
-        const totalCount = await postCollection.countDocuments(filter);
+        const totalCount = await PostModel.countDocuments(filter);
 
         // 2. Получение нужной страницы постов
-        const items = await postCollection
+        const items = await PostModel
             .find(filter)
             .sort(sort as any)  // <-- вот так
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
-            .toArray();
+
 
         return { items, totalCount };
     },
@@ -76,7 +76,7 @@ export const postsRepository = {
 
 
     async update(id: string, dto: PostInputDto): Promise<void> {
-        const updateResult = await postCollection.updateOne(
+        const updateResult = await PostModel.updateOne(
             {
                 _id: new ObjectId(id),
             },
@@ -97,7 +97,7 @@ export const postsRepository = {
 
 
     async delete(id: string): Promise<void> {
-        const deleteResult = await postCollection.deleteOne({
+        const deleteResult = await PostModel.deleteOne({
             _id: new ObjectId(id),
         });
 

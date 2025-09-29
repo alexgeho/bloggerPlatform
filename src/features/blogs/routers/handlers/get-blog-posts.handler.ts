@@ -3,6 +3,7 @@ import { blogsService } from "../../application/blogs.service";
 import { postsService } from "../../../posts/application/posts.service";
 import {RepositoryNotFoundError} from "../../../../core/errors/repository-not-found.error";
 import {errorsHandler} from "../../../../core/errors/errors.handler";
+import {PostDocument} from "../../../posts/domain/post.mangoose";
 
 export async function getBlogPostsHandler(req:Request, res:Response ) {
     try {
@@ -27,7 +28,7 @@ export async function getBlogPostsHandler(req:Request, res:Response ) {
             page: pageNumber,
             pageSize: pageSize,
             totalCount: postsPage.totalCount,
-            items: postsPage.items.map(p => ({
+            items: postsPage.items.map((p: PostDocument) => ({
                 id: p._id ? p._id.toString() : p._id,
                 title: p.title,
                 shortDescription: p.shortDescription,

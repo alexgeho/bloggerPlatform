@@ -1,11 +1,12 @@
 import { Request, Response, Router } from 'express';
 import { HttpStatus } from '../../../core/types/http-statuses';
-import {
-    blogCollection,
-    commentCollection, deviceSessionsCollection,
-    postCollection, rateLimitCollection,
-    userCollection
-} from '../../../db/mongo.db';
+
+import {UserModel} from "../../auth/domain/user-mangoose.entity";
+import {RateLimitModel} from "../../auth/domain/rate-limit.mangoose";
+import {DeviceSessionModel} from "../../auth/domain/device-session.mangoose";
+import {BlogModel} from "../../blogs/domain/blog.mangoose";
+import {PostModel} from "../../posts/domain/post.mangoose";
+import {CommentModel} from "../../comments/domain/comment.mangoose";
 
 export const testingRouter = Router({});
 
@@ -15,12 +16,12 @@ testingRouter.delete('/all-data', async (req: Request, res: Response) => {
 
         await Promise.all([
 
-            blogCollection.deleteMany(),
-            postCollection.deleteMany(),
-            userCollection.deleteMany(),
-            commentCollection.deleteMany(),
-            deviceSessionsCollection.deleteMany(),
-            rateLimitCollection.deleteMany(),
+            BlogModel.deleteMany(),
+            PostModel.deleteMany(),
+            UserModel.deleteMany(),
+            CommentModel.deleteMany(),
+            DeviceSessionModel.deleteMany(),
+            RateLimitModel.deleteMany(),
 
         ]);
         res.sendStatus(HttpStatus.NoContent);

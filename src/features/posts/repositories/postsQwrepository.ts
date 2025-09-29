@@ -1,10 +1,10 @@
 import { Omit } from 'utility-types'; // если нужен import, либо сам объяви тип
 import { PostDb } from '../domain/postDb';
-import { postCollection } from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {PostInputDto} from '../application/dtos/post.input-dto';
 import {PostQueryInput} from "../routers/input/post-query.input";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
+import {PostModel} from "../domain/post.mangoose";
 
 export const postsQwRepository = {
 
@@ -25,14 +25,14 @@ export const postsQwRepository = {
             filter.title = {$regex: searchTitleTerm, $options: 'i'};
         }
 
-        const items = await postCollection
+        const items = await PostModel
             .find(filter)
             .sort({[sortBy]: sortDirection})
             .skip(skip)
             .limit(pageSize)
-            .toArray();
 
-        const totalCount = await postCollection.countDocuments(filter);
+
+        const totalCount = await PostModel.countDocuments(filter);
 
         return {items, totalCount};
     },
@@ -40,10 +40,8 @@ export const postsQwRepository = {
 
 
     async findById(id: string): Promise<PostDb | null> {
-        return await postCollection.findOne({ _id: new ObjectId(id) });
+        return PostModel.findOne({ _id: new ObjectId(id) });
     },
-
-
 
     async findByBlogIdWithPagination(
         blogId: string,
@@ -56,21 +54,16 @@ export const postsQwRepository = {
         const sort = { [sortBy]: sortDirection === 'asc' ? 1 : -1 }; // для MongoDB
 
         // 1. Подсчёт общего количества постов
-        const totalCount = await postCollection.countDocuments(filter);
+        const totalCount = await PostModel.countDocuments(filter);
 
         // 2. Получение нужной страницы постов
-        const items = await postCollection
+        const items = await PostModel
             .find(filter)
             .sort(sort as any)  // <-- вот так
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
-            .toArray();
 
         return { items, totalCount };
     },
-
-
-
-
 
 };

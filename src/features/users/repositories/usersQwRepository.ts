@@ -1,7 +1,7 @@
 import {User} from '../../auth/domain/user';
-import {userCollection} from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {UserQueryInput} from '../routers/input/user-query.input';
+import {UserModel} from "../../auth/domain/user-mangoose.entity";
 
 export class UsersQwRepository {
 
@@ -27,14 +27,13 @@ export class UsersQwRepository {
             ...searchEmail,
         }
 
-        const items = await userCollection
-            .find({$or: [searchLogin, searchEmail]})
+        const items = await UserModel
+            .find({ $or: [searchLogin, searchEmail] })
             .sort({ [sortBy]: sortDirection })
             .skip(skip)
             .limit(pageSize)
-            .toArray();
 
-        const totalCount = await userCollection.countDocuments({$or: [searchLogin, searchEmail]});
+        const totalCount = await UserModel.countDocuments({$or: [searchLogin, searchEmail]});
         return { items, totalCount };
     }
 
@@ -49,11 +48,11 @@ export class UsersQwRepository {
         } else {
             return null;
         }
-        return userCollection.findOne(filter);
+        return UserModel.findOne(filter);
     }
 
     async findById(id: string): Promise<User | null> {
-        const user = await userCollection.findOne({ _id: new ObjectId(id) });
+        const user = await UserModel.findOne({ _id: new ObjectId(id) });
         return user
     }
 

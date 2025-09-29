@@ -1,9 +1,8 @@
 import { Blog } from '../domain/blog';
-import { blogCollection } from '../../../db/mongo.db';
 import { ObjectId, WithId } from 'mongodb';
 import { RepositoryNotFoundError } from '../../../core/errors/repository-not-found.error';
 import { BlogQueryInput } from '../routers/input/blog-query.input';
-import {BlogInputDto} from "../application/dtos/blog.input-dto";
+import {BlogModel} from "../domain/blog.mangoose";
 
 export const blogsQwRepository = {
 
@@ -26,24 +25,23 @@ export const blogsQwRepository = {
             filter.name = { $regex: searchNameTerm, $options: 'i' };
         }
 
-        const items = await blogCollection
+        const items = await BlogModel
             .find(filter)
             .sort({ [sortBy]: sortDirection })
             .skip(skip)
             .limit(pageSize)
-            .toArray();
 
-        const totalCount = await blogCollection.countDocuments(filter);
+        const totalCount = await BlogModel.countDocuments(filter);
 
         return { items, totalCount };
     },
 
     async findById(id: string): Promise<WithId<Blog> | null> {
-        return blogCollection.findOne({ _id: new ObjectId(id) });
+        return BlogModel.findOne({ _id: new ObjectId(id) });
     },
 
     async findByIdOrFail(id: string): Promise<WithId<Blog>> {
-        const res = await blogCollection.findOne({ _id: new ObjectId(id) });
+        const res = await BlogModel.findOne({ _id: new ObjectId(id) });
 
         if (!res) {
             throw new RepositoryNotFoundError('Blog not exist2');
@@ -53,7 +51,7 @@ export const blogsQwRepository = {
 
     async findByIds(ids: string[]): Promise<WithId<Blog>[]> {
         const objectIds = ids.map(id => new ObjectId(id));
-        return blogCollection.find({ _id: { $in: objectIds } }).toArray();
+        return BlogModel.find({ _id: { $in: objectIds } });
     },
 
 

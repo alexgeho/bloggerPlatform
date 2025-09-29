@@ -10,7 +10,6 @@ type DeviceSession = {
     expireAt?: null | Date;
 }
 
-
 const DeviceSessionSchema = new Schema<DeviceSession>({
     userId: {type: Schema.Types.ObjectId},
     ip: {type: String},

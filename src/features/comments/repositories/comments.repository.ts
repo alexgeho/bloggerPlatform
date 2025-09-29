@@ -1,17 +1,17 @@
-import {commentCollection} from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {CommentDb} from "../domain/commentDb";
 import {CommentQueryInput} from "../routers/input/comment-query.input";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
 import {ResultStatus} from "../../auth/common/result/resultCode";
 import {Result} from "../../auth/common/result/result.type";
+import {CommentModel} from "../domain/comment.mangoose";
 
 
 export const commentsRepository = {
 
     async create(commentToSave: CommentDb): Promise<string> {
-        const insertResult = await commentCollection.insertOne(commentToSave);
-        return insertResult.insertedId.toString();
+        const insertResult = await CommentModel.insertOne(commentToSave);
+        return insertResult._id.toString();
     },
 
     async findManyByPostId(
@@ -20,25 +20,25 @@ export const commentsRepository = {
         limit: number,
         sort: Record<string, 1 | -1>
     ): Promise<WithId<CommentDb>[]> {
-        return commentCollection
+        return CommentModel
             .find({postId: new ObjectId(postId)})
             .sort(sort)
             .skip(skip)
             .limit(limit)
-            .toArray();
+
     },
 
     async countByPostId(postId: string): Promise<number> {
-        return commentCollection.countDocuments({postId: new ObjectId(postId)});
+        return CommentModel.countDocuments({postId: new ObjectId(postId)});
     },
 
     async findById(id: string): Promise<WithId<CommentDb> | null> {
-        return commentCollection.findOne({_id: new ObjectId(id)});
+        return CommentModel.findOne({_id: new ObjectId(id)});
     },
 
     async updateComment(id: string, content: string): Promise<Result<null>> {
         try {
-            const result = await commentCollection.updateOne(
+            const result = await CommentModel.updateOne(
                 {_id: new ObjectId(id)},
                 {$set: {content}}
             );
@@ -67,7 +67,7 @@ export const commentsRepository = {
 async deleteById (id:string): Promise<void> {
 
         const deleteResult
-            = await commentCollection.deleteOne({_id: new ObjectId(id)});
+            = await CommentModel.deleteOne({_id: new ObjectId(id)});
 
         if (deleteResult.deletedCount < 1) {
             throw new RepositoryNotFoundError('Comment not exist');

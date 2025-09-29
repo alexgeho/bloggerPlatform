@@ -5,7 +5,6 @@ import { User } from "../features/auth/domain/user";
 import { CommentDb } from "../features/comments/domain/commentDb";
 import { DeviceSession } from "../features/auth/domain/device-session.entity";
 import { ENV } from "../core/config/env";
-import {RateLimitEntity} from "../features/auth/domain/rate-limit.entity";
 import mongoose from "mongoose";
 
 // const BLOG_COLLECTION_NAME = "blogs";
