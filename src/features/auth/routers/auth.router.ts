@@ -54,7 +54,7 @@ authRouter.post("/registration-confirmation",
     emailConfirmationHandler.execute.bind(emailConfirmationHandler));
 
 authRouter.post("/registration",
-    requestLimitMiddleware,
+    // requestLimitMiddleware,
     userInputDtoValidation,
     inputValidationResultMiddleware,
     registrationHandler.execute.bind(registrationHandler));

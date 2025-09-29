@@ -6,6 +6,7 @@ import { CommentDb } from "../features/comments/domain/commentDb";
 import { DeviceSession } from "../features/auth/domain/device-session.entity";
 import { ENV } from "../core/config/env";
 import {RateLimitEntity} from "../features/auth/domain/rate-limit.entity";
+import mongoose from "mongoose";
 
 const BLOG_COLLECTION_NAME = "blogs";
 const POST_COLLECTION_NAME = "posts";
@@ -24,24 +25,25 @@ export let deviceSessionsCollection: Collection<DeviceSession>;
 export let rateLimitCollection: Collection<RateLimitEntity>;
 
 export async function runDB(url: string): Promise<void> {
-    client = new MongoClient(url);
-    await client.connect();
-    const db: Db = client.db(ENV.DB_NAME);
+await mongoose.connect(url, {})
+    // client = new MongoClient(url);
+    // await client.connect();
+    // const db: Db = client.db(ENV.DB_NAME);
 
-    blogCollection = db.collection<Blog>(BLOG_COLLECTION_NAME);
-    postCollection = db.collection<OptionalId<PostDb>>(POST_COLLECTION_NAME);
-    userCollection = db.collection<User>(USER_COLLECTION_NAME);
-    commentCollection = db.collection<CommentDb>(COMMENT_COLLECTION_NAME);
-    deviceSessionsCollection = db.collection<DeviceSession>(DEVICE_SESSIONS_COLLECTION_NAME);
-    rateLimitCollection = db.collection<RateLimitEntity>(RATE_LIMITS_COLLECTION_NAME);
+    // blogCollection = db.collection<Blog>(BLOG_COLLECTION_NAME);
+    // postCollection = db.collection<OptionalId<PostDb>>(POST_COLLECTION_NAME);
+    // userCollection = db.collection<User>(USER_COLLECTION_NAME);
+    // commentCollection = db.collection<CommentDb>(COMMENT_COLLECTION_NAME);
+    // deviceSessionsCollection = db.collection<DeviceSession>(DEVICE_SESSIONS_COLLECTION_NAME);
+    // rateLimitCollection = db.collection<RateLimitEntity>(RATE_LIMITS_COLLECTION_NAME);
 
 
-    try {
-        await db.command({ ping: 1 });
-    } catch (e) {
-        await client.close();
-        throw new Error(`Database NOT Connected: ${e}`);
-    }
+//     try {
+//         await db.command({ ping: 1 });
+//     } catch (e) {
+//         await client.close();
+//         throw new Error(`Database NOT Connected: ${e}`);
+//     }
 }
 
 export async function stopDb(): Promise<void> {

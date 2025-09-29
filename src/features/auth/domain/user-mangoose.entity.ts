@@ -1,10 +1,7 @@
 import mongoose, {Schema, model, Model, Types, HydratedDocument} from "mongoose";
-import {randomUUID} from "crypto";
-import {constructor} from "supertest";
-import {ObjectId} from "mongodb";
+
 
 type User = {
-    _id: ObjectId;
     accountData: {
         login: string;
         email: string;
@@ -39,8 +36,8 @@ const emailConfirmation = new Schema({
 })
 
 const emailRecovery = new Schema({
-    recoveryCode: {type: String, required: true},
-    expirationDate: {type: Date, required: true},
+    recoveryCode: {type: String},
+    expirationDate: {type: Date},
 })
 
 const userSchema = new Schema<User>({
@@ -55,42 +52,3 @@ export const UserModel: UserModel = model<User, UserModel>('User', userSchema);
 
 
 
-
-//
-// constructor(login
-// :
-// string, email
-// :
-// string, passwordHash
-// :
-// string, passwordSalt
-// :
-// string
-// )
-// {
-//
-//     this._id = new ObjectId();
-//
-//     this.accountData = {
-//         login,
-//         email,
-//         passwordHash,
-//         passwordSalt,
-//         createdAt: new Date(),
-//     };
-//
-//     this.emailConfirmation = {
-//         confirmationCode: randomUUID(),
-//         expirationDate: add(new Date(), {hours: 1, minutes: 30}),
-//         isConfirmed: false
-//     };
-//
-//     this.emailRecovery = {
-//         recoveryCode: null,
-//         expirationDate: null,
-//     };
-//
-// }
-//
-//
-// }

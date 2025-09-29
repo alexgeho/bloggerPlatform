@@ -1,5 +1,5 @@
 import {User} from '../../auth/domain/user';
-import {userCollection} from '../../../db/mongo.db';
+//import {userCollection} from '../../../db/mongo.db';
 import {ObjectId, WithId} from 'mongodb';
 import {RepositoryNotFoundError} from '../../../core/errors/repository-not-found.error';
 import {UserQueryInput} from '../routers/input/user-query.input';

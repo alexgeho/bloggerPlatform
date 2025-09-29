@@ -11,39 +11,95 @@ import {UserClassEntity} from "../domain/user-class.entity";
 import {devicesService} from "./devicesService";
 import {LoginUserDto} from "../domain/login-DTO";
 import {BcryptService} from "../adapters/bcrypt.service";
+import {UserDocument, UserModel} from "../domain/user-mangoose.entity";
 
 
 export class AuthService {
 
-    constructor(protected userRepository: UserRepository, protected bcrypt: BcryptService, protected emailManager: EmailManager) {}
+    constructor(protected userRepository: UserRepository, protected bcrypt: BcryptService, protected emailManager: EmailManager) {
+    }
 
-        async newPassword (newPassword: string, recoveryCode: string) {
 
-        console.log("RecoveryCode:",recoveryCode);
 
-       const user: User | null = await this.userRepository.findByRecoveryCode(recoveryCode)
+    async create(dto: RegistrationDto): Promise<User | null> {
+try {
 
-            console.log("User:",user);
+   const result = await UserModel.findOne({email: dto.email}, {login: dto.login}).exec();
+
+   console.log('result:', result);
+
+   if (result) {
+       return null;
+   }
+
+    // const userExist = await this.userRepository.findOne(dto);
+
+    // if (userExist) return null;
+
+    const passwordSalt = await bcrypt.genSalt(10);
+    const passwordHash = await this._generateHash(dto.password, passwordSalt);
+
+    const userNew = new UserClassEntity(dto.login, dto.email, passwordHash, passwordSalt);
+
+    const userNewDoc = new UserModel(userNew);
+
+
+
+
+    // todo take away "await"
+    await this.emailManager.sendConfirmationEmail(userNewDoc.accountData.email, userNewDoc.emailConfirmation.confirmationCode);
+
+    console.log('userNewDoc before save: ', userNewDoc);
+
+    await userNewDoc.save();
+
+    console.log('userNewDoc after save: ', userNewDoc);
+
+    return userNewDoc;
+}
+
+catch (e) {
+    console.log('catch e: ', e); }
+
+
+    }
+
+    // return UserModel.create(userNew);
+    //const createdUser = new UserModel(userNew);
+    //await createdUser.save();
+
+    // async createUser(dto: CreateUserDto) {
+    //
+    //     const user: UserDocument = new UserModel({
+    //         user.accountData.login = dto.login,
+    //         user.accountData.password = dto.password,
+    //         user.accountData.email = dto.email,
+    //     })
+    //     await user.save()
+    // }
+
+
+    async newPassword(newPassword: string, recoveryCode: string) {
+
+        console.log("RecoveryCode:", recoveryCode);
+
+        const user: User | null = await this.userRepository.findByRecoveryCode(recoveryCode)
+
+        console.log("User:", user);
 
         if (!user || user.emailConfirmation.expirationDate < new Date() ||
             user.emailRecovery.recoveryCode !== recoveryCode) {
 
-           throw new Error("Invalid recovery code");
+            throw new Error("Invalid recovery code");
 
-            // return {
-            //     status: ResultStatus.BadRequest, // 400
-            //     errorsMessages: [
-            //         { message: "Invalid recovery code", field: "recoveryCode" }
-            //     ]
-            // };
+
         }
-
 
 
         const passwordSalt = await bcrypt.genSalt(10);
         const passwordHash = await this._generateHash(newPassword, passwordSalt);
 
-        await this.userRepository.updateUserWithNewPassword (user, passwordHash, passwordSalt);
+        await this.userRepository.updateUserWithNewPassword(user, passwordHash, passwordSalt);
 
 
     }
@@ -53,7 +109,7 @@ export class AuthService {
         const isUserExist = await this.userRepository.findByEmail(email);
 
         if (!isUserExist) {
-            return { success: false, error: "User with this email not found" };
+            return {success: false, error: "User with this email not found"};
         }
 
 
@@ -64,22 +120,7 @@ export class AuthService {
         await this.emailManager.sendRecoveryCode(email, recoveryCode);
 
 
-        return { success: true }
-    }
-
-    async create(dto: RegistrationDto): Promise<User | null> {
-        const userExist = await this.userRepository.findOne(dto);
-        if (userExist) return null;
-
-        const passwordSalt = await bcrypt.genSalt(10);
-        const passwordHash = await this._generateHash(dto.password, passwordSalt);
-
-        const userNew: User = new UserClassEntity(dto.login, dto.email, passwordHash, passwordSalt);
-        await this.userRepository.create(userNew);
-
-        // todo take away "await"
-        await this.emailManager.sendConfirmationEmail(userNew.accountData.email, userNew.emailConfirmation.confirmationCode);
-        return userNew;
+        return {success: true}
     }
 
     async _generateHash(password: string, salt: string) {
