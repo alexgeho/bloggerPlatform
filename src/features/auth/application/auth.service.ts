@@ -43,9 +43,6 @@ try {
 
     const userNewDoc = new UserModel(userNew);
 
-
-
-
     // todo take away "await"
     await this.emailManager.sendConfirmationEmail(userNewDoc.accountData.email, userNewDoc.emailConfirmation.confirmationCode);
 
@@ -59,7 +56,9 @@ try {
 }
 
 catch (e) {
-    console.log('catch e: ', e); }
+    console.log('catch e: ', e);
+    return null;
+}
 
 
     }

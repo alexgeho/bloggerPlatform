@@ -14,19 +14,6 @@ function isoFromIat(iat: number) {
 
 export const devicesService = {
 
-    // async isDeviceBelongsToUser(userId: string, deviceId: string): Promise<string | null> {
-    //
-    //     const devices = await deviceSessionsRepository.getAllDevices(userId);
-    //
-    //     if (!devices || devices.length === 0) {
-    //         return null;
-    //     }
-    //     const match = devices.find(d => d.deviceId === deviceId);
-    //
-    //     return match ? match.deviceId : null;
-    // },
-
-
     async deleteDevice(userId: string, deviceId: string): Promise<'ok' | 'not_found' | 'forbidden'> {
 
 
@@ -79,7 +66,7 @@ export const devicesService = {
     async getAllDevices(userId: string): Promise<any[]> {
         const sessions = await deviceSessionsRepository.getAllDevices(userId);
 
-        return sessions.map(s => ({
+        return sessions.map((s) => ({
 
             ip: s.ip,
             title: s.userAgent,

@@ -2,10 +2,11 @@
 import jwt from "jsonwebtoken";
 import type {JwtPayload as BuiltInJWTPayload} from 'jsonwebtoken';
 import { ENV } from "../../../core/config/env";
-import {deviceSessionsCollection} from "../../../db/mongo.db";
+// import {deviceSessionsCollection} from "../../../db/mongo.db";
 import { randomUUID } from "crypto";
 import {ObjectId} from "mongodb";
 import {JwtPayloadUser} from "../routers/guards/access.token.guard";
+import {DeviceSessionModel} from "../domain/device-session.mangoose";
 
 
 // index -> a shto takoe index -> kakie byvajut -> BigO notation -> Big Theta notation
@@ -76,7 +77,7 @@ export const jwtService = {
             if (!payload.deviceId) return null;
 
 
-            const session = await deviceSessionsCollection.findOne({
+            const session = await DeviceSessionModel.findOne({
                 userId: payload.userId,
                 _id: new ObjectId(payload.deviceId),
             });
@@ -84,8 +85,6 @@ export const jwtService = {
 
             if (!session) return null;
 
-
-// проверяем, что токен не просрочен в базе
             if (session.expireAt && new Date(session.expireAt).getTime() < Date.now()) {
                 return null;
             }

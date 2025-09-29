@@ -1,37 +1,37 @@
-import {deviceSessionsCollection} from "../../../db/mongo.db"
 import {DeviceSession} from "../domain/device-session.entity";
 import {ObjectId, WithId} from "mongodb";
+import {DeviceSessionModel} from "../domain/device-session.mangoose";
 
 
 export const deviceSessionsRepository = {
 
     async findUserByDeviceId(deviceId: string): Promise<WithId<DeviceSession> | null> {
-        return await deviceSessionsCollection.findOne({ _id: new ObjectId(deviceId) });
+        return DeviceSessionModel.findOne({ _id: new ObjectId(deviceId) });
     },
 
     async findByUserAndUserAgent(userId: string, userAgent: string): Promise<DeviceSession | null> {
-        return await deviceSessionsCollection.findOne({userId, userAgent});
+        return DeviceSessionModel.findOne({userId, userAgent});
     },
 
     async deleteDeviceById(deviceId: string) {
 
-        await deviceSessionsCollection.deleteOne({ _id: new ObjectId(deviceId) })
+        await DeviceSessionModel.deleteOne({ _id: new ObjectId(deviceId) })
     },
 
     async createOneOnLogin(session: Omit<DeviceSession, "deviceId">): Promise<string> {
-        const result = await deviceSessionsCollection.insertOne(session)
-        return result.insertedId.toString();
+        const result = await DeviceSessionModel.insertOne(session)
+        return result._id.toString();
     },
 
     async updateOnLogin(userId: string, userAgent: string, ip: string): Promise<string> {
 
-        const existing = await deviceSessionsCollection.findOne({ userId, userAgent });
+        const existing = await DeviceSessionModel.findOne({ userId, userAgent });
 
         if (!existing) {
             throw new Error("Session not found");
         }
 
-        const result = await deviceSessionsCollection.findOneAndUpdate(
+        const result = await DeviceSessionModel.findOneAndUpdate(
             { userId, userAgent },
             { $set: { ip } },
         );
@@ -39,13 +39,12 @@ export const deviceSessionsRepository = {
     },
 
     async getAllDevices(userId: string) {
-        return await deviceSessionsCollection.find({userId}).toArray();
-
+        return DeviceSessionModel.find({userId});
     },
 
     async deleteAllDevicesExceptCurrent(userId: string, currentDeviceId: string): Promise<void> {
 
-        const result = await deviceSessionsCollection.deleteMany({
+        await DeviceSessionModel.deleteMany({
 
             userId,
             _id: {$ne: new ObjectId(currentDeviceId)}
@@ -55,7 +54,7 @@ export const deviceSessionsRepository = {
     },
 
     async updateLastActiveDate(deviceId: string, lastActiveDate: Date, expireAt: Date) {
-        await deviceSessionsCollection.updateOne({deviceId}, {
+        await DeviceSessionModel.updateOne({deviceId}, {
             $set: {
                 lastActiveDate: lastActiveDate,
                 expireAt: expireAt,
@@ -65,7 +64,7 @@ export const deviceSessionsRepository = {
     },
 
     async updateSessionWithData(userId: string, deviceId: string, lastActiveDate: Date, expireAt: Date): Promise<void> {
-        await deviceSessionsCollection.updateOne(
+        await DeviceSessionModel.updateOne(
             {userId, _id: new ObjectId(deviceId)},
             {$set: {lastActiveDate, expireAt}}
         );

@@ -8,21 +8,21 @@ import { ENV } from "../core/config/env";
 import {RateLimitEntity} from "../features/auth/domain/rate-limit.entity";
 import mongoose from "mongoose";
 
-const BLOG_COLLECTION_NAME = "blogs";
-const POST_COLLECTION_NAME = "posts";
-const USER_COLLECTION_NAME = "users";
-const COMMENT_COLLECTION_NAME = "comments";
-const DEVICE_SESSIONS_COLLECTION_NAME = "deviceSessions";
-const RATE_LIMITS_COLLECTION_NAME = "rateLimits";
-
-export let client: MongoClient;
-
-export let blogCollection: Collection<Blog>;
-export let postCollection: Collection<OptionalId<PostDb>>;
-export let userCollection: Collection<User>;
-export let commentCollection: Collection<CommentDb>;
-export let deviceSessionsCollection: Collection<DeviceSession>;
-export let rateLimitCollection: Collection<RateLimitEntity>;
+// const BLOG_COLLECTION_NAME = "blogs";
+// const POST_COLLECTION_NAME = "posts";
+// const USER_COLLECTION_NAME = "users";
+// const COMMENT_COLLECTION_NAME = "comments";
+// const DEVICE_SESSIONS_COLLECTION_NAME = "deviceSessions";
+// const RATE_LIMITS_COLLECTION_NAME = "rateLimits";
+//
+// export let client: MongoClient;
+//
+// export let blogCollection: Collection<Blog>;
+// export let postCollection: Collection<OptionalId<PostDb>>;
+// export let userCollection: Collection<User>;
+// export let commentCollection: Collection<CommentDb>;
+// export let deviceSessionsCollection: Collection<DeviceSession>;
+// export let rateLimitCollection: Collection<RateLimitEntity>;
 
 export async function runDB(url: string): Promise<void> {
 await mongoose.connect(url, {})
@@ -45,15 +45,15 @@ await mongoose.connect(url, {})
 //         throw new Error(`Database NOT Connected: ${e}`);
 //     }
 }
-
-export async function stopDb(): Promise<void> {
-    if (!client) throw new Error("No active client");
-    await client.close();
-}
-
-export async function dropDb(): Promise<void> {
-    if (!client) throw new Error("No active client");
-    const db = client.db(ENV.DB_NAME);
-    const collections = await db.collections();
-    await Promise.all(collections.map((c) => c.deleteMany({})));
-}
+//
+// export async function stopDb(): Promise<void> {
+//     if (!client) throw new Error("No active client");
+//     await client.close();
+// }
+//
+// export async function dropDb(): Promise<void> {
+//     if (!client) throw new Error("No active client");
+//     const db = client.db(ENV.DB_NAME);
+//     const collections = await db.collections();
+//     await Promise.all(collections.map((c) => c.deleteMany({})));
+// }
