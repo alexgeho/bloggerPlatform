@@ -6,7 +6,7 @@ const contentValidation = body('content')
     .isString()
     .withMessage('comment should be string')
     .trim()
-    .isLength({ min: 20, max: 300 })
+    .isLength({ min: 10, max: 300 })
     .withMessage('Length of comment is not correct');
 
 

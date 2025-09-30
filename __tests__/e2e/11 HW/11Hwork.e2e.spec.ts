@@ -17,7 +17,7 @@ describe("aut e2e tests after implement of Classes", () => {
         await request(app).delete(`${TESTING_PATH}/all-data`);
     });
 
-    it("should create new comment;", async () => {
+    it("should create new comment and GET comment", async () => {
 
 
         const user = {
@@ -80,6 +80,19 @@ describe("aut e2e tests after implement of Classes", () => {
             .send(comment)
             .expect(201)
 
+
+        const getComment = await request(app)
+            .get(`${POSTS_PATH}/${postId}/comments`)
+            .set('Authorization', `Bearer ${accessToken}`)
+            .expect(200)
+
+
+        console.log('GET COMMENT RESPONSE:', getComment.body)
+
+        expect(getComment.body.items.length).toBeGreaterThan(0)
+        // expect(getComment.body.items[0]).toHaveProperty('content')
+        // expect(getComment.body.items[0]).toHaveProperty('commentatorInfo')
+        // expect(getComment.body.items[0]).toHaveProperty('likesInfo')
 
     });
 

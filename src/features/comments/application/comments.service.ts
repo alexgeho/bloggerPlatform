@@ -24,21 +24,22 @@ export const commentsService = {
 
         if (!post) throw new Error('Post not found');
 
-        const userById= await userRepository.findUserById(user.userId);
+        const userById= await userRepository.findById(user.userId);
+
+        if (!userById) throw new Error('User not found');
 
         // todo userLogin должен предаться в 41                 userLogin: user.userLogin,
-        const login = userById.userLogin;
-
+        const login = userById.accountData.login;
+        console.log('login:', login);
         console.log('post:', post);
         console.log('user:', user);
 
         const commentToSave: CommentDb = {
             _id: new ObjectId(),
-            postId: new ObjectId(postId),
             content: dto.content,
             commentatorInfo: {
                 userId: user.userId,
-                userLogin: user.userLogin,
+                userLogin: userById.accountData.login,
             },
             createdAt: new Date().toISOString(),
         };

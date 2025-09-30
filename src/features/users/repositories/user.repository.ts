@@ -2,9 +2,14 @@ import {User} from '../../auth/domain/user';
 import {ObjectId, WithId} from 'mongodb';
 import {RepositoryNotFoundError} from '../../../core/errors/repository-not-found.error';
 import {UserQueryInput} from '../routers/input/user-query.input';
-import {UserModel} from "../../auth/domain/user-mangoose.entity";
+import {UserDocument, UserModel} from "../../auth/domain/user-mangoose.entity";
 
 export class UserRepository {
+
+    async findById(id: string): Promise<UserDocument | null> {
+        const user = await UserModel.findOne({ _id:id})
+        return user;
+    }
 
     async updateUserWithNewPassword (user: User, passwordHash:string, passwordSalt: string): Promise<void> {
 
@@ -139,6 +144,5 @@ export class UserRepository {
         return UserModel.findOne({"emailRecovery.recoveryCode": code});
     }
 
-//todo find user by id
-};
+}
 
