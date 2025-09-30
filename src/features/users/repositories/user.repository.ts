@@ -72,7 +72,8 @@ export class UserRepository {
     }
 
     async create(newUser: User): Promise<string> {
-        const insertResult = await UserModel.insertOne(newUser);
+        const insertResult
+            = await UserModel.insertOne(newUser);
         return insertResult._id.toString();
     }
 
@@ -101,9 +102,7 @@ export class UserRepository {
                 $set: {
                     'emailConfirmation.expirationDate': user.emailConfirmation.expirationDate,
                     'emailConfirmation.confirmationCode': user.emailConfirmation.confirmationCode,
-                }
-            }
-        );
+                }});
 
         return result.modifiedCount === 1;
     }
@@ -117,7 +116,6 @@ export class UserRepository {
         if (!login && !email) return null;
         return UserModel.findOne({ $or: [{ login }, { email }] });
     }
-
 
     async findByLoginOrEmail(identifier: string) {
         return UserModel.findOne({
@@ -141,6 +139,6 @@ export class UserRepository {
         return UserModel.findOne({"emailRecovery.recoveryCode": code});
     }
 
-
+//todo find user by id
 };
 

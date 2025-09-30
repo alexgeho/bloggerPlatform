@@ -4,7 +4,7 @@ const loginOrEmailValidation = body('loginOrEmail')
     .isString()
     .withMessage('loginOrEmail should be string')
     .trim()
-    .isLength({ min: 2, max: 20 })
+    .isLength({ min: 2, max: 30 })
     .withMessage('Length of name is not correct');
 
 const passwordValidation = body('password')

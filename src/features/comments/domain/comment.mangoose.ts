@@ -26,7 +26,7 @@ const CommentSchema = new Schema<Comment>({
     createdAt: { type: String, required: true },
     commentatorInfo: {
         userId: { type: String, required: true },
-        userLogin: { type: String, required: true },
+        deviceId: { type: String, required: true },
     },
     likesInfo: {
         likesCount: { type: Number, default: 0 },

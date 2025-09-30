@@ -8,6 +8,7 @@ import { CommentQueryInput } from '../routers/input/comment-query.input';
 import { mapToCommentListPaginatedOutput } from '../routers/mappers/map-to-comment-list-paginated-output.util';
 import { Result } from "../../auth/common/result/result.type";
 import {ResultStatus} from "../../auth/common/result/resultCode";
+import {userRepository} from "../../../composition-root";
 
 export const commentsService = {
 
@@ -17,9 +18,19 @@ export const commentsService = {
         return;
     },
 
-    async create(postId: string, dto: CommentInputDto, user: { userId: string; userLogin: string }): Promise<CommentDataOutput> {
+    async create(postId: string, dto: CommentInputDto, user: { userId: string}): Promise<CommentDataOutput> {
+
         const post = await postsRepository.findByIdOrFail(postId);
+
         if (!post) throw new Error('Post not found');
+
+        const userById= await userRepository.findUserById(user.userId);
+
+        // todo userLogin должен предаться в 41                 userLogin: user.userLogin,
+        const login = userById.userLogin;
+
+        console.log('post:', post);
+        console.log('user:', user);
 
         const commentToSave: CommentDb = {
             _id: new ObjectId(),

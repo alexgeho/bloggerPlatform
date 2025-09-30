@@ -1,11 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 import { jwtService } from '../../adapters/jwt.service';
 
+
+//todo типы отдельно
 export type JwtPayloadUser = {
     userId: string;
     userLogin: string;
 };
 
+//todo  перенести в отдельный файл index.d.ts в корне
 declare global {
     namespace Express {
         interface Request {
@@ -37,7 +40,7 @@ export const accessTokenGuard = async (
         res.sendStatus(401);
         return;
     }
-
+    console.log('payload', payload, '')
     req.user = {
         userId: payload.userId,
         userLogin: payload.userLogin,
