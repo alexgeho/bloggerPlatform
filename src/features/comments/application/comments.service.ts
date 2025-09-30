@@ -11,11 +11,13 @@ import {ResultStatus} from "../../auth/common/result/resultCode";
 
 export const commentsService = {
 
-    async create(
-        postId: string,
-        dto: CommentInputDto,
-        user: { userId: string; userLogin: string }
-    ): Promise<CommentDataOutput> {
+    async setLikeStatus(commentId: string, userId: string, likeStatus: "None" | "Like" | "Dislike") {
+        const updated = await commentsRepository.updateLikeStatus(commentId, userId, likeStatus);
+        if (!updated) throw new Error("Comment not found");
+        return;
+    },
+
+    async create(postId: string, dto: CommentInputDto, user: { userId: string; userLogin: string }): Promise<CommentDataOutput> {
         const post = await postsRepository.findByIdOrFail(postId);
         if (!post) throw new Error('Post not found');
 
@@ -40,10 +42,7 @@ export const commentsService = {
         };
     },
 
-    async findManyByPostId(
-        postId: string,
-        queryDto: CommentQueryInput
-    ): Promise<ReturnType<typeof mapToCommentListPaginatedOutput>> {
+    async findManyByPostId(postId: string, queryDto: CommentQueryInput): Promise<ReturnType<typeof mapToCommentListPaginatedOutput>> {
         const {
             pageNumber,
             pageSize,

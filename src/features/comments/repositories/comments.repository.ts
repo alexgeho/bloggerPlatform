@@ -9,17 +9,36 @@ import {CommentModel} from "../domain/comment.mangoose";
 
 export const commentsRepository = {
 
+    async updateLikeStatus(commentId: string, userId: string, newStatus: "None" | "Like" | "Dislike"): Promise<boolean> {
+        const comment = await CommentModel.findById(commentId);
+        if (!comment) return false;
+
+        // текущий статус
+        const oldStatus = comment.likesInfo.myStatus;
+
+        // если статус не поменялся → ничего не делаем
+        if (oldStatus === newStatus) return true;
+
+        // обновляем счётчики
+        if (oldStatus === "Like") comment.likesInfo.likesCount--;
+        if (oldStatus === "Dislike") comment.likesInfo.dislikesCount--;
+
+        if (newStatus === "Like") comment.likesInfo.likesCount++;
+        if (newStatus === "Dislike") comment.likesInfo.dislikesCount++;
+
+        // сохраняем новый статус
+        comment.likesInfo.myStatus = newStatus;
+
+        await comment.save();
+        return true;
+    },
+
     async create(commentToSave: CommentDb): Promise<string> {
         const insertResult = await CommentModel.insertOne(commentToSave);
         return insertResult._id.toString();
     },
 
-    async findManyByPostId(
-        postId: string,
-        skip: number,
-        limit: number,
-        sort: Record<string, 1 | -1>
-    ): Promise<WithId<CommentDb>[]> {
+    async findManyByPostId(postId: string, skip: number, limit: number, sort: Record<string, 1 | -1>): Promise<WithId<CommentDb>[]> {
         return CommentModel
             .find({postId: new ObjectId(postId)})
             .sort(sort)
@@ -64,7 +83,9 @@ export const commentsRepository = {
             };
         }
     },
-async deleteById (id:string): Promise<void> {
+
+    async deleteById(id: string): Promise<void> {
+
 
         const deleteResult
             = await CommentModel.deleteOne({_id: new ObjectId(id)});
@@ -74,6 +95,6 @@ async deleteById (id:string): Promise<void> {
         }
         return;
 
-}
+    }
 
 };
