@@ -9,7 +9,7 @@ export class UserRepository {
     async updateUserWithNewPassword (user: User, passwordHash:string, passwordSalt: string): Promise<void> {
 
         await UserModel.updateOne(
-            {_id: new ObjectId(user._id)},
+            {_id: user._id},
             {
                 $set: {
                     'accountData.passwordHash': passwordHash,
@@ -109,29 +109,15 @@ export class UserRepository {
     }
 
     async delete(id: string): Promise<void> {
-        const deleteResult = await UserModel.deleteOne({
-            _id: new ObjectId(id),
-        });
-
-        if (deleteResult.deletedCount < 1) {
-            throw new RepositoryNotFoundError('User not exist');
-        }
-        return;
+        const user = await UserModel.findByIdAndDelete(id);
+        if (!user) throw new RepositoryNotFoundError('User not exist');
     }
 
-    async findOne({login, email}: { login?: string, email?: string }): Promise<WithId<User> | null> {
-        const filter: any = {};
-        if (login && email) {
-            filter.$or = [{login}, {email}];
-        } else if (login) {
-            filter.login = login;
-        } else if (email) {
-            filter.email = email;
-        } else {
-            return null;
-        }
-        return UserModel.findOne(filter);
+    async findOne({ login, email }: { login?: string; email?: string }): Promise<WithId<User> | null> {
+        if (!login && !email) return null;
+        return UserModel.findOne({ $or: [{ login }, { email }] });
     }
+
 
     async findByLoginOrEmail(identifier: string) {
         return UserModel.findOne({
@@ -142,18 +128,6 @@ export class UserRepository {
         });
     }
 
-    async forTestfindByLoginOrEmail(login: string, email: string) {
-        return UserModel.findOne(
-            {
-                $or: [
-                    {"accountData.email": email},
-                    {"accountData.login": login}
-                ]
-            }
-        )
-
-
-    }
 
     async findByEmail(email: string): Promise<User | null> {
         return UserModel.findOne({"accountData.email": email});
