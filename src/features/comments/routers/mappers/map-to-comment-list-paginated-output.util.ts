@@ -2,10 +2,11 @@ import {WithId} from 'mongodb';
 import {CommentDb} from '../../domain/commentDb';
 import {CommentDataOutput} from '../output/comment-data.output';
 import {PaginatedOutput} from "../../../../core/types/paginated.output";
+import {CommentDocument} from "../../domain/comment.mangoose";
 
 export function mapToCommentListPaginatedOutput(
-    comments: WithId<CommentDb>[],
-    meta: { pageNumber: number; pageSize: number; totalCount: number }
+    comments: WithId<CommentDocument>[],
+    meta: { pageNumber: number; pageSize: number; totalCount: WithId<CommentDocument>[] }
 ): PaginatedOutput & { items: CommentDataOutput[] } {
     return {
         pagesCount: Math.ceil(meta.totalCount / meta.pageSize),
@@ -20,6 +21,12 @@ export function mapToCommentListPaginatedOutput(
               userLogin: comment.commentatorInfo.userLogin,
             },
             createdAt: comment.createdAt,
+            likesInfo: {
+                likesCount: comment.likesInfo.likesCount,
+                dislikesCount: comment.likesInfo.dislikesCount,
+                myStatus: comment.likesInfo.myStatus,
+            }
+
         })),
     };
 }

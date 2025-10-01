@@ -7,6 +7,11 @@ export type CommentDataOutput = {
     }
 
     createdAt: string;
+    likesInfo: {
+        likesCount: number,
+        dislikesCount: number,
+        myStatus: string
+    }
 
 };
 

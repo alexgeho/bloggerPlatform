@@ -1,11 +1,10 @@
 import {ObjectId, WithId} from 'mongodb';
-import {CommentDb} from "../domain/commentDb";
-import {CommentModel} from "../domain/comment.mangoose";
+import {CommentDocument, CommentModel} from "../domain/comment.mangoose";
 
 
 export const commentsQwRepository = {
 
-    async findById(id: string): Promise<WithId<CommentDb> | null> {
+    async findById(id: string): Promise<WithId<CommentDocument> | null> {
         return CommentModel.findOne({ _id: new ObjectId(id) });
     },
 

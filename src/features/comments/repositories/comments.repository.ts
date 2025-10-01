@@ -4,10 +4,15 @@ import {CommentQueryInput} from "../routers/input/comment-query.input";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
 import {ResultStatus} from "../../auth/common/result/resultCode";
 import {Result} from "../../auth/common/result/result.type";
-import {CommentModel} from "../domain/comment.mangoose";
+import {CommentDocument, CommentModel} from "../domain/comment.mangoose";
 
 
 export const commentsRepository = {
+
+    async save(commentToSave: CommentDocument): Promise<CommentDocument> {
+
+        return commentToSave.save()
+    },
 
     async updateLikeStatus(commentId: string, userId: string, newStatus: "None" | "Like" | "Dislike"): Promise<boolean> {
         const comment = await CommentModel.findById(commentId);
@@ -40,7 +45,7 @@ export const commentsRepository = {
 
     async findManyByPostId(postId: string, skip: number, limit: number, sort: Record<string, 1 | -1>): Promise<WithId<CommentDb>[]> {
         return CommentModel
-            .find({postId: new ObjectId(postId)})
+            .find({postId: postId})
             .sort(sort)
             .skip(skip)
             .limit(limit)
@@ -48,8 +53,9 @@ export const commentsRepository = {
     },
 
     async countByPostId(postId: string): Promise<number> {
-        return CommentModel.countDocuments({postId: new ObjectId(postId)});
+        return CommentModel.countDocuments({ postId: new ObjectId(postId) });
     },
+
 
     async findById(id: string): Promise<WithId<CommentDb> | null> {
         return CommentModel.findOne({_id: new ObjectId(id)});

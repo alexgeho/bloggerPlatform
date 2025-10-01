@@ -1,5 +1,3 @@
-// src/features/comments/routers/handlers/get-comments-by-post.handler.ts
-
 import { Request, Response } from 'express';
 import { commentsService } from '../../application/comments.service';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
@@ -13,11 +11,15 @@ export async function getCommentsByPostHandler(req: Request, res: Response) {
     try {
         const postId = req.params.id;
 
+        console.log('req.params.id:', postId)
+
         const queryInput = setDefaultSortAndPaginationIfNotExist(
             req.query as Partial<PaginationAndSorting<CommentSortField>>
         ) as CommentQueryInput;
 
         const checkIfPostExist = await postsQwRepository.findById(postId)
+        console.log('checkIfPostExist:', checkIfPostExist)
+
 
         if (!checkIfPostExist) {
             res.sendStatus(404);
@@ -25,7 +27,10 @@ export async function getCommentsByPostHandler(req: Request, res: Response) {
         }
 
         const result
-            = await commentsService.findManyByPostId(postId, queryInput);
+            = await commentsService.findManyCommentsByPostId(postId, queryInput);
+
+        console.log('result:', result)
+
 
         res.send(result);
     } catch (e: unknown) {

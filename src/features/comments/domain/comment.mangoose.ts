@@ -4,8 +4,7 @@ import { HydratedDocument, model, Model, Schema } from "mongoose";
 type LikeStatus = "None" | "Like" | "Dislike";
 
 type Comment = {
-    _id: ObjectId;
-    postId: ObjectId;
+    id: ObjectId;
     content: string;
     createdAt: string;
     commentatorInfo: {
@@ -20,13 +19,11 @@ type Comment = {
 };
 
 const CommentSchema = new Schema<Comment>({
-    _id: ObjectId,
-    postId: ObjectId,
     content: { type: String, required: true },
     createdAt: { type: String, required: true },
     commentatorInfo: {
-        userId: { type: String},
-        deviceId: { type: String},
+        userId: { type: String, required: true},
+        userLogin: { type: String, required: true},
     },
     likesInfo: {
         likesCount: { type: Number, default: 0 },
