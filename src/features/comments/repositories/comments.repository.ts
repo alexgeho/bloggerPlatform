@@ -13,7 +13,8 @@ export const commentsRepository = {
         return commentToSave.save()
     },
 
-    async updateLikeStatus(commentId: string, userId: string, newStatus: "None" | "Like" | "Dislike"): Promise<boolean> {
+    async updateLikeStatus(commentId: string, newStatus: "None" | "Like" | "Dislike"): Promise<boolean> {
+
         const comment = await CommentModel.findById(commentId);
         if (!comment) return false;
 
@@ -57,7 +58,7 @@ export const commentsRepository = {
 
 
     async findById(id: string): Promise<WithId<CommentDocument> | null> {
-        return CommentModel.findOne({_id: new ObjectId(id)});
+        return CommentModel.findOne({_id:id});
     },
 
     async updateComment(id: string, content: string): Promise<Result<null>> {

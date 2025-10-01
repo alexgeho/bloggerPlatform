@@ -13,7 +13,16 @@ import {ObjectId} from "mongodb";
 export const commentsService = {
 
     async setLikeStatus(commentId: string, userId: string, likeStatus: "None" | "Like" | "Dislike") {
-        const updated = await commentsRepository.updateLikeStatus(commentId, userId, likeStatus);
+
+        const commentExist = await commentsRepository.findById(commentId);
+
+        if (!commentExist) {return false}
+
+        const userExist = await userRepository.findById(userId);
+
+        if (!userExist) {return false}
+
+        const updated = await commentsRepository.updateLikeStatus(commentId, likeStatus);
         if (!updated) throw new Error("Comment not found");
         return;
     },
