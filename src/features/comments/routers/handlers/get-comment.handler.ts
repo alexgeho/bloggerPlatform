@@ -21,7 +21,12 @@ export async function getCommentHandler(req: Request, res: Response)
                 userId: comment.commentatorInfo.userId,
                 userLogin: comment.commentatorInfo.userLogin,
             },
-            createdAt: comment.createdAt
+            createdAt: comment.createdAt,
+            likesInfo: {
+                likesCount: comment.likesInfo.likesCount,
+                dislikesCount: comment.likesInfo.dislikesCount,
+                myStatus: comment.likesInfo.myStatus,
+            }
 
         }
 

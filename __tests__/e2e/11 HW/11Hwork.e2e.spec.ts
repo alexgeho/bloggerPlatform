@@ -90,9 +90,9 @@ describe("aut e2e tests after implement of Classes", () => {
         console.log('GET COMMENT RESPONSE:', getComment.body)
 
         expect(getComment.body.items.length).toBeGreaterThan(0)
-        // expect(getComment.body.items[0]).toHaveProperty('content')
-        // expect(getComment.body.items[0]).toHaveProperty('commentatorInfo')
-        // expect(getComment.body.items[0]).toHaveProperty('likesInfo')
+        expect(getComment.body.items[0]).toHaveProperty('content')
+        expect(getComment.body.items[0]).toHaveProperty('commentatorInfo')
+        expect(getComment.body.items[0]).toHaveProperty('likesInfo')
 
     });
 
