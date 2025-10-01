@@ -18,20 +18,16 @@ export const commentsRepository = {
         const comment = await CommentModel.findById(commentId);
         if (!comment) return false;
 
-        // текущий статус
         const oldStatus = comment.likesInfo.myStatus;
 
-        // если статус не поменялся → ничего не делаем
         if (oldStatus === newStatus) return true;
 
-        // обновляем счётчики
         if (oldStatus === "Like") comment.likesInfo.likesCount--;
         if (oldStatus === "Dislike") comment.likesInfo.dislikesCount--;
 
         if (newStatus === "Like") comment.likesInfo.likesCount++;
         if (newStatus === "Dislike") comment.likesInfo.dislikesCount++;
 
-        // сохраняем новый статус
         comment.likesInfo.myStatus = newStatus;
 
         await comment.save();
@@ -61,34 +57,42 @@ export const commentsRepository = {
         return CommentModel.findOne({_id:id});
     },
 
-    async updateComment(id: string, content: string): Promise<Result<null>> {
-        try {
-            const result = await CommentModel.updateOne(
-                {_id: new ObjectId(id)},
-                {$set: {content}}
-            );
-
-            if (result.matchedCount === 0) {
-                return {
-                    status: ResultStatus.NotFound,
-                    extensions: [{field: "id", message: "Comment not found"}],
-                    data: null,
-                };
-            }
-
-            return {
-                status: ResultStatus.Success,
-                extensions: [],
-                data: null,
-            };
-        } catch (error) {
-            return {
-                status: ResultStatus.InternalError,
-                extensions: [{field: "unknown", message: "Unexpected error"}],
-                data: null,
-            };
-        }
+    async updateComment(id: string, content: string): Promise<boolean> {
+        const result = await CommentModel.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { content } }
+        );
+        return result.matchedCount > 0;
     },
+
+    // async updateComment(id: string, content: string): Promise<Result<null>> {
+    //     try {
+    //         const result = await CommentModel.updateOne(
+    //             {_id: new ObjectId(id)},
+    //             {$set: {content}}
+    //         );
+    //
+    //         if (result.matchedCount === 0) {
+    //             return {
+    //                 status: ResultStatus.NotFound,
+    //                 extensions: [{field: "id", message: "Comment not found"}],
+    //                 data: null,
+    //             };
+    //         }
+    //
+    //         return {
+    //             status: ResultStatus.Success,
+    //             extensions: [],
+    //             data: null,
+    //         };
+    //     } catch (error) {
+    //         return {
+    //             status: ResultStatus.InternalError,
+    //             extensions: [{field: "unknown", message: "Unexpected error"}],
+    //             data: null,
+    //         };
+    //     }
+    // },
 
     async deleteById(id: string): Promise<void> {
 

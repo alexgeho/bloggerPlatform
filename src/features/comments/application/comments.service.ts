@@ -1,47 +1,78 @@
-import {postsRepository} from '../../posts/repositories/posts.repository';
-import {commentsRepository} from '../repositories/comments.repository';
-import {CommentDataOutput} from '../routers/output/comment-data.output';
-import {CommentInputDto} from './dtos/comment.input-dto';
-import {CommentQueryInput} from '../routers/input/comment-query.input';
-import {mapToCommentListPaginatedOutput} from '../routers/mappers/map-to-comment-list-paginated-output.util';
-import {Result} from "../../auth/common/result/result.type";
-import {ResultStatus} from "../../auth/common/result/resultCode";
-import {userRepository} from "../../../composition-root";
-import {CommentDocument, CommentModel} from "../domain/comment.mangoose";
-import {ObjectId} from "mongodb";
+import { postsRepository } from '../../posts/repositories/posts.repository';
+import { commentsRepository } from '../repositories/comments.repository';
+import { CommentDataOutput } from '../routers/output/comment-data.output';
+import { CommentInputDto } from './dtos/comment.input-dto';
+import { CommentQueryInput } from '../routers/input/comment-query.input';
+import { mapToCommentListPaginatedOutput } from '../routers/mappers/map-to-comment-list-paginated-output.util';
+import { Result } from "../../auth/common/result/result.type";
+import { ResultStatus } from "../../auth/common/result/resultCode";
+import { userRepository } from "../../../composition-root";
+import { CommentDocument, CommentModel } from "../domain/comment.mangoose";
+import { ObjectId } from "mongodb";
+import { likesService } from "../../likes/likes.serviceAndRep";
 
 export const commentsService = {
 
-    async setLikeStatus(commentId: string, userId: string, likeStatus: "None" | "Like" | "Dislike"):Promise<"COMMENT_NOT_FOUND" | "USER_NOT_FOUND" | "UPDATED"> {
+    async setLikeStatus(
+        commentId: string,
+        userId: string,
+        likeStatus: "None" | "Like" | "Dislike"
+    ): Promise<"COMMENT_NOT_FOUND" | "USER_NOT_FOUND" | "UPDATED"> {
 
+        // проверяем коммент
         const commentExist = await commentsRepository.findById(commentId);
+        if (!commentExist) return "COMMENT_NOT_FOUND";
 
-        if (!commentExist) return "COMMENT_NOT_FOUND"
-
+        // проверяем юзера
         const userExist = await userRepository.findById(userId);
+        if (!userExist) return "USER_NOT_FOUND";
 
-        if (!userExist) return "USER_NOT_FOUND"
+        // ищем лайк
+        const likeExisting = await likesService.findLike(commentId, userId);
 
+        if (likeExisting) {
+            if (likeExisting.myStatus === likeStatus) {
+                return "UPDATED"; // ничего не меняем
+            }
 
-        const updated = await commentsRepository.updateLikeStatus(commentId, likeStatus);
-        if (!updated) throw new Error("Comment not found");
+            // обновляем статус
+            likeExisting.myStatus = likeStatus;
+            await likesService.setLike(likeExisting);
+        } else {
+            // создаём новый лайк
+            await likesService.createLike(commentId, userId, likeStatus);
+        }
+
+        // пересчёт счётчиков
+        if (likeStatus === "Like") {
+            commentExist.likesInfo.likesCount++;
+        }
+        if (likeStatus === "Dislike") {
+            commentExist.likesInfo.dislikesCount++;
+        }
+        if (likeStatus === "None") {
+            // ⚡️ упрощённая логика — просто не увеличиваем
+        }
+
+        await commentExist.save();
+
         return "UPDATED";
     },
 
-    async create(postId: string, dto: CommentInputDto, user: { userId: string }): Promise<CommentDataOutput> {
-
+    async create(
+        postId: string,
+        dto: CommentInputDto,
+        user: { userId: string }
+    ): Promise<CommentDataOutput> {
         const post = await postsRepository.findByIdOrFail(postId);
-
-        if (!post) throw new Error('Post not found');
+        if (!post) throw new Error("Post not found");
 
         const userById = await userRepository.findById(user.userId);
-
-        if (!userById) throw new Error('User not found');
-
+        if (!userById) throw new Error("User not found");
 
         const commentToSave: CommentDocument = new CommentModel({
             id: new ObjectId(),
-            postId: postId,
+            postId,
             content: dto.content,
             createdAt: new Date().toISOString(),
             commentatorInfo: {
@@ -55,11 +86,7 @@ export const commentsService = {
             },
         });
 
-        console.log('commentToSave: ', commentToSave);
-
-        // передаём в репозиторий
         const savedComment = await commentsRepository.save(commentToSave);
-
 
         return {
             id: savedComment._id.toString(),
@@ -67,22 +94,29 @@ export const commentsService = {
             commentatorInfo: savedComment.commentatorInfo,
             createdAt: savedComment.createdAt,
             likesInfo: savedComment.likesInfo,
-        }
+        };
     },
 
-
-    async findManyCommentsByPostId(postId: string, queryDto: CommentQueryInput): Promise<ReturnType<typeof mapToCommentListPaginatedOutput>> {
+    async findManyCommentsByPostId(
+        postId: string,
+        queryDto: CommentQueryInput
+    ): Promise<ReturnType<typeof mapToCommentListPaginatedOutput>> {
         const {
-            pageNumber, pageSize, sortBy = 'createdAt', sortDirection = 'desc',
+            pageNumber,
+            pageSize,
+            sortBy = "createdAt",
+            sortDirection = "desc",
         } = queryDto;
+
         const skip = (pageNumber - 1) * pageSize;
         const limit = pageSize;
-        const sort: Record<string, 1 | -1> = {[sortBy]: sortDirection === 'asc' ? 1 : -1};
-
+        const sort: Record<string, 1 | -1> = {
+            [sortBy]: sortDirection === "asc" ? 1 : -1,
+        };
 
         const [items, totalCount] = await Promise.all([
             commentsRepository.findManyByPostId(postId, skip, limit, sort),
-            commentsRepository.countByPostId(postId), // это должно вернуть число
+            commentsRepository.countByPostId(postId),
         ]);
 
         return mapToCommentListPaginatedOutput(items, {
@@ -90,21 +124,17 @@ export const commentsService = {
             pageSize,
             totalCount,
         });
-
-
     },
 
     async updateComment(id: string, content: string): Promise<Result<null>> {
         const updateResult = await commentsRepository.updateComment(id, content);
-
         if (!updateResult) {
             return {
                 status: ResultStatus.NotFound,
-                extensions: [{field: "id", message: "Comment not found"}],
+                extensions: [{ field: "id", message: "Comment not found" }],
                 data: null,
             };
         }
-
         return {
             status: ResultStatus.Success,
             extensions: [],
@@ -114,7 +144,5 @@ export const commentsService = {
 
     async deleteById(id: string): Promise<void> {
         await commentsRepository.deleteById(id);
-        return;
-    }
-
+    },
 };

@@ -8,8 +8,6 @@ export async function putLikesHandler(req: Request, res: Response): Promise<void
         const commentId = req.params.id;
         const likeStatus = req.body.likeStatus;
 
-
-       // проверка ID
         if (!commentId) {
             res.status(404).send({ error: "Invalid comment id" });
             return;
@@ -18,14 +16,11 @@ export async function putLikesHandler(req: Request, res: Response): Promise<void
         console.log('userId:', userId )
         console.log('likeStatus:', likeStatus)
 
-
-        // валидация статуса
         if (!["None", "Like", "Dislike"].includes(likeStatus)) {
             res.status(400).send({ error: "Invalid like status" });
             return;
         }
 
-        // бизнес-логика
         const setLikeStatus = await commentsService.setLikeStatus(commentId, userId, likeStatus);
 
         if (setLikeStatus === "COMMENT_NOT_FOUND") {
