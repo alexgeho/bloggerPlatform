@@ -2,10 +2,12 @@ import { Request, Response } from "express";
 import { commentsService } from "../../application/comments.service";
 
 export async function putLikesHandler(req: Request, res: Response): Promise<void> {
+
     try {
         const userId = req.user.userId; // из accessToken
         const commentId = req.params.id;
-        const { likeStatus } = req.body;
+        const likeStatus = req.body.likeStatus;
+
 
        // проверка ID
         if (!commentId) {
@@ -13,6 +15,9 @@ export async function putLikesHandler(req: Request, res: Response): Promise<void
             return;
         }
         console.log('commentId:', commentId)
+        console.log('userId:', userId )
+        console.log('likeStatus:', likeStatus)
+
 
         // валидация статуса
         if (!["None", "Like", "Dislike"].includes(likeStatus)) {
@@ -20,13 +25,16 @@ export async function putLikesHandler(req: Request, res: Response): Promise<void
             return;
         }
 
-        console.log('likeStatus:', likeStatus)
-        console.log('userId:', userId)
         // бизнес-логика
-        const isUpdated = await commentsService.setLikeStatus(commentId, userId, likeStatus);
+        const setLikeStatus = await commentsService.setLikeStatus(commentId, userId, likeStatus);
 
-        if (!isUpdated) {
-            res.sendStatus(404); // комментарий не найден
+        if (setLikeStatus === "COMMENT_NOT_FOUND") {
+            res.status(404).send({error:"Comment not found"}); // комментарий не найден
+            return;
+        }
+
+        if (setLikeStatus === "USER_NOT_FOUND") {
+            res.status(404).send({error:"User not found"}); // комментарий не найден
             return;
         }
 

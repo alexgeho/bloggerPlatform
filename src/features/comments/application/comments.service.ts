@@ -12,19 +12,20 @@ import {ObjectId} from "mongodb";
 
 export const commentsService = {
 
-    async setLikeStatus(commentId: string, userId: string, likeStatus: "None" | "Like" | "Dislike") {
+    async setLikeStatus(commentId: string, userId: string, likeStatus: "None" | "Like" | "Dislike"):Promise<"COMMENT_NOT_FOUND" | "USER_NOT_FOUND" | "UPDATED"> {
 
         const commentExist = await commentsRepository.findById(commentId);
 
-        if (!commentExist) {return false}
+        if (!commentExist) return "COMMENT_NOT_FOUND"
 
         const userExist = await userRepository.findById(userId);
 
-        if (!userExist) {return false}
+        if (!userExist) return "USER_NOT_FOUND"
+
 
         const updated = await commentsRepository.updateLikeStatus(commentId, likeStatus);
         if (!updated) throw new Error("Comment not found");
-        return;
+        return "UPDATED";
     },
 
     async create(postId: string, dto: CommentInputDto, user: { userId: string }): Promise<CommentDataOutput> {
