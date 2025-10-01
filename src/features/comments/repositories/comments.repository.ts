@@ -1,5 +1,4 @@
 import {ObjectId, WithId} from 'mongodb';
-import {CommentDb} from "../domain/commentDb";
 import {CommentQueryInput} from "../routers/input/comment-query.input";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
 import {ResultStatus} from "../../auth/common/result/resultCode";
@@ -38,12 +37,12 @@ export const commentsRepository = {
         return true;
     },
 
-    async create(commentToSave: CommentDb): Promise<string> {
+    async create(commentToSave: CommentDocument): Promise<string> {
         const insertResult = await CommentModel.insertOne(commentToSave);
         return insertResult._id.toString();
     },
 
-    async findManyByPostId(postId: string, skip: number, limit: number, sort: Record<string, 1 | -1>): Promise<WithId<CommentDb>[]> {
+    async findManyByPostId(postId: string, skip: number, limit: number, sort: Record<string, 1 | -1>): Promise<WithId<CommentDocument>[]> {
         return CommentModel
             .find({postId: postId})
             .sort(sort)
@@ -57,7 +56,7 @@ export const commentsRepository = {
     },
 
 
-    async findById(id: string): Promise<WithId<CommentDb> | null> {
+    async findById(id: string): Promise<WithId<CommentDocument> | null> {
         return CommentModel.findOne({_id: new ObjectId(id)});
     },
 

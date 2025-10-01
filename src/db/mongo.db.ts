@@ -2,7 +2,6 @@ import { Collection, Db, OptionalId, MongoClient } from "mongodb";
 import { Blog } from "../features/blogs/domain/blog";
 import { PostDb } from "../features/posts/domain/postDb";
 import { User } from "../features/auth/domain/user";
-import { CommentDb } from "../features/comments/domain/commentDb";
 import { DeviceSession } from "../features/auth/domain/device-session.entity";
 import { ENV } from "../core/config/env";
 import mongoose from "mongoose";
