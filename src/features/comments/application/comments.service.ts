@@ -31,6 +31,7 @@ export const commentsService = {
 
         const commentToSave: CommentDocument = new CommentModel({
             id: new ObjectId(),
+            postId: postId,
             content: dto.content,
             createdAt: new Date().toISOString(),
             commentatorInfo: {

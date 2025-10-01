@@ -5,6 +5,7 @@ type LikeStatus = "None" | "Like" | "Dislike";
 
 type Comment = {
     id: ObjectId;
+    postId: string;
     content: string;
     createdAt: string;
     commentatorInfo: {
@@ -19,6 +20,7 @@ type Comment = {
 };
 
 const CommentSchema = new Schema<Comment>({
+    postId:{ type: String, required: true },
     content: { type: String, required: true },
     createdAt: { type: String, required: true },
     commentatorInfo: {
