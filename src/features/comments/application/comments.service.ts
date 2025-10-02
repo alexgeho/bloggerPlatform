@@ -1,15 +1,15 @@
-import { postsRepository } from '../../posts/repositories/posts.repository';
-import { commentsRepository } from '../repositories/comments.repository';
-import { CommentDataOutput } from '../routers/output/comment-data.output';
-import { CommentInputDto } from './dtos/comment.input-dto';
-import { CommentQueryInput } from '../routers/input/comment-query.input';
-import { mapToCommentListPaginatedOutput } from '../routers/mappers/map-to-comment-list-paginated-output.util';
-import { Result } from "../../auth/common/result/result.type";
-import { ResultStatus } from "../../auth/common/result/resultCode";
-import { userRepository } from "../../../composition-root";
-import { CommentDocument, CommentModel } from "../domain/comment.mangoose";
-import { ObjectId } from "mongodb";
-import { likesService } from "../../likes/likes.serviceAndRep";
+import {postsRepository} from '../../posts/repositories/posts.repository';
+import {commentsRepository} from '../repositories/comments.repository';
+import {CommentDataOutput} from '../routers/output/comment-data.output';
+import {CommentInputDto} from './dtos/comment.input-dto';
+import {CommentQueryInput} from '../routers/input/comment-query.input';
+import {mapToCommentListPaginatedOutput} from '../routers/mappers/map-to-comment-list-paginated-output.util';
+import {Result} from "../../auth/common/result/result.type";
+import {ResultStatus} from "../../auth/common/result/resultCode";
+import {userRepository} from "../../../composition-root";
+import {CommentDocument, CommentModel} from "../domain/comment.mangoose";
+import {ObjectId} from "mongodb";
+import {likesService} from "../../likes/likes.serviceAndRep";
 
 export const commentsService = {
 
@@ -23,38 +23,75 @@ export const commentsService = {
         const commentExist = await commentsRepository.findById(commentId);
         if (!commentExist) return "COMMENT_NOT_FOUND";
 
+        console.log("commentExistDoc 26: ", commentExist)
+
         // проверяем юзера
         const userExist = await userRepository.findById(userId);
         if (!userExist) return "USER_NOT_FOUND";
 
+        console.log("userExist 32: ", userExist)
+
         // ищем лайк
         const likeExisting = await likesService.findLike(commentId, userId);
 
+        console.log("likeExisting 37: ", likeExisting)
+
         if (likeExisting) {
-            if (likeExisting.myStatus === likeStatus) {
+
+            if (commentExist.likesInfo.myStatus === likeStatus) {
                 return "UPDATED"; // ничего не меняем
             }
 
-            // обновляем статус
-            likeExisting.myStatus = likeStatus;
-            await likesService.setLike(likeExisting);
-        } else {
-            // создаём новый лайк
-            await likesService.createLike(commentId, userId, likeStatus);
+            if (likeStatus !== "None") {
+
+                if ( commentExist.likesInfo.myStatus === "Like"){
+                    commentExist.likesInfo.likesCount--
+                } else { commentExist.likesInfo.dislikesCount-- }
+
+                commentExist.likesInfo.myStatus = likeStatus
+
+                if ( likeStatus === "Like"){
+                    commentExist.likesInfo.likesCount++
+                } else { commentExist.likesInfo.dislikesCount++ }
+
+            }
+
+            await commentExist.save();
+            return "UPDATED";
         }
 
-        // пересчёт счётчиков
-        if (likeStatus === "Like") {
+// S1
+        // if (likeExisting) {
+        //     if (commentExist.likesInfo.myStatus === likeStatus) {
+        //         return "UPDATED"; // ничего не меняем
+        //     }
+        //
+        //     if (likeStatus !== "None") {
+        //         if (likeStatus === "Like") {
+        //             commentExist.likesInfo.myStatus = "Like";
+        //             commentExist.likesInfo.likesCount++;
+        //         }
+        //
+        //         if (likeStatus === "Dislike") {
+        //             commentExist.likesInfo.myStatus = "Dislike";
+        //             commentExist.likesInfo.dislikesCount++;
+        //         }
+        //     }
+        //
+        //     await commentExist.save();
+        //     return "UPDATED";
+        // }
+
+
+        const newLike = await likesService.createLike(commentId, userId, likeStatus);
+
+        if (newLike.myStatus === "Like") {
             commentExist.likesInfo.likesCount++;
-        }
-        if (likeStatus === "Dislike") {
+        } else if (newLike.myStatus === "Dislike") {
             commentExist.likesInfo.dislikesCount++;
         }
-        if (likeStatus === "None") {
-            // ⚡️ упрощённая логика — просто не увеличиваем
-        }
-
-        await commentExist.save();
+        console.log('comExist 76: ', commentExist)
+        await commentExist.save()
 
         return "UPDATED";
     },
@@ -131,7 +168,7 @@ export const commentsService = {
         if (!updateResult) {
             return {
                 status: ResultStatus.NotFound,
-                extensions: [{ field: "id", message: "Comment not found" }],
+                extensions: [{field: "id", message: "Comment not found"}],
                 data: null,
             };
         }

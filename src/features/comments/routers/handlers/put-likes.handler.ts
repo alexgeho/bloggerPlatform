@@ -23,6 +23,8 @@ export async function putLikesHandler(req: Request, res: Response): Promise<void
 
         const setLikeStatus = await commentsService.setLikeStatus(commentId, userId, likeStatus);
 
+        console.log('setLikeStatus:', setLikeStatus)
+
         if (setLikeStatus === "COMMENT_NOT_FOUND") {
             res.status(404).send({error:"Comment not found"}); // комментарий не найден
             return;

@@ -1,6 +1,7 @@
 import { LikeDocument, LikeModel } from "./domain/like.entity";
 
 export const likesService = {
+
     async findLike(commentId: string, userId: string): Promise<LikeDocument | null> {
         return LikeModel.findOne({ commentId, userId });
     },

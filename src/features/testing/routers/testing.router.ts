@@ -7,6 +7,7 @@ import {DeviceSessionModel} from "../../auth/domain/device-session.mangoose";
 import {BlogModel} from "../../blogs/domain/blog.mangoose";
 import {PostModel} from "../../posts/domain/post.mangoose";
 import {CommentModel} from "../../comments/domain/comment.mangoose";
+import {LikeModel} from "../../likes/domain/like.entity";
 
 export const testingRouter = Router({});
 
@@ -22,6 +23,7 @@ testingRouter.delete('/all-data', async (req: Request, res: Response) => {
             CommentModel.deleteMany(),
             DeviceSessionModel.deleteMany(),
             RateLimitModel.deleteMany(),
+            LikeModel.deleteMany(),
 
         ]);
         res.sendStatus(HttpStatus.NoContent);
