@@ -37,28 +37,33 @@ export const commentsService = {
         console.log("likeExisting 37: ", likeExisting)
 
         if (likeExisting) {
-
-            if (commentExist.likesInfo.myStatus === likeStatus) {
-                return "UPDATED"; // ничего не меняем
+            // если статус не изменился или новый статус None → ничего не делаем
+            if (commentExist.likesInfo.myStatus === likeStatus || likeStatus === "None") {
+                return "UPDATED";
             }
 
-            if (likeStatus !== "None") {
-
-                if ( commentExist.likesInfo.myStatus === "Like"){
-                    commentExist.likesInfo.likesCount--
-                } else { commentExist.likesInfo.dislikesCount-- }
-
-                commentExist.likesInfo.myStatus = likeStatus
-
-                if ( likeStatus === "Like"){
-                    commentExist.likesInfo.likesCount++
-                } else { commentExist.likesInfo.dislikesCount++ }
-
+            // убираем старый
+            if (commentExist.likesInfo.myStatus === "Like") {
+                commentExist.likesInfo.likesCount--;
             }
+            if (commentExist.likesInfo.myStatus === "Dislike") {
+                commentExist.likesInfo.dislikesCount--;
+            }
+
+            // добавляем новый
+            if (likeStatus === "Like") {
+                commentExist.likesInfo.likesCount++;
+            }
+            if (likeStatus === "Dislike") {
+                commentExist.likesInfo.dislikesCount++;
+            }
+
+            commentExist.likesInfo.myStatus = likeStatus;
 
             await commentExist.save();
             return "UPDATED";
         }
+
 
 // S1
         // if (likeExisting) {
