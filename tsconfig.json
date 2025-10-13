@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "typeRoots": ["./src/core/types", "./node_modules/@types"],
     "target": "es2015",
     "module": "commonjs",
     "experimentalDecorators": true,
@@ -15,6 +16,6 @@
   },
   "include": ["src/**/*"],
   "exclude": [
-    "./__tests__/**/*", "dist", "node_modules"],
+    "./__tests__/**/*", "dist", "node_modules"]
 
 }

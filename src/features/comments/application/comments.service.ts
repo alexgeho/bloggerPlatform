@@ -10,95 +10,45 @@ import {userRepository} from "../../../composition-root";
 import {CommentDocument, CommentModel} from "../domain/comment.mangoose";
 import {ObjectId} from "mongodb";
 import {likesService} from "../../likes/likes.serviceAndRep";
+import {LikeStatus} from "../../likes/domain/like-status.enum";
 
 export const commentsService = {
 
-    async setLikeStatus(
-        commentId: string,
-        userId: string,
-        likeStatus: "None" | "Like" | "Dislike"
-    ): Promise<"COMMENT_NOT_FOUND" | "USER_NOT_FOUND" | "UPDATED"> {
+    async setLikeStatus(commentId: string, userId: string, likeStatus: LikeStatus) {
+        const comment = await commentsRepository.findById(commentId);
+        if (!comment) return 'COMMENT_NOT_FOUND';
 
-        // проверяем коммент
-        const commentExist = await commentsRepository.findById(commentId);
-        if (!commentExist) return "COMMENT_NOT_FOUND";
+        const user = await userRepository.findById(userId);
+        if (!user) return 'USER_NOT_FOUND';
 
-        console.log("commentExistDoc 26: ", commentExist)
+        const existingLike = await likesService.findLike(commentId, userId);
 
-        // проверяем юзера
-        const userExist = await userRepository.findById(userId);
-        if (!userExist) return "USER_NOT_FOUND";
-
-        console.log("userExist 32: ", userExist)
-
-        // ищем лайк
-        const likeExisting = await likesService.findLike(commentId, userId);
-
-        console.log("likeExisting 37: ", likeExisting)
-
-        if (likeExisting) {
-            // если статус не изменился или новый статус None → ничего не делаем
-            if (commentExist.likesInfo.myStatus === likeStatus || likeStatus === "None") {
-                return "UPDATED";
+        if (existingLike) {
+            if (comment.likesInfo.myStatus === likeStatus || likeStatus === LikeStatus.None) {
+                return 'UPDATED';
             }
 
-            // убираем старый
-            if (commentExist.likesInfo.myStatus === "Like") {
-                commentExist.likesInfo.likesCount--;
-            }
-            if (commentExist.likesInfo.myStatus === "Dislike") {
-                commentExist.likesInfo.dislikesCount--;
-            }
+            // Убираем старое значение
+            if (comment.likesInfo.myStatus === LikeStatus.Like) comment.likesInfo.likesCount--;
+            if (comment.likesInfo.myStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount--;
 
-            // добавляем новый
-            if (likeStatus === "Like") {
-                commentExist.likesInfo.likesCount++;
-            }
-            if (likeStatus === "Dislike") {
-                commentExist.likesInfo.dislikesCount++;
-            }
+            // Добавляем новое
+            if (likeStatus === LikeStatus.Like) comment.likesInfo.likesCount++;
+            if (likeStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount++;
 
-            commentExist.likesInfo.myStatus = likeStatus;
-
-            await commentExist.save();
-            return "UPDATED";
+            comment.likesInfo.myStatus = likeStatus;
+            await comment.save();
+            return 'UPDATED';
         }
 
-
-// S1
-        // if (likeExisting) {
-        //     if (commentExist.likesInfo.myStatus === likeStatus) {
-        //         return "UPDATED"; // ничего не меняем
-        //     }
-        //
-        //     if (likeStatus !== "None") {
-        //         if (likeStatus === "Like") {
-        //             commentExist.likesInfo.myStatus = "Like";
-        //             commentExist.likesInfo.likesCount++;
-        //         }
-        //
-        //         if (likeStatus === "Dislike") {
-        //             commentExist.likesInfo.myStatus = "Dislike";
-        //             commentExist.likesInfo.dislikesCount++;
-        //         }
-        //     }
-        //
-        //     await commentExist.save();
-        //     return "UPDATED";
-        // }
-
-
+        // Если лайка ещё нет
         const newLike = await likesService.createLike(commentId, userId, likeStatus);
 
-        if (newLike.myStatus === "Like") {
-            commentExist.likesInfo.likesCount++;
-        } else if (newLike.myStatus === "Dislike") {
-            commentExist.likesInfo.dislikesCount++;
-        }
-        console.log('comExist 76: ', commentExist)
-        await commentExist.save()
+        if (newLike.myStatus === LikeStatus.Like) comment.likesInfo.likesCount++;
+        else if (newLike.myStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount++;
 
-        return "UPDATED";
+        await comment.save();
+        return 'UPDATED';
     },
 
     async create(

@@ -1,17 +1,18 @@
 import {Request, Response} from "express";
 import {commentsQwRepository} from "../../repositories/commentsQwRepository";
 
-export async function getCommentHandler(req: Request, res: Response)
-    : Promise<void> {
 
+export async function getCommentHandler(req: Request, res: Response): Promise<void> {
     try {
+        const { id } = req.params;
+        const userId = req.user?.userId; // получаем userId, если пользователь авторизован
 
-        const {id} = req.params;
-        const comment = await commentsQwRepository.findById(id);
+        // 🧠 теперь findById принимает userId и возвращает уже с myStatus
+        const comment = await commentsQwRepository.findById(id, userId);
 
         if (!comment) {
-            res.sendStatus(404).send({message: 'Comment not found'});
-            return
+            res.status(404).send({ message: 'Comment not found' });
+            return;
         }
 
         const viewModel = {
@@ -25,35 +26,13 @@ export async function getCommentHandler(req: Request, res: Response)
             likesInfo: {
                 likesCount: comment.likesInfo.likesCount,
                 dislikesCount: comment.likesInfo.dislikesCount,
-                myStatus: comment.likesInfo.myStatus,
-            }
-
-        }
-
+                myStatus: comment.likesInfo.myStatus, // 👈 вот тут ты используешь присвоенное значение
+            },
+        };
 
         res.status(200).send(viewModel);
-
-    } catch (e: unknown) {
-
+    } catch (e) {
+        console.error(e);
+        res.sendStatus(500);
     }
-
 }
-
-
-// => {
-//
-//     const {id} = req.params;
-//
-//     const comment = await commentsQwRepository.findById(id);
-//
-//     if(!comment){
-//
-//         return res.sendStatus(404).send({message: 'Comment not found'});
-//     }
-//
-//     res.status(200).send(comment);
-//
-//
-//
-//
-// }

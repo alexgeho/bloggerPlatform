@@ -11,14 +11,7 @@ export async function createCommentHandler (req: Request, res: Response) {
         const postId = req.params.id;
         const dto = req.body;
         const user = req.user;
-        console.log('dto:', dto)
 
-        // const checkIfPostExist = await postsQwRepository.findById(postId)
-        //
-        // if (!checkIfPostExist) {
-        //     res.sendStatus(404);
-        //     return;
-        // }
 
         const createdCommentData: CommentDataOutput = await commentsService.create(postId, dto, user);
 

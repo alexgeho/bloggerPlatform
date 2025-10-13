@@ -1,9 +1,7 @@
 import {ObjectId, WithId} from 'mongodb';
-import {CommentQueryInput} from "../routers/input/comment-query.input";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
-import {ResultStatus} from "../../auth/common/result/resultCode";
-import {Result} from "../../auth/common/result/result.type";
 import {CommentDocument, CommentModel} from "../domain/comment.mangoose";
+import {LikeStatus} from "../../likes/domain/like-status.enum";
 
 
 export const commentsRepository = {
@@ -13,20 +11,26 @@ export const commentsRepository = {
         return commentToSave.save()
     },
 
-    async updateLikeStatus(commentId: string, newStatus: "None" | "Like" | "Dislike"): Promise<boolean> {
+    async updateLikeStatus(
+        commentId: string,
+        newStatus: LikeStatus
+    ): Promise<boolean> {
 
         const comment = await CommentModel.findById(commentId);
         if (!comment) return false;
 
         const oldStatus = comment.likesInfo.myStatus;
 
+        // если статус не изменился — ничего не делаем
         if (oldStatus === newStatus) return true;
 
-        if (oldStatus === "Like") comment.likesInfo.likesCount--;
-        if (oldStatus === "Dislike") comment.likesInfo.dislikesCount--;
+        // убираем старый
+        if (oldStatus === LikeStatus.Like) comment.likesInfo.likesCount--;
+        if (oldStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount--;
 
-        if (newStatus === "Like") comment.likesInfo.likesCount++;
-        if (newStatus === "Dislike") comment.likesInfo.dislikesCount++;
+        // добавляем новый
+        if (newStatus === LikeStatus.Like) comment.likesInfo.likesCount++;
+        if (newStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount++;
 
         comment.likesInfo.myStatus = newStatus;
 
@@ -49,18 +53,18 @@ export const commentsRepository = {
     },
 
     async countByPostId(postId: string): Promise<number> {
-        return CommentModel.countDocuments({ postId: new ObjectId(postId) });
+        return CommentModel.countDocuments({postId: new ObjectId(postId)});
     },
 
 
     async findById(id: string): Promise<WithId<CommentDocument> | null> {
-        return CommentModel.findOne({_id:id});
+        return CommentModel.findOne({_id: id});
     },
 
     async updateComment(id: string, content: string): Promise<boolean> {
         const result = await CommentModel.updateOne(
-            { _id: new ObjectId(id) },
-            { $set: { content } }
+            {_id: new ObjectId(id)},
+            {$set: {content}}
         );
         return result.matchedCount > 0;
     },

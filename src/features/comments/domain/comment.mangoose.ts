@@ -1,7 +1,9 @@
 import { ObjectId } from "mongodb";
 import { HydratedDocument, model, Model, Schema } from "mongoose";
+import { LikeStatus } from '../../likes/domain/like-status.enum';
 
-type LikeStatus = "None" | "Like" | "Dislike";
+
+// type LikeStatus = "None" | "Like" | "Dislike";
 
 type Comment = {
     id: ObjectId;
@@ -32,8 +34,8 @@ const CommentSchema = new Schema<Comment>({
         dislikesCount: { type: Number, default: 0 },
         myStatus: {
             type: String,
-            enum: ["None", "Like", "Dislike"],
-            default: "None",
+            enum: Object.values(LikeStatus),
+            default: LikeStatus.None,
         },
     },
 });

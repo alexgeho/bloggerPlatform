@@ -1,22 +1,27 @@
 import { LikeDocument, LikeModel } from "./domain/like.entity";
+import {likesRepository} from "./likes.repository";
+import {LikeStatus} from "./domain/like-status.enum";
 
 export const likesService = {
-
-    async findLike(commentId: string, userId: string): Promise<LikeDocument | null> {
-        return LikeModel.findOne({ commentId, userId });
+    async findLike(commentId: string, userId: string) {
+        return likesRepository.findOne(commentId, userId);
     },
 
-    async setLike(like: LikeDocument): Promise<LikeDocument> {
-        return like.save();
-    },
-
-    async createLike(commentId: string, userId: string, likeStatus: "None" | "Like" | "Dislike"): Promise<LikeDocument> {
-        const newLike = new LikeModel({
+    async createLike(commentId: string, userId: string, status: LikeStatus) {
+        const like = await likesRepository.create({
             commentId,
             userId,
-            myStatus: likeStatus,
+            myStatus: status,
             createdAt: new Date().toISOString(),
         });
-        return newLike.save();
+        return like;
+    },
+
+    async updateLike(commentId: string, userId: string, status: LikeStatus) {
+        await likesRepository.update(commentId, userId, { myStatus: status });
+    },
+
+    async deleteLike(commentId: string, userId: string) {
+        await likesRepository.delete(commentId, userId);
     },
 };

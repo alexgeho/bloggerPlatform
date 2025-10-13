@@ -5,7 +5,6 @@ import { ENV } from "../../../core/config/env";
 // import {deviceSessionsCollection} from "../../../db/mongo.db";
 import { randomUUID } from "crypto";
 import {ObjectId} from "mongodb";
-import {JwtPayloadUser} from "../routers/guards/access.token.guard";
 import {DeviceSessionModel} from "../domain/device-session.mangoose";
 
 

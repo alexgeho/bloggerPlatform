@@ -1,24 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
 import { jwtService } from '../../adapters/jwt.service';
+import {JwtPayloadUser} from '../../../../core/types/jwt-payload-user.type'
 
 
-
-export const accessTokenGuard = async (
+export const accessTokenLikes = async (
     req: Request,
     res: Response,
     next: NextFunction
 ): Promise<void> => {
     if (!req.headers.authorization) {
-        res.sendStatus(401);
-        return;
+        req.user = null;
+        return next();
     }
 
     const [authType, token] = req.headers.authorization.split(' ');
 
-    if (authType !== 'Bearer' || !token) {
-        res.sendStatus(401);
-        return;
-    }
 
     const payload = await jwtService.verifyToken(token);
 
