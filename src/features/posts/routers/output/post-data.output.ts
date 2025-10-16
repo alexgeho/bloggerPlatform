@@ -5,6 +5,18 @@ export type PostDataOutput = {
     content: string;
     blogId: string;
     blogName: string | null;
-    createdAt: string;     // Обычно как ISO-строка
+    createdAt: string;
+    extendedLikesInfo: {
+        likesCount: number,
+        dislikesCount: number,
+        myStatus: string,
+        newestLikes: [
+            {
+                addedAt: string,
+                userId: string,
+                login: string
+            }
+        ]
+    }
 
 };

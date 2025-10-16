@@ -1,8 +1,9 @@
-import { WithId } from 'mongodb';
-import { PostDb } from '../../domain/postDb';
+import {WithId} from 'mongodb';
+import {PostDb} from '../../domain/postDb';
 import {PostDataOutput} from '../output/post-data.output';
+import {LikeForPostDocument} from "../../../likes/domain/like-for-post";
 
-export function mapToPostOutput(post: WithId<PostDb>): PostDataOutput {
+export function mapToPostOutput(post: WithId<PostDb>, likesExtended: any): PostDataOutput {
     return {
         id: post._id.toString(),
         title: post.title,
@@ -10,27 +11,16 @@ export function mapToPostOutput(post: WithId<PostDb>): PostDataOutput {
         content: post.content,
         blogId: post.blogId,
         blogName: post.blogName ?? null,
-        createdAt: post.createdAt
+        createdAt: post.createdAt,
+        extendedLikesInfo: {
+            likesCount: likesExtended.likesCount,
+            dislikesCount: likesExtended.dislikesCount,
+            myStatus: likesExtended.myStatus,
+            newestLikes: likesExtended.newestLikes.map((like: any) => ({
+                addedAt: like.addedAt,
+                userId: like.userId,
+                login: like.login,
+            })),
+        },
     };
 }
-
-
-
-
-
-// import { WithId } from 'mongodb';
-// import { Post } from '../../types/post';
-// import { PostViewModel } from '../../types/post-view-model';
-//
-// export function mapToPostViewModel(post: WithId<Post>): PostViewModel {
-//     return {
-//         id: post._id.toString(),
-//         title: post.title,
-//         shortDescription: post.shortDescription,
-//         content: post.content,
-//         blogId: post.blogId,
-//         blogName: post.blogName,
-//         createdAt: post.createdAt,
-//
-//     };
-// }

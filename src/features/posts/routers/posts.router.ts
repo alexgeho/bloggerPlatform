@@ -30,12 +30,13 @@ postsRouter
         getPostListHandler)
 
     .post("/",
-        // superAdminGuardMiddleware,
+        accessTokenOptionalMiddleware,
         postInputDtoValidation,
         inputValidationResultMiddleware,
         postPostHandler)
 
     .get("/:id",
+        accessTokenOptionalMiddleware,
         idValidation,
         inputValidationResultMiddleware,
         getPostHandler)

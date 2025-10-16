@@ -3,6 +3,7 @@ import { HttpStatus } from '../../../../core/types/http-statuses';
 import { mapToPostOutput } from '../mappers/map-to-post-output.util';
 import { postsService } from '../../application/posts.service';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
+import {likesService} from "../../../likes/likes.serviceAndRep";
 
 export async function getPostHandler(
 
@@ -13,11 +14,16 @@ export async function getPostHandler(
 
 
     try {
-        const id = req.params.id;
+        const postId = req.params.id;
+        const userId = req.user?.userId;
 
-        const post = await postsService.findByIdOrFail(id);
+        const post
+            = await postsService.findByIdOrFail(postId);
 
-        const postOutput = mapToPostOutput(post);
+        const likesExtended
+            = await likesService.findLikeOnPost(postId, userId)
+
+        const postOutput = mapToPostOutput(post, likesExtended);
 
         res.status(HttpStatus.Ok).send(postOutput);
     } catch (e: unknown) {

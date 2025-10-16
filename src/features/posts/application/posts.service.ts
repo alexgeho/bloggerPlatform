@@ -7,6 +7,7 @@ import {PostDb} from "../domain/postDb";
 import {WithId} from "mongodb";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
 import {likesService} from "../../likes/likes.serviceAndRep";
+import {mapToPostOutput} from "../routers/mappers/map-to-post-output.util";
 
 export const postsService = {
 
@@ -15,12 +16,23 @@ export const postsService = {
         const existingPost = await postsRepository.findByIdOrFail(postId);
         if (!existingPost) throw new Error('Post not found');
 
-        const newLikeEntity = await likesService.likeToPost(postId, userId, likeStatus);
+        const newLikeEntity = await likesService.createLikeOnPost(postId, userId, likeStatus);
 
     },
 
-    async findMany(queryDto: PostQueryInput): Promise<{ items: any[]; totalCount: number }> {
-        return postsRepository.findMany(queryDto);
+        async findMany(queryDto: PostQueryInput, userId?: string): Promise<{ items: any[]; totalCount: number }> {
+            const { items, totalCount } = await postsRepository.findMany(queryDto);
+
+            // Для каждого поста добавляем информацию о лайках и маппим в нормальный вывод
+            const postsWithLikes = await Promise.all(
+                items.map(async (post) => {
+                    const likesExtended = await likesService.findLikeOnPost(post._id.toString(), userId);
+                    return mapToPostOutput(post, likesExtended); // 👈 получаем нормальную структуру
+                })
+            );
+
+            return { items: postsWithLikes, totalCount };
+        },
 
         // const blogIds = [...new Set(items.map(post => post.blogId))];
         // const blogs = await blogsRepository.findByIds(blogIds);
@@ -36,7 +48,7 @@ export const postsService = {
         // }));
         //
         // return { items: enrichedPosts, totalCount };
-    },
+
 
     async findAllByBlogId(
         blogId: string, pageNumber: number, pageSize: number, sortBy: string, sortDirection: 'asc' | 'desc'
@@ -81,6 +93,18 @@ export const postsService = {
             blogId: createdPost.blogId,
             blogName: createdPost.blogName,
             createdAt: createdPost.createdAt,
+            extendedLikesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: 'None',
+                newestLikes: [
+                    {
+                        addedAt: createdPost.createdAt,
+                        userId: 'None',
+                        login: 'None'
+                    }
+                ]
+            }
         };
     },
 

@@ -12,7 +12,10 @@ export const likesRepository = {
           myStatus: likeStatus,
           createdAt: new Date()
       });
+    },
 
+    async findLikeOnPost(postId: string) {
+        return LikeForPostModel.find({ postId });
     },
 
 
