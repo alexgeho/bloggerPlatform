@@ -16,6 +16,8 @@ import {contentInputDtoValidation} from "../../comments/comment.input-dto.valida
 import {createCommentHandler} from "./handlers/create-comment.handler";
 import {accessTokenGuard} from "../../auth/routers/guards/access.token.guard";
 import {getCommentsByPostHandler} from "../../comments/routers/handlers/get-comments-by-post.handler";
+import {accessTokenOptionalMiddleware} from "../../../core/middlewares/validation/accessTokenOptionalMiddleware";
+import {likeToPostHandler} from "../../likes/like-to-post.handler";
 
 
 export const postsRouter = Router({});
@@ -57,6 +59,13 @@ postsRouter
         createCommentHandler)
 
     .get('/:id/comments',
+        accessTokenOptionalMiddleware,
         idValidation,
         getCommentsByPostHandler)
+
+
+    .put ('/:id/like-status',
+        accessTokenOptionalMiddleware,
+        likeToPostHandler
+        )
 

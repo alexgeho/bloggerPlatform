@@ -1,8 +1,23 @@
-import { LikeDocument, LikeModel } from "./domain/like.entity";
 import {likesRepository} from "./likes.repository";
 import {LikeStatus} from "./domain/like-status.enum";
 
 export const likesService = {
+
+    // LIKES FOR POSTS
+
+    async likeToPost (postId: string, userId: string, likeStatus: string) {
+
+        const likeExists = await likesRepository.findOne(postId, userId);
+
+        if (!likeExists) {
+            await likesRepository.createLikeOnPost(postId, userId, likeStatus)
+        }
+
+
+    },
+
+
+    // LIKES FOR COMMENTS
     async findLike(commentId: string, userId: string) {
         return likesRepository.findOne(commentId, userId);
     },

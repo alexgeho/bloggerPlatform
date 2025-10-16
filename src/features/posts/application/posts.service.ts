@@ -1,13 +1,23 @@
-import { postsRepository } from '../repositories/posts.repository';
+import {postsRepository} from '../repositories/posts.repository';
 import {PostQueryInput} from "../routers/input/post-query.input";
-import { blogsRepository } from '../../blogs/repositories/blogs.repository';
+import {blogsRepository} from '../../blogs/repositories/blogs.repository';
 import {PostInputDto} from "./dtos/post.input-dto";
 import {PostDataOutput} from "../routers/output/post-data.output";
 import {PostDb} from "../domain/postDb";
 import {WithId} from "mongodb";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
+import {likesService} from "../../likes/likes.serviceAndRep";
 
 export const postsService = {
+
+    async updateLikeOnPost(postId: string, userId: string, likeStatus: string) {
+
+        const existingPost = await postsRepository.findByIdOrFail(postId);
+        if (!existingPost) throw new Error('Post not found');
+
+        const newLikeEntity = await likesService.likeToPost(postId, userId, likeStatus);
+
+    },
 
     async findMany(queryDto: PostQueryInput): Promise<{ items: any[]; totalCount: number }> {
         return postsRepository.findMany(queryDto);
@@ -71,11 +81,13 @@ export const postsService = {
             blogId: createdPost.blogId,
             blogName: createdPost.blogName,
             createdAt: createdPost.createdAt,
-        };},
+        };
+    },
 
     async update(id: string, dto: PostInputDto): Promise<void> {
-    await postsRepository.update(id, dto);
-        return;},
+        await postsRepository.update(id, dto);
+        return;
+    },
 
 
     async delete(id: string): Promise<void> {

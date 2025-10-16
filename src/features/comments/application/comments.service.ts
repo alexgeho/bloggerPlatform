@@ -11,8 +11,24 @@ import {CommentDocument, CommentModel} from "../domain/comment.mangoose";
 import {ObjectId} from "mongodb";
 import {likesService} from "../../likes/likes.serviceAndRep";
 import {LikeStatus} from "../../likes/domain/like-status.enum";
+import {commentsQwRepository} from "../repositories/commentsQwRepository";
 
 export const commentsService = {
+
+    async findManyCommentsByPostId(
+        postId: string,
+        query: CommentQueryInput,
+        userId?: string
+    ) {
+        return commentsQwRepository.findCommentsByPostId(
+            postId,
+            userId,
+            query.pageNumber,
+            query.pageSize,
+            query.sortBy,
+            query.sortDirection
+        );
+    },
 
     async setLikeStatus(commentId: string, userId: string, likeStatus: LikeStatus) {
         const comment = await commentsRepository.findById(commentId);
@@ -24,32 +40,48 @@ export const commentsService = {
         const existingLike = await likesService.findLike(commentId, userId);
 
         if (existingLike) {
-            if (comment.likesInfo.myStatus === likeStatus || likeStatus === LikeStatus.None) {
+            // ✅ 1. Если статус не изменился — просто выходим, ничего не трогаем
+            if (existingLike.myStatus === likeStatus) {
                 return 'UPDATED';
             }
 
-            // Убираем старое значение
-            if (comment.likesInfo.myStatus === LikeStatus.Like) comment.likesInfo.likesCount--;
-            if (comment.likesInfo.myStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount--;
+            // ✅ 2. Если пользователь хочет убрать лайк (likeStatus = None)
+            if (likeStatus === LikeStatus.None) {
+                if (existingLike.myStatus === LikeStatus.Like) comment.likesInfo.likesCount--;
+                if (existingLike.myStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount--;
 
-            // Добавляем новое
+                await likesService.deleteLike(commentId, userId);
+                await comment.save();
+                return 'UPDATED';
+            }
+
+            // ✅ 3. Если статус поменялся (Like ↔ Dislike)
+            if (existingLike.myStatus === LikeStatus.Like) comment.likesInfo.likesCount--;
+            if (existingLike.myStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount--;
+
             if (likeStatus === LikeStatus.Like) comment.likesInfo.likesCount++;
             if (likeStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount++;
 
-            comment.likesInfo.myStatus = likeStatus;
+            existingLike.myStatus = likeStatus;
+            await existingLike.save();
             await comment.save();
             return 'UPDATED';
         }
 
-        // Если лайка ещё нет
-        const newLike = await likesService.createLike(commentId, userId, likeStatus);
+        // ✅ 4. Если лайка ещё не было
+        if (likeStatus !== LikeStatus.None) {
+            await likesService.createLike(commentId, userId, likeStatus);
 
-        if (newLike.myStatus === LikeStatus.Like) comment.likesInfo.likesCount++;
-        else if (newLike.myStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount++;
+            if (likeStatus === LikeStatus.Like) comment.likesInfo.likesCount++;
+            if (likeStatus === LikeStatus.Dislike) comment.likesInfo.dislikesCount++;
 
-        await comment.save();
+            await comment.save();
+        }
+
         return 'UPDATED';
-    },
+    }
+
+    ,
 
     async create(
         postId: string,
@@ -89,34 +121,6 @@ export const commentsService = {
         };
     },
 
-    async findManyCommentsByPostId(
-        postId: string,
-        queryDto: CommentQueryInput
-    ): Promise<ReturnType<typeof mapToCommentListPaginatedOutput>> {
-        const {
-            pageNumber,
-            pageSize,
-            sortBy = "createdAt",
-            sortDirection = "desc",
-        } = queryDto;
-
-        const skip = (pageNumber - 1) * pageSize;
-        const limit = pageSize;
-        const sort: Record<string, 1 | -1> = {
-            [sortBy]: sortDirection === "asc" ? 1 : -1,
-        };
-
-        const [items, totalCount] = await Promise.all([
-            commentsRepository.findManyByPostId(postId, skip, limit, sort),
-            commentsRepository.countByPostId(postId),
-        ]);
-
-        return mapToCommentListPaginatedOutput(items, {
-            pageNumber,
-            pageSize,
-            totalCount,
-        });
-    },
 
     async updateComment(id: string, content: string): Promise<Result<null>> {
         const updateResult = await commentsRepository.updateComment(id, content);

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { commentsService } from "../../application/comments.service";
+import { commentsService } from "../comments/application/comments.service";
 
-export async function putLikesHandler(req: Request, res: Response): Promise<void> {
+export async function likesToCommentsHandler(req: Request, res: Response): Promise<void> {
 
     try {
         const userId = req.user.userId; // из accessToken
