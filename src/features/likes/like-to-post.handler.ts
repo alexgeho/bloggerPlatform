@@ -1,11 +1,12 @@
 import {Request, Response} from "express";
 import {postsService} from "../posts/application/posts.service";
+import {errorsHandler} from "../../core/errors/errors.handler";
 
 
 export async function likeToPostHandler(req: Request, res: Response)
     : Promise<void> {
     try {
-        const userId = req.user!.userId;
+        const userId = req.user.userId;
         const postId = req.params.id;
         const likeStatus = req.body.likeStatus;
 
@@ -13,8 +14,7 @@ export async function likeToPostHandler(req: Request, res: Response)
 
         res.sendStatus(204);
     } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
+        errorsHandler(e, res);
     }
 
 

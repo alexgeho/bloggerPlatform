@@ -12,7 +12,6 @@ export async function createCommentHandler (req: Request, res: Response) {
         const dto = req.body;
         const user = req.user;
 
-
         const createdCommentData: CommentDataOutput = await commentsService.create(postId, dto, user);
 
         res.status(HttpStatus.Created).send(createdCommentData);

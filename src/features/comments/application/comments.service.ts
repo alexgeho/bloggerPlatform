@@ -12,6 +12,7 @@ import {ObjectId} from "mongodb";
 import {likesService} from "../../likes/likes.serviceAndRep";
 import {LikeStatus} from "../../likes/domain/like-status.enum";
 import {commentsQwRepository} from "../repositories/commentsQwRepository";
+import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found.error";
 
 export const commentsService = {
 
@@ -88,8 +89,12 @@ export const commentsService = {
         dto: CommentInputDto,
         user: { userId: string }
     ): Promise<CommentDataOutput> {
+
         const post = await postsRepository.findByIdOrFail(postId);
-        if (!post) throw new Error("Post not found");
+
+        if (!post) {
+            throw new RepositoryNotFoundError("Post not found");
+        }
 
         const userById = await userRepository.findById(user.userId);
         if (!userById) throw new Error("User not found");

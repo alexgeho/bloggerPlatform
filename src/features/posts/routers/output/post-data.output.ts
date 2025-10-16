@@ -7,16 +7,13 @@ export type PostDataOutput = {
     blogName: string | null;
     createdAt: string;
     extendedLikesInfo: {
-        likesCount: number,
-        dislikesCount: number,
-        myStatus: string,
-        newestLikes: [
-            {
-                addedAt: string,
-                userId: string,
-                login: string
-            }
-        ]
-    }
-
+        likesCount: number;
+        dislikesCount: number;
+        myStatus: string;
+        newestLikes: {
+            addedAt: string;
+            userId: string;
+            login: string;
+        }[];
+    };
 };

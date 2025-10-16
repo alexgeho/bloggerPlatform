@@ -30,6 +30,7 @@ postsRouter
         getPostListHandler)
 
     .post("/",
+        // accessTokenGuard,
         accessTokenOptionalMiddleware,
         postInputDtoValidation,
         inputValidationResultMiddleware,
@@ -66,7 +67,7 @@ postsRouter
 
 
     .put ('/:id/like-status',
-        accessTokenOptionalMiddleware,
+        accessTokenGuard,
         likeToPostHandler
         )
 

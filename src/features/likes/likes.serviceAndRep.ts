@@ -1,24 +1,41 @@
-import {likesRepository} from "./likes.repository";
 import {LikeStatus} from "./domain/like-status.enum";
 import {userRepository, userService} from "../../composition-root";
 import {LikeForPostDocument} from "./domain/like-for-post";
+import {likesForPostsRepository} from "./repository/likes-for-posts.repository";
+import {likesForCommentsRepository} from "./repository/likes-for-comments.repository";
 
 export const likesService = {
 
     // LIKES FOR POSTS
 
     async createLikeOnPost(postId: string, userId: string, likeStatus: string) {
+        const existingLike = await likesForPostsRepository.findOne(postId, userId);
 
-        const likeExists = await likesRepository.findOne(postId, userId);
-
-        if (!likeExists) {
-            await likesRepository.createLikeOnPost(postId, userId, likeStatus)
+        // 🔹 1. Если лайка нет — создаём, но только если статус не "None"
+        if (!existingLike) {
+            if (likeStatus === LikeStatus.None) return; // ничего не делаем
+            await likesForPostsRepository.create(postId, userId, likeStatus);
+            return;
         }
+
+        // 🔹 2. Если лайк уже есть и статус не меняется — ничего не делаем
+        if (existingLike.myStatus === likeStatus) {
+            return;
+        }
+
+        // 🔹 3. Если новый статус "None" — удаляем лайк
+        if (likeStatus === LikeStatus.None) {
+            await likesForPostsRepository.delete(postId, userId);
+            return;
+        }
+
+        // 🔹 4. Иначе обновляем статус (Like ↔ Dislike)
+        await likesForPostsRepository.update(postId, userId, { myStatus: likeStatus });
     },
 
     async findLikeOnPost(postId: string, userId?: string) {
 
-        const likes: LikeForPostDocument[] = await likesRepository.findLikeOnPost(postId);
+        const likes: LikeForPostDocument[] = await likesForPostsRepository.findManyByPost(postId);
 
         console.log('repo.findLikeOnPost ->', likes)
 
@@ -77,11 +94,11 @@ export const likesService = {
 
     // LIKES FOR COMMENTS
     async findLike(commentId: string, userId: string) {
-        return likesRepository.findOne(commentId, userId);
+        return likesForCommentsRepository.findOne(commentId, userId);
     },
 
     async createLike(commentId: string, userId: string, status: LikeStatus) {
-        const like = await likesRepository.create({
+        const like = await likesForCommentsRepository.create({
             commentId,
             userId,
             myStatus: status,
@@ -91,10 +108,10 @@ export const likesService = {
     },
 
     async updateLike(commentId: string, userId: string, status: LikeStatus) {
-        await likesRepository.update(commentId, userId, {myStatus: status});
+        await likesForCommentsRepository.update(commentId, userId, {myStatus: status});
     },
 
     async deleteLike(commentId: string, userId: string) {
-        await likesRepository.delete(commentId, userId);
+        await likesForCommentsRepository.delete(commentId, userId);
     },
 };

@@ -16,11 +16,13 @@ export function mapToPostOutput(post: WithId<PostDb>, likesExtended: any): PostD
             likesCount: likesExtended.likesCount,
             dislikesCount: likesExtended.dislikesCount,
             myStatus: likesExtended.myStatus,
-            newestLikes: likesExtended.newestLikes.map((like: any) => ({
-                addedAt: like.addedAt,
-                userId: like.userId,
-                login: like.login,
-            })),
+            newestLikes: Array.isArray(likesExtended.newestLikes)
+                ? likesExtended.newestLikes.map((like: any) => ({
+                    addedAt: like.addedAt,
+                    userId: like.userId,
+                    login: like.login,
+                }))
+                : [],
         },
     };
 }

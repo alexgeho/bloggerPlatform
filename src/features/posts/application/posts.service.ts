@@ -14,40 +14,29 @@ export const postsService = {
     async updateLikeOnPost(postId: string, userId: string, likeStatus: string) {
 
         const existingPost = await postsRepository.findByIdOrFail(postId);
-        if (!existingPost) throw new Error('Post not found');
+        if (!existingPost) {
 
-        const newLikeEntity = await likesService.createLikeOnPost(postId, userId, likeStatus);
+            throw new RepositoryNotFoundError("Post not found");
+        }
+
+
+        await likesService.createLikeOnPost(postId, userId, likeStatus);
 
     },
 
-        async findMany(queryDto: PostQueryInput, userId?: string): Promise<{ items: any[]; totalCount: number }> {
-            const { items, totalCount } = await postsRepository.findMany(queryDto);
+    async findMany(queryDto: PostQueryInput, userId?: string): Promise<{ items: any[]; totalCount: number }> {
+        const {items, totalCount} = await postsRepository.findMany(queryDto);
 
-            // Для каждого поста добавляем информацию о лайках и маппим в нормальный вывод
-            const postsWithLikes = await Promise.all(
-                items.map(async (post) => {
-                    const likesExtended = await likesService.findLikeOnPost(post._id.toString(), userId);
-                    return mapToPostOutput(post, likesExtended); // 👈 получаем нормальную структуру
-                })
-            );
+        // Для каждого поста добавляем информацию о лайках и маппим в нормальный вывод
+        const postsWithLikes = await Promise.all(
+            items.map(async (post) => {
+                const likesExtended = await likesService.findLikeOnPost(post._id.toString(), userId);
+                return mapToPostOutput(post, likesExtended); // 👈 получаем нормальную структуру
+            })
+        );
 
-            return { items: postsWithLikes, totalCount };
-        },
-
-        // const blogIds = [...new Set(items.map(post => post.blogId))];
-        // const blogs = await blogsRepository.findByIds(blogIds);
-        // if (!blogs || blogs.length === 0) throw new Error('Blog not found');
-        //
-        // const blogsMap: { [k: string]: any } = Object.fromEntries(
-        //     blogs.map((bLog: any) => [bLog._id.toString(), bLog.name])
-        // );
-        //
-        // const enrichedPosts = items.map(post => ({
-        //     ...post,
-        //     blogName: blogsMap[post.blogId] || null,
-        // }));
-        //
-        // return { items: enrichedPosts, totalCount };
+        return {items: postsWithLikes, totalCount};
+    },
 
 
     async findAllByBlogId(
@@ -97,13 +86,7 @@ export const postsService = {
                 likesCount: 0,
                 dislikesCount: 0,
                 myStatus: 'None',
-                newestLikes: [
-                    {
-                        addedAt: createdPost.createdAt,
-                        userId: 'None',
-                        login: 'None'
-                    }
-                ]
+                newestLikes: []
             }
         };
     },
