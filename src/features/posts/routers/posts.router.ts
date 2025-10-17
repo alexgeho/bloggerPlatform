@@ -18,6 +18,7 @@ import {accessTokenGuard} from "../../auth/routers/guards/access.token.guard";
 import {getCommentsByPostHandler} from "../../comments/routers/handlers/get-comments-by-post.handler";
 import {accessTokenOptionalMiddleware} from "../../../core/middlewares/validation/accessTokenOptionalMiddleware";
 import {likeToPostHandler} from "../../likes/like-to-post.handler";
+import {likeStatusValidation} from "../../comments/like.input-dto.validation-middlewares";
 
 
 export const postsRouter = Router({});
@@ -67,6 +68,9 @@ postsRouter
 
 
     .put ('/:id/like-status',
+        accessTokenGuard,
+        likeStatusValidation,
+        inputValidationResultMiddleware,
         accessTokenGuard,
         likeToPostHandler
         )

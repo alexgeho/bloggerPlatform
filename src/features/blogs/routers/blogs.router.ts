@@ -54,7 +54,7 @@ blogsRouter
         deleteBlogHandler)
 
     .get('/:blogId/posts',
-        inputValidationResultMiddleware,
+        accessTokenOptionalMiddleware,
     ...blogIdValidationNested('blogId'),
         inputValidationResultMiddleware,
         asyncHandler(getBlogPostsHandler)
