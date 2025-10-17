@@ -14,6 +14,8 @@ export async function getBlogListHandler(req: Request, res: Response) {
             req.query as Partial<PaginationAndSorting<BlogSortField>> & { searchNameTerm?: string }
         ) as BlogQueryInput;
 
+
+
         const { items, totalCount } = await blogsQwRepository.findMany(queryInput);
 
         const blogsListOutput = mapToBlogListPaginatedOutput(items, {

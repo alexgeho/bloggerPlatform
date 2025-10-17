@@ -25,13 +25,13 @@ export const postsRouter = Router({});
 postsRouter
 
     .get("/",
+        accessTokenOptionalMiddleware,
         paginationAndSortingValidation(PostSortField),
         inputValidationResultMiddleware,
         getPostListHandler)
 
     .post("/",
-        // accessTokenGuard,
-        accessTokenOptionalMiddleware,
+        superAdminGuardMiddleware,
         postInputDtoValidation,
         inputValidationResultMiddleware,
         postPostHandler)

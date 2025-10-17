@@ -16,20 +16,26 @@ export function accessTokenOptionalMiddleware(
     next: NextFunction
 ) {
     const authHeader = req.headers.authorization;
-
+    console.log('authHeader::::::::', authHeader)
     // Если нет заголовка Authorization — просто идём дальше
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return next();
     }
 
     const token = authHeader.split(' ')[1];
+
+    console.log('token::::::::', token)
+
     try {
         const decoded = jwt.verify(token, ENV.AC_SECRET) as JwtPayload;
         // Добавляем userId в объект запроса
         req.user = { userId: decoded.userId };
+
+
+
     } catch (err) {
-        // Если токен невалидный — не выбрасываем ошибку
-        // Просто идём дальше без userId
+        console.log('JWT verify error:::::::::', err);
+
     }
 
     next();

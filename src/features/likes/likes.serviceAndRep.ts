@@ -33,11 +33,10 @@ export const likesService = {
         await likesForPostsRepository.update(postId, userId, { myStatus: likeStatus });
     },
 
-    async findLikeOnPost(postId: string, userId?: string) {
+    async findAllLikesOnPost(postId: string, userId?: string) {
 
         const likes: LikeForPostDocument[] = await likesForPostsRepository.findManyByPost(postId);
 
-        console.log('repo.findLikeOnPost ->', likes)
 
         const likesCount = likes.filter(l => l.myStatus.toLowerCase() === LikeStatus.Like.toLowerCase()).length;
         const dislikesCount = likes.filter(l => l.myStatus.toLowerCase() === LikeStatus.Dislike.toLowerCase()).length;
@@ -59,17 +58,13 @@ export const likesService = {
             })
             .slice(0, 3);
 
-        console.log('STEP 2 | newestLikesRaw:', newestLikesRaw.map(l => ({ userId: l.userId, createdAt: l.createdAt })));
 
 
         // добавляем логины из users
         const newestLikes = [];
         for (const like of newestLikesRaw) {
             const user = await userRepository.findById(like.userId);
-            console.log('STEP 3 | found user for like:', {
-                userId: like.userId.toString(),
-                login: user?.accountData.login,
-            });
+
             newestLikes.push({
                 addedAt: like.createdAt,
                 userId: like.userId.toString(),

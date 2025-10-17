@@ -18,6 +18,7 @@ import {postBlogPostHandler} from "./handlers/post-blog-post.handler";
 import {blogIdValidationNested} from "../../../core/middlewares/validation/blogId-validation.nested";
 import {postInputDtoForBlogValidation} from "../validation/post.blogForPostInput.validation-middlewares";
 import {accessTokenGuard} from "../../auth/routers/guards/access.token.guard";
+import {accessTokenOptionalMiddleware} from "../../../core/middlewares/validation/accessTokenOptionalMiddleware";
 
 
 export const blogsRouter = Router({});

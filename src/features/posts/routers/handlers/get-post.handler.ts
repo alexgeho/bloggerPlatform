@@ -5,14 +5,8 @@ import { postsService } from '../../application/posts.service';
 import { errorsHandler } from '../../../../core/errors/errors.handler';
 import {likesService} from "../../../likes/likes.serviceAndRep";
 
-export async function getPostHandler(
-
-    req: Request<{ id: string }>,
-    res: Response,
-)
+export async function getPostHandler( req: Request<{ id: string }>, res: Response)
 {
-
-
     try {
         const postId = req.params.id;
         const userId = req.user?.userId;
@@ -21,7 +15,7 @@ export async function getPostHandler(
             = await postsService.findByIdOrFail(postId);
 
         const likesExtended
-            = await likesService.findLikeOnPost(postId, userId)
+            = await likesService.findAllLikesOnPost(postId, userId)
 
         const postOutput = mapToPostOutput(post, likesExtended);
 

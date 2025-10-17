@@ -24,18 +24,18 @@ export const postsService = {
 
     },
 
-    async findMany(queryDto: PostQueryInput, userId?: string): Promise<{ items: any[]; totalCount: number }> {
-        const {items, totalCount} = await postsRepository.findMany(queryDto);
+    async findMany(queryDto: PostQueryInput, userId?: string) {
+        const { items, totalCount } = await postsRepository.findMany(queryDto);
 
-        // Для каждого поста добавляем информацию о лайках и маппим в нормальный вывод
         const postsWithLikes = await Promise.all(
             items.map(async (post) => {
-                const likesExtended = await likesService.findLikeOnPost(post._id.toString(), userId);
-                return mapToPostOutput(post, likesExtended); // 👈 получаем нормальную структуру
+                // 👇 теперь likesService может вернуть корректный myStatus
+                const likesExtended = await likesService.findAllLikesOnPost(post._id.toString(), userId);
+                return mapToPostOutput(post, likesExtended);
             })
         );
 
-        return {items: postsWithLikes, totalCount};
+        return { items: postsWithLikes, totalCount };
     },
 
 

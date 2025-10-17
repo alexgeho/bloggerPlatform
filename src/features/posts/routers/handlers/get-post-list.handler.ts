@@ -13,7 +13,9 @@ export async function getPostListHandler(req: Request, res: Response) {
             req.query as Partial<PaginationAndSorting<PostSortField>> & { searchTitleTerm?: string }
         ) as PostQueryInput;
 
-        const { items, totalCount } = await postsService.findMany(queryInput);
+        const userId = req.user?.userId;
+
+        const { items, totalCount } = await postsService.findMany(queryInput, userId);
 
         const postsListOutput = mapToPostListPaginatedOutput(items, {
             pageNumber: queryInput.pageNumber,
