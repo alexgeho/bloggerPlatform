@@ -6,9 +6,9 @@ const swaggerOptions = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Blogger Platform 1",
+            title: "Blogger Platform",
             version: "1.0.0",
-            description: "Blogger Platform API Bitau",
+            description: "Blogger Platform API",
         },
     },
     apis: ["./src/**/*.swagger.yml"],
