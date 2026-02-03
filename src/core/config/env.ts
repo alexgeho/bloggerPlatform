@@ -16,7 +16,7 @@ export const ENV = {
     COOKIE_SECURE: toBool(process.env.COOKIE_SECURE),
     COOKIE_SAMESITE: (process.env.COOKIE_SAMESITE as SameSiteOpt) || 'lax',
 
-    // JWT (секунды)
+    // JWT
     AC_TIME: toNumber(process.env.AC_TIME, 1000),   // access token ttl (s)
     RT_TIME: toNumber(process.env.RT_TIME, 2000),   // refresh token ttl (s)
     AC_SECRET: process.env.AC_SECRET || '',
