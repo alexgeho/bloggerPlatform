@@ -10,6 +10,29 @@ paths:
     post:
       summary: Add a new blog
       tags: [ Blogs ]
+      security:
+       - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - description
+                - websiteUrl
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                websiteUrl:
+                  type: string
+            example:
+              name: "My Tech Blog"
+              description: "Blog about programming"
+              websiteUrl: "https://myblog.dev"
       responses:
         201:
           description: Blog was successfully created
@@ -76,6 +99,14 @@ paths:
               properties:
                 name:
                   type: string
+                description:
+                  type: string
+                websiteUrl:
+                  type: string
+            example:
+              name: "Updated blog name"
+              description: "Updated description"
+              websiteUrl: "https://updated-site.com"
       responses:
         204:
           description: Blog updated
