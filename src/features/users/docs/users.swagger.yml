@@ -7,25 +7,78 @@ paths:
         200:
           description: List of all users
     post:
-      summary: Add a new driver
+      summary: Add a new user
       tags: [ Users ]
       responses:
         201:
           description: The driver was successfully created
         400:
           description: Validation error
-  /testing:
-    get:
-      summary: Get a list of all users
+    delete:
+      summary: Delete all users
       tags: [ Users ]
+      description: Removes all users from the database
+      responses:
+        204:
+          description: All users deleted
+  /users/{id}:
+    get:
+      summary: Get user by id
+      tags: [ Users ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User id
+          schema:
+            type: string
       responses:
         200:
-          description: List of all users
-    post:
-      summary: Add a new driver
+          description: User found
+        404:
+          description: User not found
+
+    delete:
+      summary: Delete user by id
       tags: [ Users ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User id
+          schema:
+            type: string
       responses:
-        201:
-          description: The driver was successfully created
-        400:
-          description: Validation error
+        204:
+          description: User deleted
+        404:
+          description: User not found
+
+    put:
+      summary: Update user by id
+      tags: [ Users ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                  example: johndoe
+                email:
+                  type: string
+                  example: john@example.com
+      responses:
+        204:
+          description: User updated
+        404:
+          description: User not found
