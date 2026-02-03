@@ -1,19 +1,30 @@
 paths:
   /api/blogs:
     get:
-      summary: Get a list of all drivers
+      summary: Get a list of all blogs
       tags: [ Blogs ]
       responses:
         200:
-          description: List of all drivers
+          description: List of all blogs
     post:
-      summary: Add a new driver
+      summary: Add a new blog
       tags: [ Blogs ]
       responses:
         201:
           description: The driver was successfully created
         400:
           description: Validation error
+    delete:
+      summary: Delete all blogs
+      tags: [ Blogs ]
+      description: Removes all blogs from the database (testing/admin endpoint)
+      responses:
+        200:
+          description: Blog found
+        204:
+          description: All blogs deleted
+        404:
+          description: Blog not found
 
   /api/blogs/{id}:
     get:
@@ -32,18 +43,4 @@ paths:
         404:
           description: Blog not found
 
-  /api/testing:
-    get:
-      summary: Get a list of all drivers
-      tags: [ Blogs ]
-      responses:
-        200:
-          description: List of all drivers
-    post:
-      summary: Add a new driver
-      tags: [ Blogs ]
-      responses:
-        201:
-          description: The driver was successfully created
-        400:
-          description: Validation error
+

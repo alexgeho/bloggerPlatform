@@ -6,6 +6,6 @@ info:
 
 tags:
   - name: Blogs
-    description: API bitau
+    description: API
   - name: Testing
     description: API for clearing the database

@@ -1,31 +1,16 @@
 paths:
-  /api/drivers:
+  /api/auth:
     get:
-      summary: Get a list of all drivers
-      tags: [ Drivers ]
+      summary: Get a list of all users
+      tags: [ Auth ]
       responses:
         200:
-          description: List of all drivers
+          description: List of all users
     post:
-      summary: Add a new driver
-      tags: [ Drivers ]
+      summary: Add a new user
+      tags: [ Auth ]
       responses:
         201:
-          description: The driver was successfully created
-        400:
-          description: Validation error
-  /api/testing:
-    get:
-      summary: Get a list of all drivers
-      tags: [ Drivers ]
-      responses:
-        200:
-          description: List of all drivers
-    post:
-      summary: Add a new driver
-      tags: [ Drivers ]
-      responses:
-        201:
-          description: The driver was successfully created
+          description: The user was successfully created
         400:
           description: Validation error

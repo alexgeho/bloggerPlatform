@@ -1,14 +1,14 @@
 paths:
-  /api/drivers:
+  /api/users:
     get:
-      summary: Get a list of all drivers
-      tags: [ Drivers ]
+      summary: Get a list of all users
+      tags: [ Users ]
       responses:
         200:
-          description: List of all drivers
+          description: List of all users
     post:
       summary: Add a new driver
-      tags: [ Drivers ]
+      tags: [ Users ]
       responses:
         201:
           description: The driver was successfully created
@@ -16,14 +16,14 @@ paths:
           description: Validation error
   /api/testing:
     get:
-      summary: Get a list of all drivers
-      tags: [ Drivers ]
+      summary: Get a list of all users
+      tags: [ Users ]
       responses:
         200:
-          description: List of all drivers
+          description: List of all users
     post:
       summary: Add a new driver
-      tags: [ Drivers ]
+      tags: [ Users ]
       responses:
         201:
           description: The driver was successfully created
