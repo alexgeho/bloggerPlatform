@@ -1,29 +1,47 @@
 paths:
-  /api/drivers:
+  /api/blogs:
     get:
       summary: Get a list of all drivers
-      tags: [ Drivers ]
+      tags: [ Blogs ]
       responses:
         200:
           description: List of all drivers
     post:
       summary: Add a new driver
-      tags: [ Drivers ]
+      tags: [ Blogs ]
       responses:
         201:
           description: The driver was successfully created
         400:
           description: Validation error
+
+  /api/blogs/{id}:
+    get:
+      summary: Get blog by id
+      tags: [ Blogs ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Blog id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Blog found
+        404:
+          description: Blog not found
+
   /api/testing:
     get:
       summary: Get a list of all drivers
-      tags: [ Drivers ]
+      tags: [ Blogs ]
       responses:
         200:
           description: List of all drivers
     post:
       summary: Add a new driver
-      tags: [ Drivers ]
+      tags: [ Blogs ]
       responses:
         201:
           description: The driver was successfully created
