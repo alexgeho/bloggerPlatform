@@ -1,0 +1,236 @@
+paths:
+  /posts:
+    get:
+      summary: Get list of posts
+      tags: [ Posts ]
+      description: Returns paginated list of posts
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+        - name: sortDirection
+          in: query
+          schema:
+            type: string
+            enum: [ asc, desc ]
+      responses:
+        200:
+          description: List of posts
+
+    post:
+      summary: Create new post
+      tags: [ Posts ]
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - shortDescription
+                - content
+                - blogId
+              properties:
+                title:
+                  type: string
+                shortDescription:
+                  type: string
+                content:
+                  type: string
+                blogId:
+                  type: string
+            example:
+              title: "Post title"
+              shortDescription: "Short description"
+              content: "Post content"
+              blogId: "blogId123"
+      responses:
+        201:
+          description: Post created
+        401:
+          description: Unauthorized
+
+  /posts/{id}:
+    get:
+      summary: Get post by id
+      tags: [ Posts ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Post found
+        404:
+          description: Post not found
+
+    put:
+      summary: Update post by id
+      tags: [ Posts ]
+      security:
+        - basicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - shortDescription
+                - content
+                - blogId
+              properties:
+                title:
+                  type: string
+                shortDescription:
+                  type: string
+                content:
+                  type: string
+                blogId:
+                  type: string
+            example:
+              title: "Updated title"
+              shortDescription: "Updated short description"
+              content: "Updated content"
+              blogId: "blogId123"
+      responses:
+        204:
+          description: Post updated
+        401:
+          description: Unauthorized
+        404:
+          description: Post not found
+
+    delete:
+      summary: Delete post by id
+      tags: [ Posts ]
+      security:
+        - basicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Post deleted
+        401:
+          description: Unauthorized
+        404:
+          description: Post not found
+
+  /posts/{id}/comments:
+    post:
+      summary: Create comment for post
+      tags: [ Comments ]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+            example:
+              content: "Nice post!"
+      responses:
+        201:
+          description: Comment created
+        401:
+          description: Unauthorized
+        404:
+          description: Post not found
+
+    get:
+      summary: Get comments for post
+      tags: [ Comments ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pageNumber
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          description: List of comments
+        404:
+          description: Post not found
+
+  /posts/{id}/like-status:
+    put:
+      summary: Like or dislike post
+      tags: [ Likes ]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - likeStatus
+              properties:
+                likeStatus:
+                  type: string
+                  enum: [ Like, Dislike, None ]
+            example:
+              likeStatus: Like
+      responses:
+        204:
+          description: Like status updated
+        401:
+          description: Unauthorized
+        404:
+          description: Post not found
