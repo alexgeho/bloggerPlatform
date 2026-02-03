@@ -1,32 +1,30 @@
 paths:
-  /api/blogs:
+  /blogs:
     get:
       summary: Get a list of all blogs
       tags: [ Blogs ]
       responses:
         200:
           description: List of all blogs
+
     post:
       summary: Add a new blog
       tags: [ Blogs ]
       responses:
         201:
-          description: The driver was successfully created
+          description: Blog was successfully created
         400:
           description: Validation error
+
     delete:
       summary: Delete all blogs
       tags: [ Blogs ]
       description: Removes all blogs from the database (testing/admin endpoint)
       responses:
-        200:
-          description: Blog found
         204:
           description: All blogs deleted
-        404:
-          description: Blog not found
 
-  /api/blogs/{id}:
+  /blogs/{id}:
     get:
       summary: Get blog by id
       tags: [ Blogs ]
@@ -43,4 +41,43 @@ paths:
         404:
           description: Blog not found
 
+    delete:
+      summary: Delete blog by id
+      tags: [ Blogs ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Blog id
+          schema:
+            type: string
+      responses:
+        204:
+          description: Blog deleted
+        404:
+          description: Blog not found
 
+    put:
+      summary: Update blog by id
+      tags: [ Blogs ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Blog id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        204:
+          description: Blog updated
+        404:
+          description: Blog not found

@@ -1,5 +1,5 @@
 paths:
-  /api/users:
+  /users:
     get:
       summary: Get a list of all users
       tags: [ Users ]
@@ -14,7 +14,7 @@ paths:
           description: The driver was successfully created
         400:
           description: Validation error
-  /api/testing:
+  /testing:
     get:
       summary: Get a list of all users
       tags: [ Users ]
