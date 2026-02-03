@@ -1,0 +1,12 @@
+paths:
+  /testing/all-data:
+    delete:
+      summary: Delete all data
+      tags:
+        - Testing
+      description: |
+        Deletes all data from the database.
+        Used for testing and development purposes only.
+      responses:
+        204:
+          description: All data deleted successfully
