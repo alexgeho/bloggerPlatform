@@ -57,14 +57,31 @@ export const jwtService = {
 
     },
     /**
-     * Проверяет access токен. Возвращает payload или null, если невалиден.
+     * Проверяет access токен. Сначала AC_SECRET, затем (если задан) NEST_JWT_SECRET —
+     * чтобы принимались токены с фронта, где логин идёт через Nest.
      */
     async verifyToken(token: string): Promise<JwtPayload | null> {
         try {
-            return jwt.verify(token, ENV.AC_SECRET) as JwtPayload;
+            const payload = jwt.verify(token, ENV.AC_SECRET) as any;
+            return this.normalizePayload(payload);
         } catch {
+            if (ENV.NEST_JWT_SECRET) {
+                try {
+                    const payload = jwt.verify(token, ENV.NEST_JWT_SECRET) as any;
+                    return this.normalizePayload(payload);
+                } catch {
+                    return null;
+                }
+            }
             return null;
         }
+    },
+
+    /** Приводит payload к виду { userId, userLogin } (Nest отдаёт id вместо userId). */
+    normalizePayload(payload: any): JwtPayload {
+        const userId = payload.userId ?? payload.id ?? payload.sub;
+        const userLogin = payload.userLogin ?? payload.login ?? '';
+        return { ...payload, userId, userLogin } as JwtPayload;
     },
 
     /**

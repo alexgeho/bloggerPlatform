@@ -107,6 +107,12 @@ export const commentsService = {
         const userById = await userRepository.findById(user.userId);
         if (!userById) throw new Error("User not found");
 
+        // Поддержка схемы Express (accountData.login) и Nest (login на верхнем уровне)
+        const userLogin =
+            (userById as any).accountData?.login ??
+            (userById as any).login ??
+            'user';
+
         const commentToSave: CommentDocument = new CommentModel({
             id: new ObjectId(),
             postId,
@@ -114,7 +120,7 @@ export const commentsService = {
             createdAt: new Date().toISOString(),
             commentatorInfo: {
                 userId: user.userId,
-                userLogin: userById.accountData.login,
+                userLogin,
             },
             likesInfo: {
                 likesCount: 0,

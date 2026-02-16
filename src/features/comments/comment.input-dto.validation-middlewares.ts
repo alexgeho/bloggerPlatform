@@ -1,12 +1,12 @@
 import { body } from 'express-validator';
 
 const contentValidation = body('content')
+    .trim()
     .notEmpty()
     .withMessage('comment must be')
     .isString()
     .withMessage('comment should be string')
-    .trim()
-    .isLength({ min: 20, max: 300 })
+    .isLength({ max: 300 })
     .withMessage('Length of comment is not correct');
 
 

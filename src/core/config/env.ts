@@ -7,10 +7,18 @@ const toBool = (v: string | undefined) => v === 'true';
 const toNumber = (v: string | undefined, fallback: number) =>
     Number.isFinite(Number(v)) ? Number(v) : fallback;
 
+// CORS: одна строка или несколько через запятую. Всегда добавляем типичные dev-origin для фронта.
+const originEnv = process.env.ORIGIN || '';
+const fromEnv = originEnv.split(',').map((s) => s.trim()).filter(Boolean);
+const defaultDevOrigins = ['http://localhost:5173', 'http://127.0.0.1:5500'];
+const allowedOrigins = [...new Set([...defaultDevOrigins, ...fromEnv])];
+
 export const ENV = {
     // Server
     PORT: toNumber(process.env.PORT, 5003),
-    ORIGIN: process.env.ORIGIN || 'http://localhost:5003',
+    ORIGIN: allowedOrigins[0] ?? 'http://localhost:5173',
+    /** Список разрешённых origin для CORS. */
+    ALLOWED_ORIGINS: allowedOrigins,
 
     // Cookies
     COOKIE_SECURE: toBool(process.env.COOKIE_SECURE),
@@ -21,6 +29,8 @@ export const ENV = {
     RT_TIME: toNumber(process.env.RT_TIME, 2000),   // refresh token ttl (s)
     AC_SECRET: process.env.AC_SECRET || '',
     RT_SECRET: process.env.RT_SECRET || '',
+    /** Секрет JWT от Nest-бэкенда: если задан, токены с фронта (логин через Nest) тоже принимаются. */
+    NEST_JWT_SECRET: process.env.NEST_JWT_SECRET || process.env.JWT_SECRET || '',
 
     // DB
     MONGO_URL: process.env.MONGO_URL || '',

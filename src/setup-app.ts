@@ -23,6 +23,8 @@ import {
 import {devicesRouter} from './features/auth/routers/security-devices.router';
 import {ENV} from "./core/config/env";
 
+/** CORS: только эти origin (без зависимости от ENV). */
+const CORS_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:5500'] as const;
 
 const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
     console.log('-------------------')
@@ -39,7 +41,14 @@ export const setupApp = (app: Express) => {
     // 🆕 корректный req.ip за прокси
     app.set('trust proxy', true);
 
-    app.use(cors({ origin: ENV.ORIGIN, credentials: true }));
+    app.use(cors({
+        origin: (origin, cb) => {
+            if (!origin) return cb(null, CORS_ORIGINS[0]);
+            if (CORS_ORIGINS.includes(origin as typeof CORS_ORIGINS[number])) return cb(null, origin);
+            cb(null, CORS_ORIGINS[0]);
+        },
+        credentials: true,
+    }));
     app.use(express.json());
     app.use(cookieParser()); // why: чтобы читать/ставить refresh cookie
 
