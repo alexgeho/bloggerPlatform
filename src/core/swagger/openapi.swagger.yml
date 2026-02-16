@@ -615,6 +615,37 @@ paths:
           description: Пользователь не найден
 
   # ==================== COMMENTS ====================
+  /comments:
+    get:
+      summary: Список комментариев
+      tags: [Comments]
+      parameters:
+        - name: pageNumber
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: sortBy
+          in: query
+          schema: { type: string, enum: [createdAt], default: createdAt }
+        - name: sortDirection
+          in: query
+          schema: { type: string, enum: [asc, desc], default: desc }
+      responses:
+        '200':
+          description: Пагинированный список комментариев
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagination'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: '#/components/schemas/Comment' }
+
   /comments/{id}:
     get:
       summary: Получить комментарий по id

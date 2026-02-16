@@ -80,9 +80,17 @@ export const commentsService = {
         }
 
         return 'UPDATED';
-    }
+    },
 
-    ,
+    async findMany(query: CommentQueryInput, userId?: string) {
+        return commentsQwRepository.findAll(
+            userId,
+            query.pageNumber,
+            query.pageSize,
+            query.sortBy,
+            query.sortDirection
+        );
+    },
 
     async create(
         postId: string,
