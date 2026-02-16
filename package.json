@@ -36,7 +36,8 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "utility-types": "^3.11.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

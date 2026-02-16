@@ -23,7 +23,8 @@ import mongoose from "mongoose";
 // export let rateLimitCollection: Collection<RateLimitEntity>;
 
 export async function runDB(url: string): Promise<void> {
-await mongoose.connect(url, {})}
+    await mongoose.connect(url, {});
+}
     // client = new MongoClient(url);
     // await client.connect();
     // const db: Db = client.db(ENV.DB_NAME);

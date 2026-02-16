@@ -1,17 +1,26 @@
 openapi: 3.0.0
 
 info:
-  title: Blogger Platform
+  title: Blogger Platform API
   version: 1.0.0
-  description: Blogger Platform API documentation
+  description: |
+    API платформы блогеров: блоги, посты, комментарии, пользователи, авторизация, лайки, сессии устройств.
 
 tags:
   - name: Blogs
-    description: Blogs API
+    description: Блоги
+  - name: Posts
+    description: Посты
+  - name: Users
+    description: Пользователи (админ)
+  - name: Comments
+    description: Комментарии
   - name: Auth
-    description: Authentication API
+    description: Регистрация, логин, JWT, восстановление пароля
+  - name: Security Devices
+    description: Сессии устройств (refresh token)
   - name: Testing
-    description: API for clearing the database
+    description: Очистка БД для тестов
 
 components:
   securitySchemes:
@@ -19,6 +28,911 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    basicAuth:
-      type: http
-      scheme: basic
+      description: Access token в заголовке Authorization
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        pagesCount: { type: integer }
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalCount: { type: integer }
+    Blog:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        websiteUrl: { type: string }
+        createdAt: { type: string }
+        isMembership: { type: boolean }
+    Post:
+      type: object
+      properties:
+        id: { type: string }
+        title: { type: string }
+        shortDescription: { type: string }
+        content: { type: string }
+        blogId: { type: string }
+        blogName: { type: string, nullable: true }
+        createdAt: { type: string }
+        extendedLikesInfo:
+          type: object
+          properties:
+            likesCount: { type: integer }
+            dislikesCount: { type: integer }
+            myStatus: { type: string, enum: [None, Like, Dislike] }
+            newestLikes:
+              type: array
+              items:
+                type: object
+                properties:
+                  addedAt: { type: string }
+                  userId: { type: string }
+                  login: { type: string }
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        login: { type: string }
+        email: { type: string }
+        createdAt: { type: string }
+    Comment:
+      type: object
+      properties:
+        id: { type: string }
+        content: { type: string }
+        commentatorInfo:
+          type: object
+          properties:
+            userId: { type: string }
+            userLogin: { type: string }
+        createdAt: { type: string }
+        likesInfo:
+          type: object
+          properties:
+            likesCount: { type: integer }
+            dislikesCount: { type: integer }
+            myStatus: { type: string, enum: [None, Like, Dislike] }
+    DeviceSession:
+      type: object
+      properties:
+        deviceId: { type: string }
+        ip: { type: string }
+        userAgent: { type: string }
+        lastActiveDate: { type: string }
+    Error:
+      type: object
+      properties:
+        message: { type: string }
+        errorsMessages:
+          type: array
+          items:
+            type: object
+            properties:
+              message: { type: string }
+              field: { type: string }
+
+paths:
+  # ==================== BLOGS ====================
+  /blogs:
+    get:
+      summary: Список блогов
+      tags: [Blogs]
+      parameters:
+        - name: pageNumber
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: sortBy
+          in: query
+          schema: { type: string, enum: [createdAt, name, description, websiteUrl], default: createdAt }
+        - name: sortDirection
+          in: query
+          schema: { type: string, enum: [asc, desc], default: desc }
+        - name: searchNameTerm
+          in: query
+          description: Поиск по имени блога
+          schema: { type: string }
+      responses:
+        '200':
+          description: Пагинированный список блогов
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagination'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: '#/components/schemas/Blog' }
+    post:
+      summary: Создать блог
+      tags: [Blogs]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, description, websiteUrl]
+              properties:
+                name: { type: string, maxLength: 15 }
+                description: { type: string, maxLength: 500 }
+                websiteUrl: { type: string, format: uri, maxLength: 100 }
+      responses:
+        '201':
+          description: Блог создан
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Blog' }
+        '400':
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          description: Не авторизован
+
+  /blogs/{id}:
+    get:
+      summary: Получить блог по id
+      tags: [Blogs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Блог найден
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Blog' }
+        '404':
+          description: Блог не найден
+    put:
+      summary: Обновить блог
+      tags: [Blogs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, description, websiteUrl]
+              properties:
+                name: { type: string, maxLength: 15 }
+                description: { type: string, maxLength: 500 }
+                websiteUrl: { type: string, format: uri, maxLength: 100 }
+      responses:
+        '204':
+          description: Обновлено
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+        '404':
+          description: Блог не найден
+    delete:
+      summary: Удалить блог
+      tags: [Blogs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Удалено
+        '401':
+          description: Не авторизован
+        '404':
+          description: Блог не найден
+
+  /blogs/{blogId}/posts:
+    get:
+      summary: Посты блога
+      tags: [Blogs]
+      parameters:
+        - name: blogId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: pageNumber
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: sortBy
+          in: query
+          schema: { type: string, enum: [createdAt, title], default: createdAt }
+        - name: sortDirection
+          in: query
+          schema: { type: string, enum: [asc, desc], default: desc }
+      responses:
+        '200':
+          description: Список постов блога
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagination'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: '#/components/schemas/Post' }
+        '404':
+          description: Блог не найден
+    post:
+      summary: Создать пост в блоге
+      tags: [Blogs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: blogId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, shortDescription, content]
+              properties:
+                title: { type: string, maxLength: 30 }
+                shortDescription: { type: string, maxLength: 100 }
+                content: { type: string, maxLength: 1000 }
+      responses:
+        '201':
+          description: Пост создан
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Post' }
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+        '404':
+          description: Блог не найден
+
+  # ==================== POSTS ====================
+  /posts:
+    get:
+      summary: Список постов
+      tags: [Posts]
+      parameters:
+        - name: pageNumber
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: sortBy
+          in: query
+          schema: { type: string, enum: [createdAt, title], default: createdAt }
+        - name: sortDirection
+          in: query
+          schema: { type: string, enum: [asc, desc], default: desc }
+        - name: searchTitleTerm
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Пагинированный список постов
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagination'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: '#/components/schemas/Post' }
+    post:
+      summary: Создать пост
+      tags: [Posts]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, shortDescription, content, blogId]
+              properties:
+                title: { type: string, maxLength: 30 }
+                shortDescription: { type: string, maxLength: 100 }
+                content: { type: string, maxLength: 1000 }
+                blogId: { type: string }
+      responses:
+        '201':
+          description: Пост создан
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Post' }
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+        '404':
+          description: Блог не найден
+
+  /posts/{id}:
+    get:
+      summary: Получить пост по id
+      tags: [Posts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Пост найден
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Post' }
+        '404':
+          description: Пост не найден
+    put:
+      summary: Обновить пост
+      tags: [Posts]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, shortDescription, content, blogId]
+              properties:
+                title: { type: string, maxLength: 30 }
+                shortDescription: { type: string, maxLength: 100 }
+                content: { type: string, maxLength: 1000 }
+                blogId: { type: string }
+      responses:
+        '204':
+          description: Обновлено
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+        '404':
+          description: Пост не найден
+    delete:
+      summary: Удалить пост
+      tags: [Posts]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Удалено
+        '401':
+          description: Не авторизован
+        '404':
+          description: Пост не найден
+
+  /posts/{id}/comments:
+    get:
+      summary: Комментарии к посту
+      tags: [Posts]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: pageNumber
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: sortBy
+          in: query
+          schema: { type: string, default: createdAt }
+        - name: sortDirection
+          in: query
+          schema: { type: string, enum: [asc, desc], default: desc }
+      responses:
+        '200':
+          description: Список комментариев
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagination'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: '#/components/schemas/Comment' }
+        '404':
+          description: Пост не найден
+    post:
+      summary: Создать комментарий к посту
+      tags: [Posts]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string, minLength: 20, maxLength: 300 }
+      responses:
+        '201':
+          description: Комментарий создан
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Comment' }
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+        '404':
+          description: Пост не найден
+
+  /posts/{id}/like-status:
+    put:
+      summary: Поставить лайк/дизлайк посту
+      tags: [Posts]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [likeStatus]
+              properties:
+                likeStatus: { type: string, enum: [None, Like, Dislike] }
+      responses:
+        '204':
+          description: Статус обновлён
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+        '404':
+          description: Пост не найден
+
+  # ==================== USERS ====================
+  /users:
+    get:
+      summary: Список пользователей
+      tags: [Users]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: pageNumber
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: sortBy
+          in: query
+          schema: { type: string, enum: [createdAt, login, email], default: createdAt }
+        - name: sortDirection
+          in: query
+          schema: { type: string, enum: [asc, desc], default: desc }
+        - name: searchLoginTerm
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Пагинированный список пользователей
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagination'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: '#/components/schemas/User' }
+        '401':
+          description: Не авторизован
+    post:
+      summary: Создать пользователя (админ)
+      tags: [Users]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [login, email, password]
+              properties:
+                login: { type: string, minLength: 3, maxLength: 10 }
+                email: { type: string, format: email }
+                password: { type: string, minLength: 6 }
+      responses:
+        '201':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+
+  /users/{id}:
+    delete:
+      summary: Удалить пользователя
+      tags: [Users]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Удалён
+        '401':
+          description: Не авторизован
+        '404':
+          description: Пользователь не найден
+
+  # ==================== COMMENTS ====================
+  /comments/{id}:
+    get:
+      summary: Получить комментарий по id
+      tags: [Comments]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Комментарий найден
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Comment' }
+        '404':
+          description: Комментарий не найден
+    put:
+      summary: Обновить комментарий
+      tags: [Comments]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string, minLength: 20, maxLength: 300 }
+      responses:
+        '204':
+          description: Обновлено
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+        '403':
+          description: Не свой комментарий
+        '404':
+          description: Комментарий не найден
+    delete:
+      summary: Удалить комментарий
+      tags: [Comments]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Удалён
+        '401':
+          description: Не авторизован
+        '403':
+          description: Не свой комментарий
+        '404':
+          description: Комментарий не найден
+
+  /comments/{id}/like-status:
+    put:
+      summary: Поставить лайк/дизлайк комментарию
+      tags: [Comments]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [likeStatus]
+              properties:
+                likeStatus: { type: string, enum: [None, Like, Dislike] }
+      responses:
+        '204':
+          description: Статус обновлён
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Не авторизован
+        '404':
+          description: Комментарий не найден
+
+  # ==================== AUTH ====================
+  /auth/registration:
+    post:
+      summary: Регистрация
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [login, email, password]
+              properties:
+                login: { type: string, minLength: 3, maxLength: 10 }
+                email: { type: string, format: email }
+                password: { type: string, minLength: 6 }
+      responses:
+        '204':
+          description: Подтверждение отправлено на email
+        '400':
+          description: Ошибка валидации или логин/email заняты
+
+  /auth/registration-confirmation:
+    post:
+      summary: Подтверждение регистрации по коду
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code: { type: string }
+      responses:
+        '204':
+          description: Email подтверждён
+        '400':
+          description: Неверный или просроченный код
+
+  /auth/registration-email-resending:
+    post:
+      summary: Повторная отправка кода подтверждения
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        '204':
+          description: Письмо отправлено
+        '400':
+          description: Ошибка валидации или email уже подтверждён
+
+  /auth/login:
+    post:
+      summary: Вход
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [loginOrEmail, password]
+              properties:
+                loginOrEmail: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Успешный вход (accessToken в body, refreshToken в cookie)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken: { type: string }
+        '401':
+          description: Неверный логин/пароль
+
+  /auth/refresh-token:
+    post:
+      summary: Обновить пару токенов
+      tags: [Auth]
+      description: Refresh token передаётся в cookie
+      responses:
+        '200':
+          description: Новая пара токенов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken: { type: string }
+        '401':
+          description: Невалидный refresh token
+
+  /auth/logout:
+    post:
+      summary: Выход
+      tags: [Auth]
+      description: Инвалидирует refresh token (cookie)
+      responses:
+        '204':
+          description: Успешный выход
+        '401':
+          description: Не авторизован
+
+  /auth/me:
+    get:
+      summary: Текущий пользователь
+      tags: [Auth]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Данные текущего пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email: { type: string }
+                  login: { type: string }
+                  userId: { type: string }
+        '401':
+          description: Не авторизован
+
+  /auth/password-recovery:
+    post:
+      summary: Запрос восстановления пароля
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        '204':
+          description: Письмо с кодом отправлено
+        '400':
+          description: Ошибка валидации
+
+  /auth/new-password:
+    post:
+      summary: Установить новый пароль по коду восстановления
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [newPassword, recoveryCode]
+              properties:
+                newPassword: { type: string, minLength: 6 }
+                recoveryCode: { type: string }
+      responses:
+        '204':
+          description: Пароль обновлён
+        '400':
+          description: Неверный или просроченный код
+
+  # ==================== SECURITY DEVICES ====================
+  /security/devices:
+    get:
+      summary: Список сессий (устройств)
+      tags: [Security Devices]
+      security: [{ bearerAuth: [] }]
+      description: Refresh token в cookie. Возвращает все сессии текущего пользователя.
+      responses:
+        '200':
+          description: Список устройств
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/DeviceSession' }
+        '401':
+          description: Не авторизован
+    delete:
+      summary: Завершить все сессии кроме текущей
+      tags: [Security Devices]
+      description: Удаляет все устройства кроме того, с которого отправлен refresh token.
+      responses:
+        '204':
+          description: Осталась только текущая сессия
+        '401':
+          description: Не авторизован
+
+  /security/devices/{id}:
+    delete:
+      summary: Завершить сессию по id устройства
+      tags: [Security Devices]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Сессия завершена
+        '401':
+          description: Не авторизован
+        '403':
+          description: Чужая сессия
+        '404':
+          description: Устройство не найдено
+
+  # ==================== TESTING ====================
+  /testing/all-data:
+    delete:
+      summary: Удалить все данные
+      tags: [Testing]
+      description: Очищает все коллекции БД. Только для тестов/разработки.
+      responses:
+        '204':
+          description: Все данные удалены

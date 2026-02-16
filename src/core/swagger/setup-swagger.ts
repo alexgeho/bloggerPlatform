@@ -1,21 +1,17 @@
-import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { Express } from "express";
+import * as fs from "fs";
+import * as path from "path";
+import YAML from "yaml";
 
-const swaggerOptions = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "Blogger Platform",
-            version: "1.0.0",
-            description: "Blogger Platform API",
-        },
-    },
-    apis: ["./src/**/*.swagger.yml"],
-};
+const openApiPath = path.join(process.cwd(), "src", "core", "swagger", "openapi.swagger.yml");
 
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
+function loadSwaggerSpec(): object {
+    const raw = fs.readFileSync(openApiPath, "utf8");
+    return YAML.parse(raw);
+}
 
 export const setupSwagger = (app: Express) => {
-    app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    const spec = loadSwaggerSpec();
+    app.use("/api", swaggerUi.serve, swaggerUi.setup(spec));
 };
