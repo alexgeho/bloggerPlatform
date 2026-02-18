@@ -4,23 +4,23 @@ info:
   title: Blogger Platform API
   version: 1.0.0
   description: |
-    API платформы блогеров: блоги, посты, комментарии, пользователи, авторизация, лайки, сессии устройств.
+    Blogger platform API: blogs, posts, comments, users, authentication, likes, device sessions.
 
 tags:
   - name: Blogs
-    description: Блоги
+    description: Blogs
   - name: Posts
-    description: Посты
+    description: Post
   - name: Users
-    description: Пользователи (админ)
+    description: Users
   - name: Comments
-    description: Комментарии
+    description: Comments
   - name: Auth
-    description: Регистрация, логин, JWT, восстановление пароля
+    description: Registration, login, JWT, password recovery.
   - name: Security Devices
-    description: Сессии устройств (refresh token)
+    description: Device sessions (refresh token).
   - name: Testing
-    description: Очистка БД для тестов
+    description: Database cleanup for tests.
 
 components:
   securitySchemes:
@@ -117,7 +117,7 @@ paths:
   # ==================== BLOGS ====================
   /blogs:
     get:
-      summary: Список блогов
+      summary: List of blogs
       tags: [Blogs]
       parameters:
         - name: pageNumber
@@ -138,7 +138,7 @@ paths:
           schema: { type: string }
       responses:
         '200':
-          description: Пагинированный список блогов
+          description: Paginated list of blogs.
           content:
             application/json:
               schema:
@@ -150,7 +150,7 @@ paths:
                         type: array
                         items: { $ref: '#/components/schemas/Blog' }
     post:
-      summary: Создать блог
+      summary: Creat blog
       tags: [Blogs]
       security: [{ bearerAuth: [] }]
       requestBody:
@@ -166,21 +166,21 @@ paths:
                 websiteUrl: { type: string, format: uri, maxLength: 100 }
       responses:
         '201':
-          description: Блог создан
+          description: Blog created
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Blog' }
         '400':
-          description: Ошибка валидации
+          description: Validation error
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
         '401':
-          description: Не авторизован
+          description: Unauthorized
 
   /blogs/{id}:
     get:
-      summary: Получить блог по id
+      summary: Get blog by id
       tags: [Blogs]
       parameters:
         - name: id
